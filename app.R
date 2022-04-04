@@ -30,6 +30,7 @@ ui <- fluidPage(
          selectInput("analysis",
                   label = "Choose analysis",
                   choices = list("None selected",
+                                 "Blind search",
                                  "Exclusion",
                                  "Pairwise",
                                  "Joint",
@@ -69,8 +70,16 @@ server <- function(input, output) {
         })
 
     output$table <- renderTable({
-
-        if(input$analysis == "Exclusion"){
+      
+      if(input$analysis == "Blind search"){
+        if(input$dat == "grave"){
+          res = checkPairwise(grave$pm)
+          head(data.frame(V = rownames(res), res))
+        }
+        else 
+          data.frame(ToDO = "Not implemented.")
+      }
+      else if(input$analysis == "Exclusion"){
                 if(input$dat == "Tutorial example"){
                     res = exclusionMatrix(example1$pm, example1$am , example1$missing)
                     head(data.frame(V = rownames(res), res))
