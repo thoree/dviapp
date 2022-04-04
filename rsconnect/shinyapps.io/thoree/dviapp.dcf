@@ -1,0 +1,11 @@
+name: dviapp
+title:
+username:
+account: thoree
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6006432
+bundleId: 5762087
+url: https://thoree.shinyapps.io/dviapp/
+when: 1649069108.14668
+lastSyncTime: 1649069108.14668
