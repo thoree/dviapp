@@ -34,6 +34,7 @@ ui <- fluidPage(
                                  "Exclusion",
                                  "Pairwise",
                                  "Joint",
+                                 "Posterior",
                                  "Power simulation")
                   ),
 
@@ -55,6 +56,7 @@ server <- function(input, output) {
     output$selected_var <- renderText({ 
 
         if(input$dat == "Tutorial example")
+# Failed to display output from dvir::summariseDVI(pm, am, missing),hence:
             c(" Tutorial example. 3 victims: V1, V2, V3.  
                 3 missing: M1, M2, M3. 1 family, 1 typed refs: R1. 1 marker")
         else if (input$dat == "grave")
@@ -72,7 +74,11 @@ server <- function(input, output) {
     output$table <- renderTable({
       
       if(input$analysis == "Blind search"){
-        if(input$dat == "grave"){
+        if(input$dat == "Tutorial example"){
+          res = checkPairwise(example1$pm)
+          head(data.frame(V = rownames(res), res))
+        }
+        else if (input$dat == "grave"){
           res = checkPairwise(grave$pm)
           head(data.frame(V = rownames(res), res))
         }
@@ -130,11 +136,20 @@ server <- function(input, output) {
                                planecrash$missing, verbose = F)
                 head(res)
             }
-        } else if (input$analysis == "Power simulation")
-                data.frame(ToDO = "Not implemented.")
-  
-  
+        } 
+        else if (input$analysis == "Posterior"){
+          if(input$dat == "Tutorial example"){
+            res = jointDVI(example1$pm, example1$am , example1$missing)
+            res2 = Bmarginal(res, example1$missing)
+            head(data.frame(V = rownames(res2), res2))
+          }
+          else
+            data.frame(ToDO = "Not implemented")
+        }
  
+        else if (input$analysis == "Power simulation")
+                data.frame(ToDO = "Not implemented.")
+
     })  
     
         output$distPlot1 <- renderPlot({
