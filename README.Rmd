@@ -15,3 +15,5 @@ knitr::opts_chunk$set(
 ```
 
 ## DVI app
+
+The purpose of this app is to provide easy functionality for DVI ...
