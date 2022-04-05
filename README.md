@@ -15,11 +15,15 @@ The following data documented in dvir:
 
 ## File formats for input
 
--   RData, on format as for the uilt in data
+-   RData, on format as for the built in data
 -   Familias file (not likely to be fully implemented)
 
 ## Functionality
 
--   Blind search Performed PM data. LR gives test for estimated
+-   IBD estimates. Performed on PM data. LR gives test for estimated
     relationship as given by k-s to pedigree relationship (unrelated)
     given by kappa-s
+-   Exclusion Counts number of exclusions for PM sample
+-   Pairwise LR comparing pm sample in MP position to unrelated
+-   Joint. Also called `global`
+-   Posterior. For each pm sample with flat prior

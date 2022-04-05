@@ -30,7 +30,7 @@ ui <- fluidPage(
          selectInput("analysis",
                   label = "Choose analysis",
                   choices = list("None selected",
-                                 "Blind search",
+                                 "IBD estimates",
                                  "Exclusion",
                                  "Pairwise",
                                  "Joint",
@@ -73,7 +73,7 @@ server <- function(input, output) {
 
     output$table <- renderTable({
       
-      if(input$analysis == "Blind search"){
+      if(input$analysis == "IBD estimates"){
         if(input$dat == "Tutorial example"){
           res = checkPairwise(example1$pm)
           head(data.frame(V = rownames(res), res))
