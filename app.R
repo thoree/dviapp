@@ -155,8 +155,10 @@ server <- function(input, output) {
         output$distPlot1 <- renderPlot({
             if(input$dat == "Tutorial example"){
                 dat = example1
-                plotPedList(list(dat$pm, dat$am), hatched = typedMembers, 
-                            titles = c("PM", "AM"),col = list(red = dat$missing))
+                plotPedList(list(dat$pm, dat$am), hatched = typedMembers, marker = 1,
+                            titles = c("Post Mortem", "Ante Mortem"),
+                            cex = 1.2, margins = c(1,1.2,1,1.2), frames = F,
+                            col = list(red = dat$missing, blue = "R1"))
             }
             else if (input$dat == "grave"){
                 dat = grave
