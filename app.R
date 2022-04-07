@@ -4,6 +4,8 @@
 library(shiny)
 library(dvir)
 library(forrel)
+library(glue)
+source("helpers.R")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -15,6 +17,9 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
 
+        fileInput("file1", 
+                  h5("User data. Select newRdata or Familiasfiles in next step")),
+        
          selectInput("dat", 
                   label = "Available data",
                   choices = list("None selected",
@@ -25,8 +30,7 @@ ui <- fluidPage(
                                  "FamiliasFile")
                   ),
          
-         fileInput("file1", h5("User data")),
-         
+
          selectInput("analysis",
                   label = "Choose analysis",
                   choices = list("None selected",
@@ -54,97 +58,80 @@ server <- function(input, output) {
     
     
     output$selected_var <- renderText({ 
-
         if(input$dat == "Tutorial example")
-# Failed to display output from dvir::summariseDVI(pm, am, missing),hence:
-            c(" Tutorial example. 3 victims: V1, V2, V3.  
-                3 missing: M1, M2, M3. 1 family, 1 typed refs: R1. 1 marker")
+          describeData(data = "Tutorial example")
         else if (input$dat == "grave")
-            c(" grave example. 8 victims: V1, ..., V8.  
-                8 missing: M1, ..., M8. 1 family, 5 typed refs: R1, ...,R5. 23 markers.")
+          describeData(data = "grave")
         else if (input$dat == "planecrash")
-            c(" planecrash example. 8 victims: V1, ..., V8.  
-                Five families, each with one missing and one typed ref. 15 markers.")
+          describeData(data = "planecrash")
         else if (input$dat == "newRdata" )
-            c(" newRdata")
+            RData(file = input$file1, method = "DescribeData")
         else if (input$dat ==  "FamiliasFile")
             c(" Familias file")
         })
 
-    output$table <- renderTable({
-      
+    output$table <- renderTable(rownames = T, {
       if(input$analysis == "IBD estimates"){
-        if(input$dat == "Tutorial example"){
-          res = checkPairwise(example1$pm)
-          head(data.frame(V = rownames(res), res))
-        }
-        else if (input$dat == "grave"){
-          res = checkPairwise(grave$pm)
-          head(data.frame(V = rownames(res), res))
-        }
-        else 
+        if(input$dat == "Tutorial example")
+          IBDestimates(example1$pm, nlines = 10, sorter = TRUE)
+        else if (input$dat == "grave")
+          IBDestimates(grave$pm, nlines = 10, sorter = TRUE)
+        else if (input$dat == "planecrash")
+          IBDestimates(planecrash$pm, nlines = 10, sorter = TRUE)
+        else if (input$dat == "newRdata")
+          RData(file = input$file1, method = 'IBDestimates',  nlines = 10, sorter = TRUE)
+        else
           data.frame(ToDO = "Not implemented.")
       }
       else if(input$analysis == "Exclusion"){
-                if(input$dat == "Tutorial example"){
-                    res = exclusionMatrix(example1$pm, example1$am , example1$missing)
-                    head(data.frame(V = rownames(res), res))
-                }
+                if(input$dat == "Tutorial example")
+                  exclusionMatrix(example1$pm, example1$am , example1$missing)
                 else if (input$dat == "grave")
-                    data.frame(ToDO = "Return saved table to save time")
-                else if (input$dat == "planecrash"){
-                    res = exclusionMatrix(planecrash$pm, planecrash$am, planecrash$missing)
-                    head(data.frame(V = rownames(res), res))
-                }
-                else if (input$dat == "newRdata"){
-                    res = exclusionMatrix(newdata$pm, newdata$am , newdata$missing)
-                    head(data.frame(V = rownames(res), res))
-                }
+                  data.frame(ToDO = "Return saved table to save time")
+                else if (input$dat == "planecrash")
+                  exclusionMatrix(planecrash$pm, planecrash$am , planecrash$missing)
+                else if (input$dat == "newRdata")
+                  RData(file = input$file1, method = 'Exclusion')
                 else if (input$dat == "FamiliasFile"){
                     file = input$file1
                     x = readFam(file$datapath)
                     pm = x[[1]]
                     am = x[[2]]$`Family tree`[[1]]
                     missing = c("Missing person","Missing male 2", "Missing male 3")
-                    res = exclusionMatrix(pm, am , missing)
-                    head(data.frame(V = rownames(res), res))
+                    exclusionMatrix(pm, am , missing)
                 }
             }
         else if(input$analysis == "Pairwise"){
-                if(input$dat == "Tutorial example"){
-                    res = pairwiseLR(example1$pm, example1$am , example1$missing)$LRmatrix
-                    head(data.frame(V = rownames(res), res))
-                }
-                else if (input$dat == "grave"){
-                    res = pairwiseLR(grave$pm, grave$am , grave$missing)$LRmatrix
-                    head(data.frame(V = rownames(res), res))
-                }
-                else if (input$dat == "planecrash"){
-                    res = pairwiseLR(planecrash$pm, planecrash$am, planecrash$missing)$LRmatrix
-                    head(data.frame(V = rownames(res), res))
-                }
+                if (input$dat == "Tutorial example")
+                    pairwiseLR(example1$pm, example1$am , example1$missing)$LRmatrix
+                else if (input$dat == "grave")
+                    pairwiseLR(grave$pm, grave$am , grave$missing)$LRmatrix
+                else if (input$dat == "planecrash")
+                    pairwiseLR(planecrash$pm, planecrash$am, planecrash$missing)$LRmatrix
+                else if (input$dat == "newRdata")
+                  RData(file = input$file1, method = 'Pairwise')
             }        
         else if(input$analysis == "Joint"){
-            if(input$dat == "Tutorial example"){
-                res = jointDVI(example1$pm, example1$am , example1$missing)
-                head(res)
-            }
+            if(input$dat == "Tutorial example")
+                jointDVI(example1$pm, example1$am , example1$missing)
             else if (input$dat == "grave")
                 data.frame(ToDO = "Return saved table to save time")
-            else if (input$dat == "planecrash"){
-                res = jointDVI(planecrash$pm, planecrash$am, 
-                               planecrash$missing, verbose = F)
-                head(res)
-            }
+            else if (input$dat == "planecrash")
+                jointDVI(planecrash$pm, planecrash$am, planecrash$missing)
+            else if (input$dat == "newRdata")
+                  RData(file = input$file1, method = 'Joint')
         } 
         else if (input$analysis == "Posterior"){
-          if(input$dat == "Tutorial example"){
-            res = jointDVI(example1$pm, example1$am , example1$missing)
-            res2 = Bmarginal(res, example1$missing)
-            head(data.frame(V = rownames(res2), res2))
-          }
-          else
-            data.frame(ToDO = "Not implemented")
+            if (input$dat == "Tutorial example")
+                 Bmarginal(jointDVI(example1$pm, example1$am, example1$missing), 
+                                 example1$missing)
+            else if (input$dat == "planecrash")
+                 Bmarginal(jointDVI(planecrash$pm, planecrash$am, planecrash$missing), 
+                                planecrash$missing)
+            else if (input$dat == "newRdata")
+                 RData(file = input$file1, method = 'Posterior')
+            else
+                 data.frame(ToDO = "Not implemented")
         }
  
         else if (input$analysis == "Power simulation")
@@ -168,8 +155,11 @@ server <- function(input, output) {
             else if (input$dat == "planecrash"){
                 dat = planecrash
                 plotPedList(dat$am, hatched = typedMembers, 
-                            col = list(red = dat$missing))  
+                            col = list(red = dat$missing))
             }
+            else if (input$dat == 'newRdata')
+                RData(file = input$file1, method = 'plot')
+            
     })
 }
 
