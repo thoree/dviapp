@@ -18,10 +18,10 @@ ui <- fluidPage(
         sidebarPanel(
 
         fileInput("file1", 
-                  h5("User data. Select newRdata or Familiasfiles in next step")),
+                  h5("User data. If provided, select `newRdata or `Familiasfile` accordingly` below")),
         
          selectInput("dat", 
-                  label = "Available data",
+                  label = "Data",
                   choices = list("None selected",
                                  "Tutorial example", 
                                  "grave",
@@ -56,7 +56,6 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
     
-    
     output$selected_var <- renderText({ 
         if(input$dat == "Tutorial example")
           describeData(data = "Tutorial example")
@@ -90,17 +89,19 @@ server <- function(input, output) {
                   data.frame(ToDO = "Return saved table to save time")
                 else if (input$dat == "planecrash")
                   exclusionMatrix(planecrash$pm, planecrash$am , planecrash$missing)
-                else if (input$dat == "newRdata")
+                else if (input$dat == "newRdata") 
                   RData(file = input$file1, method = 'Exclusion')
-                else if (input$dat == "FamiliasFile"){
-                    file = input$file1
-                    x = readFam(file$datapath)
-                    pm = x[[1]]
-                    am = x[[2]]$`Family tree`[[1]]
-                    missing = c("Missing person","Missing male 2", "Missing male 3")
-                    exclusionMatrix(pm, am , missing)
-                }
-            }
+                else if (input$dat == "FamiliasFile")
+                  familias(file = input$file1, method = 'Exclusion', 
+                           relabel = TRUE)#, missing = paste("Missing male", 1:3))
+                    # file = input$file1
+                    # x = readFam(file$datapath)
+                    # pm = x[[1]]
+                    # am = x[[2]]$`Family tree`[[1]]
+                    # missing = c("Missing person","Missing male 2", "Missing male 3")
+                    # exclusionMatrix(pm, am , missing)
+        
+        }
         else if(input$analysis == "Pairwise"){
                 if (input$dat == "Tutorial example")
                     pairwiseLR(example1$pm, example1$am , example1$missing)$LRmatrix
