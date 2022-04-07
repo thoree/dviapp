@@ -1,6 +1,6 @@
-"Output from Familias, version 3.3"
+"Output from Familias, version 3.2.9"
 "DO NOT EDIT!"
-3.3 (DVI)
+3.2.9 (DVI)
 ""
 0
 "Known relations"
@@ -95,15 +95,17 @@ nSystems= 0
 nPedigrees= 2
 [[[[[Pedigree 1]]]]]
 Name= Reference pedigree
-nRelations= 0
+nRelations= 1
+Parent= Missing male 1
+Child= Missing male 2
 [[[[[Pedigree 2]]]]]
-Name= Family tree
+Name= Template pedigree 2
 nRelations= 3
-Parent= Missing male 2
-Child= Missing male 3
 Parent= R
 Child= Missing male 2
-Parent= Missing person
+Parent= Missing male 2
+Child= Missing male 3
+Parent= Missing male 1
 Child= Missing male 2
 [Prior]
 UseList= Yes
