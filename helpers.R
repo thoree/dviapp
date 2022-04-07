@@ -75,5 +75,29 @@ describeData = function(data = NULL){
                 Five families, each with one missing and one typed ref. 15 markers.")
          else if (data ==  "FamiliasFile")
             c(" Familias file")
-        }
+}
 
+familias =  function(file = input$file1, method = 'Exclusion', 
+                     relabel = TRUE, missing = 'Missing person'){
+  x = readFam(file$datapath)
+  
+  pm0 = x$`Unidentified persons`
+  if (length(x) < 3)
+    am0 = x[[2]][[2]]
+  else{
+    am0 = lapply(x[-1], function(dat) {
+    ref = dat$`Reference pedigree`     
+    ref[[which(pedsize(ref) > 1)]]     # remove redundant singleton
+    })
+  }
+  
+  # Rename pm samples to V1, V2 ...; reference families to F1, F2, ...
+  # and missing to M1, M2, ... to make plots nice and to anonymise
+  
+  if(relabel)
+    z = relabelDVI(pm0, am0, missing = missing)
+  if (method == 'Exclusion')
+    exclusionMatrix(z$pm, z$am, z$missing)
+  else 
+    data.frame("Not implemented for fam file")
+}
