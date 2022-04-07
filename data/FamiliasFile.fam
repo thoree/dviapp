@@ -77,17 +77,17 @@ SystemName= L1
 Allele1= 1
 Allele2= 1
 [[[[[Person 2]]]]]
-Name= Missing male 1
+Name= M1
 Gender= Male
 [[[[[[DNA data]]]]]]
 nSystems= 0
 [[[[[Person 3]]]]]
-Name= Missing male 2
+Name= M2
 Gender= Male
 [[[[[[DNA data]]]]]]
 nSystems= 0
 [[[[[Person 4]]]]]
-Name= Missing male 3
+Name= M3
 Gender= Male
 [[[[[[DNA data]]]]]]
 nSystems= 0
@@ -96,17 +96,17 @@ nPedigrees= 2
 [[[[[Pedigree 1]]]]]
 Name= Reference pedigree
 nRelations= 1
-Parent= Missing male 1
-Child= Missing male 2
+Parent= M1
+Child= M2
 [[[[[Pedigree 2]]]]]
 Name= Template pedigree 2
 nRelations= 3
 Parent= R
-Child= Missing male 2
-Parent= Missing male 2
-Child= Missing male 3
-Parent= Missing male 1
-Child= Missing male 2
+Child= M2
+Parent= M2
+Child= M3
+Parent= M1
+Child= M2
 [Prior]
 UseList= Yes
 Size= 3

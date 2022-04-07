@@ -78,9 +78,8 @@ describeData = function(data = NULL){
 }
 
 familias =  function(file = input$file1, method = 'Exclusion', 
-                     relabel = TRUE, missing = 'Missing person'){
+                     relabel = TRUE, miss = 'Missing person'){
   x = readFam(file$datapath)
-  
   pm0 = x$`Unidentified persons`
   if (length(x) < 3)
     am0 = x[[2]][[2]]
@@ -95,7 +94,7 @@ familias =  function(file = input$file1, method = 'Exclusion',
   # and missing to M1, M2, ... to make plots nice and to anonymise
   
   if(relabel)
-    z = relabelDVI(pm0, am0, missing = missing)
+    z = relabelDVI(pm0, am0, missing = miss)
   if (method == 'Exclusion')
     exclusionMatrix(z$pm, z$am, z$missing)
   else 

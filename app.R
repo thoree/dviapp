@@ -11,14 +11,16 @@ source("helpers.R")
 ui <- fluidPage(
 
     # Application title
-    titlePanel("DNA based Identification"),
+    titlePanel("DNA Based Identification"),
 
     # Sidebar 
     sidebarLayout(
+
         sidebarPanel(
 
         fileInput("file1", 
-                  h5("User data. If provided, select `newRdata or `Familiasfile` accordingly` below")),
+                  h5("User data. If provided, select `newRdata or 
+                     `Familiasfile` accordingly` below")),
         
          selectInput("dat", 
                   label = "Data",
@@ -41,19 +43,26 @@ ui <- fluidPage(
                                  "Posterior",
                                  "Power simulation")
                   ),
-
+        
+        numericInput("nMissing", 
+                     h5("No of missing. Only for special cases, see doc"),
+                     min = -1,
+                     value = -1) 
         ),
+        
 
-        # Output
-        verticalLayout(
-           textOutput("selected_var"),
-           tableOutput("table"),
-           plotOutput("distPlot1")
+        mainPanel( 
+           tabsetPanel(
+           tabPanel("Description",textOutput("selected_var")),
+           tabPanel("Plot", plotOutput("distPlot1")),
+           tabPanel("Analysis", tableOutput("table"))
+          )
+        
         )
     )
 )
 
-# Define server logic required to draw a histogram
+#
 server <- function(input, output) {
     
     output$selected_var <- renderText({ 
@@ -91,16 +100,14 @@ server <- function(input, output) {
                   exclusionMatrix(planecrash$pm, planecrash$am , planecrash$missing)
                 else if (input$dat == "newRdata") 
                   RData(file = input$file1, method = 'Exclusion')
-                else if (input$dat == "FamiliasFile")
+                else if (input$dat == "FamiliasFile"){
+                  if (input$nMissing < 0)
+                    MPs = 'Missing person'
+                  else
+                    MPs = paste0("M", 1:input$nMissing)
                   familias(file = input$file1, method = 'Exclusion', 
-                           relabel = TRUE)#, missing = paste("Missing male", 1:3))
-                    # file = input$file1
-                    # x = readFam(file$datapath)
-                    # pm = x[[1]]
-                    # am = x[[2]]$`Family tree`[[1]]
-                    # missing = c("Missing person","Missing male 2", "Missing male 3")
-                    # exclusionMatrix(pm, am , missing)
-        
+                           relabel = TRUE, miss = MPs)
+                }
         }
         else if(input$analysis == "Pairwise"){
                 if (input$dat == "Tutorial example")
