@@ -1,3 +1,46 @@
+#' Help functionss for dviapp
+#' 
+#' The two first functions
+#' Brother, Avuncular,
+#' deals with plotting and power calculations for
+#' the two in built pedigrees
+#' 
+#' For each selection, i.e., for one or two brothers,
+#' the genotypes are generated nProfiles times. For each of
+#' these simulations, lrSims simulations of the missing person are generated under HP
+#' (for LR calculations) and under HD (for exclusion calculations)
+#' 
+
+Brother = function(plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSims = 100) {
+  x = nuclearPed(2, father = "FA", mother ="MO", children = c("Missing", "REF"))
+  x = addChildren(x, father = "FA", mother = "MO", nch = 2, sex = 1, ids = c("E1", "E2"))
+  if(plotPed)
+    plot(x, hatched = "REF", col = list(red = "Missing", blue = c("BR", "E1","E2")))
+  else{
+    x = setMarkers(x, locusAttributes = NorwegianFrequencies[1:nMark])
+    sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))
+    simData = MPPsims(x, missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
+                      selections = sel, thresholdIP = NULL, addBaseline = FALSE, numCores = 1)
+    powerPlot(simData, type = 3)
+  }
+}
+
+Avuncular = function(plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSims = 100) {
+  x = nuclearPed(2, father = "FA", mother ="MO1", children = c("Missing", "BR"))
+  x = addSon(x, parent = "BR",  id = "REF")
+  x = relabel(x, "MO2", "NN_1")
+  if(plotPed)
+    plot(x, hatched = "REF", col = list(red = "Missing", blue = c("BR", "MO2")))
+  else{
+    x = setMarkers(x, locusAttributes =NorwegianFrequencies[1:nMark])
+    sel = list( "REF", c("REF", "MO2"), c("REF", "MO2", "BR"))
+    simData = MPPsims(x, missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
+                      selections = sel, thresholdIP = NULL, addBaseline = FALSE)
+    powerPlot(simData, type = 3)
+  }
+}
+
+
 #' pairwise
 #' 
 #' Runs  dvir::checkPairwise.
@@ -20,7 +63,7 @@
 
 
 
-IBDestimates = function(pm, nlines = 10, sorter = TRUE){
+IBDestimates = function(pm, nlines = 10, sorter = FALSE){
   res = checkPairwise(pm, plot = F)
   if(sorter)
     res = res[order(res$LR, decreasing = TRUE),]
@@ -28,13 +71,14 @@ IBDestimates = function(pm, nlines = 10, sorter = TRUE){
 }
 
 #' RData
+#' Function to process RData input to DVI
 #' 
 
-RData = function(file = input$file1, nlines = 10, sorter = TRUE, method = NULL){
+RData = function(file = input$file1, nlines = 10, sorter = TRUE, method = NULL, refFam = 1){
   load(file$datapath)
   if(method == 'Exclusion')
     exclusionMatrix(pm, am, missing)
-  else if (method == 'IBDestimates')
+  else if (method == 'IBD estimates')
     IBDestimates(pm, nlines = nlines, sorter = sorter)
   else if (method == 'Pairwise')
     pairwiseLR(pm, am, missing)$LRmatrix
@@ -42,61 +86,143 @@ RData = function(file = input$file1, nlines = 10, sorter = TRUE, method = NULL){
     jointDVI(pm, am, missing)
   else if (method == 'Posterior')
     Bmarginal(jointDVI(pm, am, missing), missing)
-  else if (method == 'plot')
-    plotPedList(list(pm, am), hatched = typedMembers, marker = 1,
-                titles = c("Post Mortem", "Ante Mortem"),
-                cex = 1.2, margins = c(1,1.2,1,1.2), frames = FALSE,
-                col = list(red = missing))
-  else if (method == 'DescribeData'){
+  else if (method == 'plot'){
+    if (is.ped(am))
+      plot(am,  hatched = typedMembers, title = "Reference family",
+           col = list(red = missing, blue = typedMembers(am), cex = 1.2))
+    else
+      plot(am[[refFam]], hatched = typedMembers, 
+           title = paste("Reference family ", refFam),
+           col = list(red = missing, blue = typedMembers(am[[refFam]]), cex = 1.2))
+    }
 
-    vics = as.character(unlist(labels(pm)))
-    refs = typedMembers(am)
-    text1 = "User R data. "
-    text2 = paste(length(vics), "victims, ")
-    text3 = paste(length(pm), "missing, ")
-    text4 = paste(length(refs), "references, ")
-    text5 = paste(length(am), "families. ")
-    text6 = paste(nMarkers(pm), "markers in pm. ")
-    text7 = paste(nMarkers(am), "markers in am.")
-    glue(text1, text2, text3, text4, text5, text6, text7)
+  else if (method == 'Describe data')
+    summariseDVIreturned(pm, am, missing)
+}
+
+
+#' summariseDVIreturned
+#' modification of summariseDVI to return output
+#'
+
+summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
+  
+  vics = unlist(labels(pm))
+  nvics = length(vics)
+  nmissing = length(missing)
+  refs = typedMembers(am)
+  nrefs = length(refs)
+  nam = if (is.ped(am)) 
+    1
+  else length(am)
+  t1 = paste(nvics, "victims: ")
+  if(nvics == 1) t2 = paste(vics[1],". ")
+  if(nvics > 1) t2 = paste(vics[1],",...,",vics[nvics], ". ")
+
+  t3 = paste(nmissing, "missing: ")
+  if(nmissing == 1) t4 = paste(missing[1], ". ")
+  if(nmissing > 1) t4 = paste(missing[1],",...,",missing[nmissing], ". ")
+  
+
+  if(nrefs == 1){
+    t5 = paste(nrefs, "typed ref: ")
+    t6 = paste(refs[1], " ", ". ")
+  } 
+  
+  if(nrefs >  1){
+    t5 = paste(nrefs, "typed refs: ")
+    t6 = paste(refs[1],",...,",refs[nrefs], ". ")
   }
+  
+  if(nam == 1 ) t7 = paste(nam, "reference family. ")
+  if(nam > 1 ) t7 = paste(nam, "reference families. ")
+
+  text = glue(header, t1, t2, t3, t4, t5, t6, t7)
+  
+  text
   
 }
 
-describeData = function(data = NULL){
-        if(data == "Tutorial example")
-            c(" Tutorial example. 3 victims: V1, V2, V3.  
-                3 missing: M1, M2, M3. 1 family, 1 typed refs: R1. 1 marker")
-        else if (data == "grave")
-            c(" grave example. 8 victims: V1, ..., V8.  
-                8 missing: M1, ..., M8. 1 family, 5 typed refs: R1, ...,R5. 23 markers.")
-        else if (data == "planecrash")
-            c(" planecrash example. 8 victims: V1, ..., V8.  
-                Five families, each with one missing and one typed ref. 15 markers.")
-         else if (data ==  "FamiliasFile")
-            c(" Familias file")
-}
+#' familias
+#' Function to process fam file input
+#'
 
-familias =  function(file = input$file1, method = 'Exclusion', 
-                     relabel = TRUE, miss = 'Missing person'){
+familias =  function(file = NULL, method = NULL, 
+                     relabel = TRUE, miss = 'Missing person', refFam = 1, DVI = TRUE,
+                     nProfiles = 1, lrSims = 100, seed = 17){
   x = readFam(file$datapath)
-  pm0 = x$`Unidentified persons`
-  if (length(x) < 3)
-    am0 = x[[2]][[2]]
-  else{
-    am0 = lapply(x[-1], function(dat) {
-    ref = dat$`Reference pedigree`     
-    ref[[which(pedsize(ref) > 1)]]     # remove redundant singleton
-    })
+  
+  #Relabel if DVI and not power
+  if(DVI) {
+      pm = x$`Unidentified persons`
+    if (length(x) < 3)
+      am = x[[2]][[2]]
+    else{
+      am = lapply(x[-1], function(dat) {
+      ref = dat$`Reference pedigree`     
+      ref[[which(pedsize(ref) > 1)]]     # remove redundant singleton
+      })
+    }
+    
+    # Rename pm samples to V1, V2 ...; reference families to F1, F2, ...
+    # and missing to M1, M2, ... 
+    # We need to rename missing
+    
+    z = relabelDVI(pm, am, missing = miss)
+    miss = z$missing
+    
+    # To make plots nice and to anonymise, rename also pm and am
+    if(relabel){ 
+      pm = z$pm
+      am = z$am
+    }
   }
+
+  if(method == "Describe data")
+    summariseDVIreturned(pm, am, miss, header = "Familias data. ")
   
-  # Rename pm samples to V1, V2 ...; reference families to F1, F2, ...
-  # and missing to M1, M2, ... to make plots nice and to anonymise
+  else if (method == "IBD estimates")
+    checkPairwise(pm, plot = F)
   
-  if(relabel)
-    z = relabelDVI(pm0, am0, missing = miss)
-  if (method == 'Exclusion')
-    exclusionMatrix(z$pm, z$am, z$missing)
-  else 
-    data.frame("Not implemented for fam file")
+  else if (method == "Exclusion")
+    exclusionMatrix(pm, am, miss)
+  
+  else if (method == "Pairwise")
+    pairwiseLR(pm, am, miss)$LRmatrix
+  
+  else if (method == "Joint")
+    jointDVI(pm, am, miss)
+  
+  else if (method == "Posterior")
+    Bmarginal(jointDVI(pm, am, miss), miss)
+  
+  else if (method == "plot")
+    if (is.ped(am))
+      plot(am,  hatched = typedMembers, title = "Reference family",
+           col = list(red = miss, blue = typedMembers(am), cex = 1.2))
+    else
+       plot(am[[refFam]], hatched = typedMembers, 
+         title = paste("Reference family ", refFam),
+         col = list(red = miss, blue = typedMembers(am[[refFam]]), cex = 1.2))
+  else if (method == "plotSimPed")
+    plot(x[[1]], hatched = "REF", col = list(red = "Missing", blue = c("REF", "E1","E2")))
+  else if (method == "powerFamilias"){
+    
+    sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))
+    simData = MPPsims(x[[1]], missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
+                      selections = sel, thresholdIP = NULL, addBaseline = FALSE, 
+                      numCores = 1)
+    powerPlot(simData, type = 3)
+    
+  }
 }
+
+#' getExt
+#' Function to check if there is an input file and if so get extension
+
+getExt = function(file){
+  req(file)
+  tools::file_ext(file$datapath)
+}
+
+  
