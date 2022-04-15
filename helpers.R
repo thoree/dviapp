@@ -1,4 +1,4 @@
-#' Help functionss for dviapp
+#' Help functions for dviapp
 #' 
 #' The two first functions
 #' Brother, Avuncular,
@@ -17,7 +17,7 @@ Brother = function(plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSims = 1
   if(plotPed)
     plot(x, hatched = "REF", col = list(red = "Missing", blue = c("BR", "E1","E2")))
   else{
-    x = setMarkers(x, locusAttributes = NorwegianFrequencies[1:nMark])
+    x = setMarkers(x, locusAttributes = NorwegianFrequencies)
     sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))
     simData = MPPsims(x, missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
                       selections = sel, thresholdIP = NULL, addBaseline = FALSE, numCores = 1)
@@ -32,7 +32,7 @@ Avuncular = function(plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSims =
   if(plotPed)
     plot(x, hatched = "REF", col = list(red = "Missing", blue = c("BR", "MO2")))
   else{
-    x = setMarkers(x, locusAttributes =NorwegianFrequencies[1:nMark])
+    x = setMarkers(x, locusAttributes = NorwegianFrequencies)
     sel = list( "REF", c("REF", "MO2"), c("REF", "MO2", "BR"))
     simData = MPPsims(x, missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
                       selections = sel, thresholdIP = NULL, addBaseline = FALSE)
@@ -206,14 +206,27 @@ familias =  function(file = NULL, method = NULL,
          col = list(red = miss, blue = typedMembers(am[[refFam]]), cex = 1.2))
   else if (method == "plotSimPed")
     plot(x[[1]], hatched = "REF", col = list(red = "Missing", blue = c("REF", "E1","E2")))
-  else if (method == "powerFamilias"){
+  else if (method == "Prioritise"){
     
-    sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))
+    if(FALSE){
+      sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))
     simData = MPPsims(x[[1]], missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
                       selections = sel, thresholdIP = NULL, addBaseline = FALSE, 
                       numCores = 1)
     powerPlot(simData, type = 3)
-    
+    }
+    else
+      hist(rnorm(100,10,1))
+  }
+  else if (method == "Power"){
+    if(FALSE){
+    simData = MPPsims(x[[1]], missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
+                      selections = list("REF"), thresholdIP = NULL, addBaseline = FALSE,
+                      numCores = 1)
+    hist(log10(simData$REF$ip[[1]]$LRperSim), xlab = "log10(LR)", ylab = "",
+         main ="Power plot from fam file")
+    } else
+      hist(rnorm(100))
   }
 }
 
