@@ -1,3 +1,12 @@
+# Wrapper for joiintDVI
+
+myjointDVI = function(pm, am, missing, mutation = FALSE){
+  if(mutation)
+    jointDVI(pm, am, missing, disableMutation = FALSE)
+   else
+    jointDVI(pm, am, missing)
+}
+
 #' Help functions for dviapp
 #' 
 #' The two first functions
@@ -74,18 +83,19 @@ IBDestimates = function(pm, nlines = 10, sorter = FALSE){
 #' Function to process RData input to DVI
 #' 
 
-RData = function(file = input$file1, nlines = 10, sorter = TRUE, method = NULL, refFam = 1){
+RData = function(file = input$file1, nlines = 10, sorter = TRUE,
+                 method = NULL, refFam = 1, mutation = FALSE){
   load(file$datapath)
   if(method == 'Exclusion')
     exclusionMatrix(pm, am, missing)
   else if (method == 'IBD estimates')
-    IBDestimates(pm, nlines = nlines, sorter = sorter)
+     checkPairwise(pm, plot = F)
   else if (method == 'Pairwise')
     pairwiseLR(pm, am, missing)$LRmatrix
   else if (method == 'Joint')
-    jointDVI(pm, am, missing)
+    myjointDVI(pm, am, missing, mutation)
   else if (method == 'Posterior')
-    Bmarginal(jointDVI(pm, am, missing), missing)
+    Bmarginal(myjointDVI(pm, am, missing, mutation), missing)
   else if (method == 'plot'){
     if (is.ped(am))
       plot(am,  hatched = typedMembers, title = "Reference family",
@@ -207,26 +217,18 @@ familias =  function(file = NULL, method = NULL,
   else if (method == "plotSimPed")
     plot(x[[1]], hatched = "REF", col = list(red = "Missing", blue = c("REF", "E1","E2")))
   else if (method == "Prioritise"){
-    
-    if(FALSE){
-      sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))
+    sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))
     simData = MPPsims(x[[1]], missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
                       selections = sel, thresholdIP = NULL, addBaseline = FALSE, 
                       numCores = 1)
     powerPlot(simData, type = 3)
-    }
-    else
-      hist(rnorm(100,10,1))
   }
   else if (method == "Power"){
-    if(FALSE){
     simData = MPPsims(x[[1]], missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
                       selections = list("REF"), thresholdIP = NULL, addBaseline = FALSE,
                       numCores = 1)
     hist(log10(simData$REF$ip[[1]]$LRperSim), xlab = "log10(LR)", ylab = "",
          main ="Power plot from fam file")
-    } else
-      hist(rnorm(100))
   }
 }
 

@@ -5,19 +5,24 @@ library(glue)
 source("helpers.R")
 
 ui <- fluidPage(
-  titlePanel("DVI layout"),
+  titlePanel("Disaster Victim Identification"),
+  
+             actionButton("reset", "Reset all", class = "btn btn-danger",
+                         style = "position: absolute; bottom:30px; width: 170px"),
+                        
     navbarPage("Introduction",
                tabPanel(icon("home"),
+
                         fluidRow(
                           column(tags$img(src = "bookKETP.png", 
                                                  width = "160px", height = "200px"), width = 2),
                           column(
-                          br(),
+                          h4("Purpose"),
                           p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
                           br(),
                           "bla bla bla bla bla bla bla bla bla bla",
                           br(), br(), br(), br(), br(),
-                          p("More information on:",
+                          p("More information:",
                           a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
                             "Mass identications,",target="_blank"), 
                           a(href="https://www.familias.no",  
@@ -28,29 +33,47 @@ ui <- fluidPage(
                           ),
                ),
                
-               tabPanel("Power",
-                        p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
-                        br(),
-                        sidebarLayout(position = "left",
-                                      sidebarPanel(
-                                        selectInput(
-                                          "pedigreePower", label = "Built in pedigree for power simulation",
-                                          choices = list( "None selected", "brother", "halfBrother"),
+               navbarMenu("Power",
+                          
+                 tabPanel("Built in data",
+                          p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
+                          br(),
+                          sidebarLayout(position = "left",
+                                        sidebarPanel(
+                                          selectInput(
+                                            "pedigreePower", label = "Built in pedigree for power simulation",
+                                            choices = list( "None selected", "brother", "halfBrother"),
+                                          ),
                                         ),
-                                        fileInput("famPower", "Familias file for power simulation"),
-                                      ),
-                                      mainPanel(
-                                        fluidRow(
-                                          column(plotOutput("powerPlotPremade"),  width = 4),
-                                          column(plotOutput("powerPlotFam"),  width = 6)
+                                        mainPanel(
+                                          fluidRow(
+                                            column(plotOutput("powerPlotPremade"),  width = 9)
+                                          )
+                                          
                                         )
-                                        
-                                      )
-                        ),
-               ),              
+                          ),
+                 ), 
+               
+                 tabPanel("fam file",
+                          p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
+                          br(),
+                          sidebarLayout(position = "left",
+                                        sidebarPanel(
+                                          fileInput("famPower", "Familias file for power simulation"),
+                                        ),
+                                        mainPanel(
+                                          fluidRow(
+                                            column(plotOutput("powerPlotFam"),  width = 9)
+                                          )
+                                          
+                                        )
+                          ),
+                 ),              
+               ), 
  
-
-               tabPanel("Prioritise",
+               navbarMenu("Prioritise",
+                          
+                 tabPanel("Built in data",
                         p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
                         br(),
                         sidebarLayout(position = "left",
@@ -59,37 +82,94 @@ ui <- fluidPage(
                                           "pedigreePri", label = "Built in pedigree for priority simulation",
                                           choices = list( "None selected", "brother", "halfBrother"),
                                         ),
-                                        fileInput("priPower", "Familias file for priority simulation"),
                                       ),
                                       mainPanel(
                                         fluidRow(
-                                          column(plotOutput("priPlotPremade"),  width = 4),
-                                          column(plotOutput("priPlotFam"),  width = 6)
+                                          column(plotOutput("priPlotPremade"),  width = 9)
                                         )
                                         
                                       )
                         ),
-               ), 
-           
+                 ), 
+
+                 tabPanel("fam file",
+                          p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
+                          br(),
+                          sidebarLayout(position = "left",
+                                        sidebarPanel(
+                                          fileInput("priPower", "Familias file for priority simulation"),
+                                        ),
+                                        mainPanel(
+                                          fluidRow(
+                                            column(plotOutput("priPlotFam"),  width = 9)
+                                          )
+                                          
+                                        )
+                          ),
+                  ),
+               ),
+                          
                 navbarMenu("DVI",
-                     tabPanel("Select data",
-                              p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
+                     tabPanel("Built in data",
+                              p("Select built in data below (or go to `Load data` if you would like to analyse 
+                                 your own data)"),
                               br(),
                               sidebarLayout(position = "left",
                                             sidebarPanel(
-                                              fileInput("file1", "User data (optional) for DVI"),
-                                              selectInput(
+                                            selectInput(
                                                 "dat", 
                                                 label = "Built in data for DVI",
-                                                choices = list("No data selected",
+                                                choices = list("None selected",
                                                                "Tutorial example", 
                                                                "grave",
                                                                "planecrash")
                                               ),
+
                                             ),
                                             mainPanel(
                                               fluidRow(
-                                                column(textOutput("DVISummary"),  width = 8)
+                                                column(textOutput("DVISummaryBuiltIn"),  width = 8)
+                                              )
+                                              
+                                            )
+                              ),
+                     ),
+                     
+                      tabPanel("Load data",
+                              p("No action required here unless you would like to load and analyse your own data.
+                                 If `Relabel` is ticked, names are changed to V1, ..(for pm-samples); 
+                                 M1,..., (for am-samples) and F1, .... (for reference families). Relabelling is
+                                 required for some analyses as explained later"),
+                              br(),
+                              sidebarLayout(position = "left",
+                                            sidebarPanel(
+                                              checkboxInput("relabel", label = "Relabel", value =  FALSE),
+                                              fileInput("file1", "User data (optional fam or RData file) for DVI"),
+                                            ),
+                                            mainPanel(
+                                              fluidRow(
+                                                column(textOutput("DVISummaryLoad"),  width = 8)
+                                              )
+                                              
+                                            )
+                              ),
+                     ),                    
+                     
+                     tabPanel("Plot am data",
+                              p("plot"),
+
+                              sidebarLayout(position = "left",
+                                            sidebarPanel(
+                                                        numericInput(
+                                                           "refFam", 
+                                                           "Reference family to plot",
+                                                           min = 1,
+                                                           value = 1
+                                                         ),
+                                            ),
+                                            mainPanel(
+                                              fluidRow(
+                                                column(plotOutput("plot"),  width = 8)
                                               )
                                               
                                             )
@@ -97,14 +177,23 @@ ui <- fluidPage(
                      ),
                      tabPanel("Analysis",
                               
-                              p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
+                              p("The previous setting 'Relabel DVI' need to be ticked for fam file except for 
+                                the IBD estimates below."),
                               br(),
+                              p("The entry 'No of missing' should only be changed 
+                                when a fam file that has multiple missing in on family is used."), 
+                              p("In this case the total number of
+                                missing shoulod be given and these should be named M1, M2, ... in the fam file"),
+                              br(),
+                              checkboxInput("mutation", label = "Mutation", value = FALSE),                              
                               sidebarLayout(position = "left",
                                             sidebarPanel(
-                                              checkboxGroupInput("settings", label = "Settings", 
-                                                                 choices = list( "Relabel DVI" = "relabel",  "Mutation" = "mutation", 
-                                                                                 "Flat prior" = "flat"),
-                                                                 selected = c("relabel", "flat")),
+                                            numericInput(
+                                                        "nMissing", 
+                                                        "No of missing.",
+                                                         min = -1,
+                                                        value = -1
+                                                        ),                                              
                                               selectInput(
                                                 "analysis",
                                                 label = "Choose DVI analysis",
@@ -115,6 +204,7 @@ ui <- fluidPage(
                                                                "Joint",
                                                                "Posterior")
                                               ),
+                                              downloadButton("downloadTable", "Download DVI table output")
                                             ),
                                             mainPanel(
                                               fluidRow(
@@ -142,7 +232,6 @@ server <- function(input, output, session) {
     else if (TRUE)
       list(src = "hardCoded/empty.png")
   } 
-  
   , deleteFile = FALSE)
   
   output$powerPlotFam = renderPlot({
@@ -169,35 +258,24 @@ server <- function(input, output, session) {
     familias(file = file, method = "Prioritise", DVI = FALSE)
   })
   
-  
-    output$powerPlotPremade3 = renderImage( {
-    if(input$simulation3 == "brother")
-       list(src = "hardCoded/brotherPow.png")
-    else if(input$simulation3 == "halfBrother")
-          list(src = "hardCoded/halfBrotherPow.png")
-    else if (TRUE)
-      list(src = "hardCoded/empty.png")
-  } 
 
-    , deleteFile = FALSE)
-    
-    output$DVISummary <- renderText({
+    output$DVISummaryBuiltIn <- renderText({
       if(input$dat == "Tutorial example")
         summariseDVIreturned(example1$pm, example1$am, example1$missing, header = "Tutorial data. ")
       else if (input$dat == "grave")
         summariseDVIreturned(grave$pm, grave$am, grave$missing, header = "grave data. ")
       else if (input$dat == "planecrash")
         summariseDVIreturned(planecrash$pm, planecrash$am, planecrash$missing, header = "planecrash data. ")
-      else {
+    })
+    
+    output$DVISummaryLoad <- renderText({
         file = input$file1
         ext = getExt(file = file)
-        if (ext == "RData" )
+        if (ext == "RData" |  ext == "rda" )
           RData(file = file, method = "Describe data")
         else if (ext ==  "fam")
-          relab = any(input$settings[1] %in% "relabel")
-        familias(file = file, method = "Describe data", relabel = relab)
-      }
-    })    
+         familias(file = file, method = "Describe data", relabel = input$relabel)
+     })      
     
     output$table <- renderTable(rownames = T,{
       if(input$analysis == "IBD estimates")
@@ -225,11 +303,11 @@ server <- function(input, output, session) {
       else{ 
         file = input$file1
         ext = getExt(file = file)
-        if(ext == "RData")
+        if(ext == "RData" |  ext == "rda")
           RData(file = file, method = "IBD estimates",  nlines = 10, sorter = TRUE)
         else if(ext == "fam")
-          relab = any(input$settings[1] %in% "relabel")
-        familias(file = file, method = "IBD estimates", relabel = relab)
+          familias(file = file, method = "IBD estimates", relabel = input$relabel)
+        
       }
     })
     
@@ -241,19 +319,19 @@ server <- function(input, output, session) {
       else if (input$dat == "planecrash")
         exclusionMatrix(planecrash$pm, planecrash$am , planecrash$missing)
       else{
-        if(!any(input$settings %in% "relabel"))
+        if(!input$relabel)
           stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
         file = input$file1
         ext = getExt(file = file)
-        if (ext == "RData") 
+        if (ext == "RData" |  ext == "rda") 
           RData(file = file, method = 'Exclusion')
         else if (ext == "fam"){
-          if (TRUE) #if (input$nMissing < 0)
+        if (input$nMissing < 0)
             MPs = 'Missing person'
           else
             MPs = paste0("M", 1:input$nMissing)
           
-          familias(file = file, method = 'Exclusion',  relabel = TRUE, miss = MPs)
+          familias(file = file, method = 'Exclusion',  relabel = input$relabel, miss = MPs)
         }
       }
     })
@@ -266,82 +344,153 @@ server <- function(input, output, session) {
       else if (input$dat == "planecrash")
         pairwiseLR(planecrash$pm, planecrash$am, planecrash$missing)$LRmatrix
       else{
-        if(!any(input$settings %in% "relabel"))
+        if(!input$relabel)
           stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
         file = input$file1
         ext = getExt(file = file)
-        if (ext == "RData")
+        if (ext == "RData" |  ext == "rda")
           RData(file = file, method = 'Pairwise')
-        else 
-          if (TRUE) #if (input$nMissing < 0)
+        else {
+        if (input$nMissing < 0)
             MPs = 'Missing person'
         else
-          MPs = paste0("M", 1:input$nMissing)
-        
-        familias(file = file, method = 'Pairwise',  relabel = TRUE, miss = MPs)
+            MPs = paste0("M", 1:input$nMissing)
+          familias(file = file, method = 'Pairwise',  relabel = input$relabel, miss = MPs)
+        }
       }
     })
     
     tableJoint = reactive({
       if(input$dat == "Tutorial example")
-        jointDVI(example1$pm, example1$am , example1$missing)
+        myjointDVI(example1$pm, example1$am , example1$missing, mutation = input$mutation)
       else if (input$dat == "grave")
         data.frame(ToDO = "Return saved table to save time")
       else if (input$dat == "planecrash")
-        jointDVI(planecrash$pm, planecrash$am, planecrash$missing)
+        myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, mutation = input$mutation)
       else{
-        if(!any(input$settings %in% "relabel"))
+        if(!input$relabel)
           stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
         
         file = input$file1
         ext = getExt(file = file)
-        if (ext == "RData")
-          RData(file = file, method = 'Joint')
-        else 
-          if (TRUE) #if (input$nMissing < 0)
+        if (ext == "RData" |  ext == "rda")
+          RData(file = file, method = 'Joint', mutation = input$mutation)
+        else {
+        if (input$nMissing < 0)
             MPs = 'Missing person'
         else
-          MPs = paste0("M", 1:input$nMissing)
+            MPs = paste0("M", 1:input$nMissing)
+          familias(file = file, method = 'Joint',  relabel = input$relabel, miss = MPs)
+        }
         
-        familias(file = file, method = 'Joint',  relabel = TRUE, miss = MPs)
       }
       
     })
     
     tablePosterior = reactive({
       if (input$dat == "Tutorial example")
-        Bmarginal(jointDVI(example1$pm, example1$am, example1$missing), 
-                  example1$missing)
+        Bmarginal(myjointDVI(example1$pm, example1$am, example1$missing, 
+                  mutation = input$mutation), example1$missing)
       else if (input$dat == "planecrash")
-        Bmarginal(jointDVI(planecrash$pm, planecrash$am, planecrash$missing), 
-                  planecrash$missing)
+        Bmarginal(myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, 
+                  mutation = input$mutation), planecrash$missing)
       else{
-        if(!any(input$settings %in% "flat"))
-          stop(safeError("Need to tick 'Flat prior' for Posterior analysis"))
-        if(!any(input$settings %in% "relabel"))
+        if(!input$relabel)
           stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
         
         file = input$file1
         ext = getExt(file = file)
-        if (ext == "RData")
-          RData(file = file, method = 'Posterior')
-        else 
-          if (TRUE) #if (input$nMissing < 0)
-            MPs = 'Missing person'
-        else
-          MPs = paste0("M", 1:input$nMissing)
-        
-        
-        
-        familias(file = file, method = 'Posterior',  relabel = TRUE, miss = MPs)
+        if (ext == "RData" |  ext == "rda")
+          RData(file = file, method = 'Posterior', mutation = input$mutation)
+        else {
+          if (input$nMissing < 0)
+              MPs = 'Missing person'
+          else
+              MPs = paste0("M", 1:input$nMissing)
+            familias(file = file, method = 'Posterior',  relabel = input$relabel, miss = MPs)
+        }
+          
       }
       
-    })    
+    })
+    
+    output$downloadTable <- downloadHandler(
+    filename = "DVITableOutput.csv",
+    content = function(file = filename) {
+      if(input$analysis == "IBD estimates")
+        write.csv(tableIBD(), file, row.names = TRUE, quote = F)
+      else if (input$analysis == "Exclusion")
+        write.csv(tableExclusion(), file, row.names = TRUE, quote = F)
+      else if (input$analysis == "Pairwise")
+        write.csv(tablePairwise(), file, row.names = TRUE, quote = F)
+      else if (input$analysis == "Joint")
+        write.csv(tableJoint(), file, row.names = TRUE, quote = F)
+      else if (input$analysis == "Posterior")
+        write.csv(tablePosterior(), file, row.names = TRUE, quote = F)
+    })
 
+    output$plot <- renderPlot({
+      
+      file = input$file1
+      ext = tools::file_ext(file$datapath)
+      if(input$dat == "Tutorial example")
+        plot(example1$am, hatched = typedMembers, title = "Reference family",
+             cex = 1.2, col = list(red = planecrash$missing,
+                                   blue = typedMembers(example1$am)))
+      
+      else if (input$dat == "grave")
+        plot(grave$am, marker = 1, hatched = typedMembers, title = "Reference family",
+             col = list(red = grave$missing, blue = typedMembers(grave$am), cex = 1.2))
+      
+      else if (input$dat == "planecrash")
+        plot(planecrash$am[[input$refFam]], hatched = typedMembers, 
+                    title = paste("Reference family ", input$refFam),
+                    col = list(red = planecrash$missing,
+                               blue = typedMembers(planecrash$am[[input$refFam]])))
+      else{
+        file = input$file1
+        ext = getExt(file = file)
+        if (ext == "RData" |  ext == "rda") 
+          RData(file = input$file1, method = 'plot', refFam = input$refFam)
+        else if (ext == "fam"){
+            if (input$nMissing < 0)
+              MPs = 'Missing person'
+          else
+            MPs = paste0("M", 1:input$nMissing)
+          familias(file = file, method = 'plot', 
+                     relabel = input$relabel, refFam = input$refFam, miss = MPs)
+          }
+        }
+
+    })
+    
+  observe({
+
+    # if (!is.null(input$famPower))
+    #   updateSelectInput(session, "pedigreePower", label = "Built in pedigree for power simulation",
+    #       choices = list( "None selected", "brother", "halfBrother"), selected = "None selected")
+    # if(!is.null(input$priPower))
+    #   updateSelectInput(session, "pedigreePri", label = "Built in pedigree for priority simulation",
+    #       choices = list( "None selected", "brother", "halfBrother"), selected = "None selected")
+    if(!is.null(input$file1))
+      updateSelectInput(session, "dat", label = "Built in data for DVI",
+                        choices = list("None selected","Tutorial example", "grave", "planecrash"),
+                        selected = "None selected")                                             
+ 
+  })
+ 
+   observeEvent(input$reset, {
+    updateSelectInput(session, "pedigreePower", selected = "None selected")
+    updateSelectInput(session, "pedigreePri", selected = "None selected")
+    updateSelectInput(session, "dat", selected = "None selected")
+    updateCheckboxInput(session, "relabel", value = FALSE)
+    updateNumericInput(session, "refFam", value = 1)
+    updateNumericInput(session, "nMissing", value = -1)
+    updateSelectInput(session, "analysis", selected = "None selected")
+  })
+  
 }
 
 
 
-if (interactive()) {
   shinyApp(ui, server)
-}
