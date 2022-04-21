@@ -74,7 +74,9 @@ ui <- fluidPage(
                     sliderInput("threshold", "Threshold", min = 0, max = 10000, step = 100, value = 10000),
                     sliderInput("lastMarker", "Last Marker", min = 1, max = 35, step = 1, value = 35),
                     selectInput("pedigreePowerSimulated", label = "Built in pedigree for power simulation",
-                      choices = list( "None selected", "brother", "uncle"),
+                      choices = list( "None selected", "Missing brother", 
+                                      "Missing uncle", "Missing first cousin",
+                                      "Missing GF, 2 grandchildren typed"),
                     ),
                   ),
                   mainPanel(
@@ -102,7 +104,7 @@ ui <- fluidPage(
  
                navbarMenu("Prioritise",
                           
-                 tabPanel("Built in data",
+                 tabPanel("Demonstrations",
                         p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
                         br(),
                         sidebarLayout(position = "left",
@@ -119,6 +121,32 @@ ui <- fluidPage(
                         ),
                  ), 
 
+                 tabPanel("Built in cases",
+                          p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
+                 will be computed for a specified number simulations of MP and REF conditioned on H1.
+                 The simulations use the n (change from default `100 in`Settings`) first of the 35 markers in the database 
+                 `NorwegianFrequencies` documented in the R library forrel. The pedigree and the simulated LR distribution
+                  can be obtained below for some cases. This may take some time."),
+                          br(),
+                          sidebarLayout(position = "left",
+                            sidebarPanel(
+                              checkboxInput("plotOnly", label = "Plot only", value = FALSE),
+                              numericInput("nProfiles", "No of sims for references", min = 1, max = 10, value = 2),
+                              sliderInput("lastMarkerPri", "Last Marker", min = 1, max = 35, step = 1, value = 13),
+                              selectInput("pedigreePowerSimulatedPri", 
+                                        label = "Built in pedigree for power simulation",
+                                        choices = list( "None selected", "Missing brother", 
+                                        "Missing uncle"),
+                                        ),
+                                      ),
+                                        mainPanel(
+                                          fluidRow(
+                                            column(plotOutput("powerPlotSimulatedPri"),  width = 9)
+                                          )
+                                        )
+                          ),
+                 ),
+                                  
                  tabPanel("fam file",
                           p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
                           br(),
@@ -263,20 +291,50 @@ server <- function(input, output, session) {
   , deleteFile = FALSE)
 
   output$powerPlotSimulated = renderPlot( {
-    if(input$pedigreePowerSimulated == "brother"){
+    if(input$pedigreePowerSimulated == "Missing brother"){
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
       pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
                thresh = input$threshold, lastMarker = input$lastMarker)
     }
-    else if(input$pedigreePowerSimulated == "uncle"){
+    else if(input$pedigreePowerSimulated == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
       x = addSon(x, parent = "BR",  id = "REF")
       claim = relabel(x, "MO2", "NN_1")
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
                thresh = input$threshold, lastMarker = input$lastMarker)
     }
-
+    else if(input$pedigreePowerSimulated == "Missing first cousin"){
+      x = cousinPed(1)
+      claim = relabel(x, c("MP","REF"), 7:8)
+      pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
+               thresh = input$threshold, lastMarker = input$lastMarker)
+    }
+    else if(input$pedigreePowerSimulated == "Missing GF, 2 grandchildren typed"){
+      IDS = c("MP","REF1", "REF2")
+      claim = relabel(x, IDS, c(1,7, 8))
+      pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
+               thresh = input$threshold, lastMarker = input$lastMarker)
+    }
   })  
+  
+  output$powerPlotSimulatedPri = renderPlot( {
+    if(input$pedigreePowerSimulatedPri == "Missing brother"){
+      ped = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
+      ped = addChildren(ped, father = "FA", mother = "MO", nch = 2, 
+                        sex = 1, ids = c("E1", "E2"))
+      priPower(ped, plotPed = input$plotOnly, nMark = input$lastMarkerPri, seed = input$seed,  
+               nProfiles = input$nProfiles, lrSims = input$nSimulations)
+    }
+    else if(input$pedigreePowerSimulatedPri == "Missing uncle"){
+      x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "E2"))
+      x = addSon(x, parent = "E2",  id = "REF")
+      ped = relabel(x, "E1", "NN_1")      
+
+      priPower(ped, plotPed = input$plotOnly, nMark = input$lastMarkerPri, seed = input$seed,  
+               nProfiles = input$nProfiles, lrSims = input$nSimulations)
+    }
+
+  })   
   
   
   output$powerPlotFam = renderPlot({
@@ -520,10 +578,17 @@ server <- function(input, output, session) {
   })
  
    observeEvent(input$reset, {
-    updateSelectInput(session, "pedigreePower", selected = "None selected")
-    updateSelectInput(session, "pedigreePowerSimulated", selected = "None selected")
+
+
     updateSliderInput(session, "threshold", value = 10000)
     updateSliderInput(session, "lastMarker", value = 35)
+    updateSelectInput(session, "pedigreePowerSimulated", selected = "None selected")
+    
+    updateCheckboxInput(session, "plotOnly", value = FALSE)
+    updateNumericInput(session, "nProfiles", value = 2)
+    updateSliderInput(session, "lastMarkerPri", value = 35)    
+    updateSelectInput(session, "pedigreePowerSimulatedPri", selected = "None selected")
+    
     updateSelectInput(session, "pedigreePri", selected = "None selected")
     updateSelectInput(session, "dat", selected = "None selected")
     updateCheckboxInput(session, "relabel", value = FALSE)

@@ -1,17 +1,20 @@
 # Power plot
 
-pedPower = function(claim, nsim = 10, thresh = 10000, seed = 1729, lastMarker = 35){
+pedPower = function(claim, nsim = 10, thresh = 10000, seed = 1729, lastMarker = 35,
+                    ids = c("MP", "REF")){
   claim = setMarkers(claim, locusAttributes = NorwegianFrequencies[1:lastMarker])
-  unrel = list(singleton("MP"), singleton("REF"))
+  unrel = list()
+  for(i in 1:length(ids))
+    unrel[[i]] = singleton(ids[i])
   unrel = transferMarkers(claim, unrel)
-  ids = c("MP", "REF")
+  
   pow1 = LRpower(claim, unrel,  ids = ids, nsim = nsim,
                  threshold = thresh, seed = seed, plot = F, verbose = F)
   par(mfcol = c(1,2))
-  plot(claim, hatched = ids, col = list(red = "MP", blue = "REF"))
-  tittel = paste("No of simulations: ", nsim,". Markers: 1 - ", lastMarker)
-  subt = paste("P(LR > ", thresh,"| MP = POI) = ", pow1$IP)
-  hist(log10(pow1$LRperSim), xlab = "log10(LR)", main = paste(tittel,"\n", subt))
+  plot(claim, hatched = ids, col = list(red = ids[1], blue = ids[-1]))
+  tittel = paste("No sims: ", nsim,". Markers: 1 - ", lastMarker)
+  subt = paste("P(LR > ", thresh,"|H1) = ", pow1$IP)
+  hist(log10(pow1$LRperSim), xlab = "log10(LR)", main = tittel, sub = subt)
   par(mfcol = c(1,1))
 }
 
@@ -28,10 +31,8 @@ myjointDVI = function(pm, am, missing, mutation = FALSE){
 
 #' Help functions for dviapp
 #' 
-#' The two first functions
-#' Brother, Avuncular,
-#' deals with plotting and power calculations for
-#' the two in built pedigrees
+#' The  function priPower
+#' deals with plotting and priority calculations
 #' 
 #' For each selection, i.e., for one or two brothers,
 #' the genotypes are generated nProfiles times. For each of
@@ -39,33 +40,19 @@ myjointDVI = function(pm, am, missing, mutation = FALSE){
 #' (for LR calculations) and under HD (for exclusion calculations)
 #' 
 
-Brother = function(plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSims = 100,
-                   sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))) {
-  x = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
-  x = addChildren(x, father = "FA", mother = "MO", nch = 2, sex = 1, ids = c("E1", "E2"))
+priPower = function(ped, plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSims = 10,
+                    sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))) {
+  
   if(plotPed)
-    plot(x, hatched = "REF", col = list(red = "MP", blue = c("BR", "E1","E2")))
+    plot(ped, col = list(red = "MP", blue = c("REF", "E1", "E2")))
   else{
-    x = setMarkers(x, locusAttributes = NorwegianFrequencies)
-
-    simData = MPPsims(x, missing = "MP", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
-                      selections = sel, thresholdIP = NULL, addBaseline = FALSE, numCores = 1)
+    ped = setMarkers(ped, locusAttributes = NorwegianFrequencies[1:nMark])
+    
+    simData = MPPsims(ped, missing = "MP", nProfiles = nProfiles,
+                      lrSims = lrSims, seed = seed,
+                      selections = sel, addBaseline = FALSE, numCores = 1)
     powerPlot(simData, type = 3)
-  }
-}
 
-Avuncular = function(plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSims = 100) {
-  x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
-  x = addSon(x, parent = "BR",  id = "REF")
-  x = relabel(x, "MO2", "NN_1")
-  if(plotPed)
-    plot(x, hatched = "REF", col = list(red = "MP", blue = c("BR", "MO2")))
-  else{
-    x = setMarkers(x, locusAttributes = NorwegianFrequencies)
-    sel = list( "REF", c("REF", "MO2"), c("REF", "MO2", "BR"))
-    simData = MPPsims(x, missing = "MP", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
-                      selections = sel, thresholdIP = NULL, addBaseline = FALSE)
-    powerPlot(simData, type = 3)
   }
 }
 
