@@ -1,100 +1,102 @@
-library(shiny)
-library(dvir)
-library(forrel)
-library(glue)
+suppressPackageStartupMessages({
+  library(shiny)
+  library(dvir)
+  library(forrel)
+  library(glue)
+})
 
+version = 1.0
 
 ui <- fluidPage(
+  
   titlePanel("Disaster Victim Identification"),
   
-             actionButton("reset", "Reset all", class = "btn btn-danger",
-                         style = "position: absolute; bottom:30px; width: 170px"),
+    # Reset all input except file load ( don't know how)
+    actionButton("reset", "Reset all", class = "btn btn-danger",
+                  style = "position: absolute; bottom:30px; width: 170px"),
                         
     navbarPage("Introduction",
-               tabPanel(icon("home"),
-
-                        fluidRow(
-                          column(tags$img(src = "bookKETP.png", 
-                                                 width = "160px", height = "200px"), width = 2),
-                          column(
-                          h4("Purpose"),
-                          p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
-                          br(),
-                          "bla bla bla bla bla bla bla bla bla bla",
-                          br(), br(), br(), br(), br(),
-                          p("More information:",
-                          a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
-                            "Mass identications,",target="_blank"), 
-                          a(href="https://www.familias.no",  
-                            "Familias software,",target="_blank"),
-                          a(href="https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2",  
-                            "Pedigree Analysis in R",target="_blank")),
-                          width = 8)
-                          ),
-               ),
                
-               navbarMenu("Power",
+      # Button to return to introduction         
+      tabPanel(icon("home"),
+      
+        # Button to reset                
+        fluidRow(
+          column(tags$img(src = "bookKETP.png", width = "160px", height = "200px"), width = 2), 
+                                
+          column(
+            p("Purpose: Explain what this is all about."),
+            br(), br(), br(), br(), br(),
+            p("More information:",
+            a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
+                   "Mass identications,",target="_blank"), 
+            a(href="https://www.familias.no", "Familias software,",target="_blank"),
+            a(href="https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2",  
+                   "Pedigree Analysis in R",target="_blank")),
+                   width = 8)
+         ),
+       ),
+               
+        navbarMenu("Power",
                           
-                 tabPanel("Demo",
-                          p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
-                             has been computed for 1000 unconditional simulations of MP and REF conditioned on H1.
-                             The simulations use the 35 markers in the database `NorwegianFrequencies` 
-                             documented in the R library forrel. The pedigree and the simulated LR distribution
-                             can be obtained below for some cases, instantly, since this is precomputed. "),
-                          br(),
-                          sidebarLayout(position = "left",
-                                        sidebarPanel(
-                                          selectInput(
-                                            "pedigreePower", label = "Built in pedigree for power simulation",
-                                            choices = list( "None selected", "brother", "uncle"),
-                                          ),
-                                        ),
-                                        mainPanel(
-                                          fluidRow(
-                                            column(plotOutput("powerPlotPremade"),  width = 9)
-                                          )
+          tabPanel("Demonstrations",
+            p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
+               has been computed for 1000 unconditional simulations of MP and REF conditioned on H1.
+               The simulations use the 35 markers in the database `NorwegianFrequencies` 
+               documented in the R library forrel. The pedigree and the simulated LR distribution
+               can be obtained below for some cases, instantly, since this is precomputed. "),
+            br(),
+              sidebarLayout(position = "left",
+                sidebarPanel(
+                  selectInput(
+                    "pedigreePower", label = "Built in pedigree for power simulation",
+                     choices = list( "None selected", "brother", "uncle"),
+                  ),
+                ),
+                mainPanel(
+                  fluidRow(
+                    column(plotOutput("powerPlotPremade"),  width = 9)
+                  )
                                           
-                                        )
-                          ),
-                 ), 
+                )
+              ),
+            ), 
                  
-                tabPanel("Built in cases",
-                          p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
-                             will be computed for a specified number simulations of MP and REF conditioned on H1.
-                             The simulations use the n (specified below) first of the 35 markers in the database 
-                             `NorwegianFrequencies` documented in the R library forrel. The pedigree and the simulated LR distribution
-                             can be obtained below for some cases. This may take some time."),
-                          br(),
-                          sidebarLayout(position = "left",
-                                        sidebarPanel(
-                                          selectInput(
-                                            "pedigreePowerSimulated", label = "Built in pedigree for power simulation",
-                                            choices = list( "None selected", "brother", "uncle"),
-                                          ),
-                                        ),
-                                        mainPanel(
-                                          fluidRow(
-                                            column(plotOutput("powerPlotSimulated"),  width = 9)
-                                          )
-                                          
-                                        )
-                          ),
-                 ),
+            tabPanel("Built in cases",
+              p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
+                 will be computed for a specified number simulations of MP and REF conditioned on H1.
+                 The simulations use the n (change from default `100 in`Settings`) first of the 35 markers in the database 
+                 `NorwegianFrequencies` documented in the R library forrel. The pedigree and the simulated LR distribution
+                  can be obtained below for some cases. This may take some time."),
+              br(),
+                sidebarLayout(position = "left",
+                  sidebarPanel(
+                    sliderInput("threshold", "Threshold", min = 0, max = 10000, step = 100, value = 10000),
+                    sliderInput("lastMarker", "Last Marker", min = 1, max = 35, step = 1, value = 35),
+                    selectInput("pedigreePowerSimulated", label = "Built in pedigree for power simulation",
+                      choices = list( "None selected", "brother", "uncle"),
+                    ),
+                  ),
+                  mainPanel(
+                    fluidRow(
+                      column(plotOutput("powerPlotSimulated"),  width = 9)
+                    )
+                  )
+                ),
+              ),
                
-                 tabPanel("fam file",
-                          p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
-                          br(),
-                          sidebarLayout(position = "left",
-                                        sidebarPanel(
-                                          fileInput("famPower", "Familias file for power simulation"),
-                                        ),
-                                        mainPanel(
-                                          fluidRow(
-                                            column(plotOutput("powerPlotFam"),  width = 9)
-                                          )
-                                          
-                                        )
-                          ),
+              tabPanel("fam file",
+                p("Explain what this is all about."),
+                br(),
+                  sidebarLayout(position = "left",
+                    sidebarPanel(
+                      fileInput("famPower", "Familias file for power simulation"), ),
+                        mainPanel(
+                          fluidRow(
+                            column(plotOutput("powerPlotFam"),  width = 9)
+                          )
+                        )
+                    ),
                  ),              
                ), 
  
@@ -104,18 +106,16 @@ ui <- fluidPage(
                         p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
                         br(),
                         sidebarLayout(position = "left",
-                                      sidebarPanel(
-                                        selectInput(
-                                          "pedigreePri", label = "Built in pedigree for priority simulation",
-                                          choices = list( "None selected", "brother", "uncle"),
-                                        ),
-                                      ),
-                                      mainPanel(
-                                        fluidRow(
-                                          column(plotOutput("priPlotPremade"),  width = 9)
-                                        )
-                                        
-                                      )
+                          sidebarPanel(
+                            selectInput("pedigreePri", label = "Built in pedigree for priority simulation",
+                                        choices = list( "None selected", "brother", "uncle"),
+                            ),
+                          ),
+                           mainPanel(
+                            fluidRow(
+                              column(plotOutput("priPlotPremade"),  width = 9)
+                            )
+                          )
                         ),
                  ), 
 
@@ -123,14 +123,10 @@ ui <- fluidPage(
                           p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
                           br(),
                           sidebarLayout(position = "left",
-                                        sidebarPanel(
-                                          fileInput("priPower", "Familias file for priority simulation"),
-                                        ),
-                                        mainPanel(
-                                          fluidRow(
-                                            column(plotOutput("priPlotFam"),  width = 9)
-                                          )
-                                          
+                            sidebarPanel(
+                              fileInput("priPower", "Familias file for priority simulation"), ),
+                                mainPanel(
+                                  fluidRow( column(plotOutput("priPlotFam"),  width = 9))
                                         )
                           ),
                   ),
@@ -212,7 +208,7 @@ ui <- fluidPage(
                               p("In this case the total number of
                                 missing shoulod be given and these should be named M1, M2, ... in the fam file"),
                               br(),
-                              checkboxInput("mutation", label = "Mutation", value = FALSE),                              
+                                                         
                               sidebarLayout(position = "left",
                                             sidebarPanel(
                                               numericInput("nMissing", "No of missing", min = -1, value = -1),
@@ -242,8 +238,10 @@ ui <- fluidPage(
 ###
                tabPanel("Settings",
                        p("Some default settings can be changed below"),
-                       numericInput("nSimulation", "No of simulations", min = 1, max = 1001, step = 100, value = 100),
-                                 ),                       
+                       numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729),
+                       numericInput("nSimulations", "No of simulations", min = 0, max = 10000, step = 100, value = 100),
+                       checkboxInput("mutation", label = "Mutation", value = FALSE),   
+                       ),                       
 
 
 ###
@@ -263,6 +261,23 @@ server <- function(input, output, session) {
       list(src = "figures/empty.png")
   } 
   , deleteFile = FALSE)
+
+  output$powerPlotSimulated = renderPlot( {
+    if(input$pedigreePowerSimulated == "brother"){
+      claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
+      pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
+               thresh = input$threshold, lastMarker = input$lastMarker)
+    }
+    else if(input$pedigreePowerSimulated == "uncle"){
+      x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
+      x = addSon(x, parent = "BR",  id = "REF")
+      claim = relabel(x, "MO2", "NN_1")
+      pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
+               thresh = input$threshold, lastMarker = input$lastMarker)
+    }
+
+  })  
+  
   
   output$powerPlotFam = renderPlot({
       file = input$famPower
@@ -506,13 +521,26 @@ server <- function(input, output, session) {
  
    observeEvent(input$reset, {
     updateSelectInput(session, "pedigreePower", selected = "None selected")
+    updateSelectInput(session, "pedigreePowerSimulated", selected = "None selected")
+    updateSliderInput(session, "threshold", value = 10000)
+    updateSliderInput(session, "lastMarker", value = 35)
     updateSelectInput(session, "pedigreePri", selected = "None selected")
     updateSelectInput(session, "dat", selected = "None selected")
     updateCheckboxInput(session, "relabel", value = FALSE)
     updateNumericInput(session, "refFam", value = 1)
     updateNumericInput(session, "nMissing", value = -1)
+    updateNumericInput(session, "nSimulations", value = 100)
+    updateNumericInput(session, "seed", value = 1729)
     updateSelectInput(session, "analysis", selected = "None selected")
+    updateCheckboxInput(session, "mutation", label = "Mutation", value = FALSE) 
   })
+
+   # Change 0 simulations to 1 always 
+   observeEvent(input$nSimulations, {
+     x = input$nSimulations
+     if(x == 0 | is.na(x))
+       updateNumericInput(session,"nSimulations", value = 10)
+   })
   
 }
 
