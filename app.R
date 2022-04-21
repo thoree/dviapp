@@ -2,7 +2,7 @@ library(shiny)
 library(dvir)
 library(forrel)
 library(glue)
-source("helpers.R")
+
 
 ui <- fluidPage(
   titlePanel("Disaster Victim Identification"),
@@ -35,14 +35,18 @@ ui <- fluidPage(
                
                navbarMenu("Power",
                           
-                 tabPanel("Built in data",
-                          p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
+                 tabPanel("Demo",
+                          p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
+                             has been computed for 1000 unconditional simulations of MP and REF conditioned on H1.
+                             The simulations use the 35 markers in the database `NorwegianFrequencies` 
+                             documented in the R library forrel. The pedigree and the simulated LR distribution
+                             can be obtained below for some cases, instantly, since this is precomputed. "),
                           br(),
                           sidebarLayout(position = "left",
                                         sidebarPanel(
                                           selectInput(
                                             "pedigreePower", label = "Built in pedigree for power simulation",
-                                            choices = list( "None selected", "brother", "halfBrother"),
+                                            choices = list( "None selected", "brother", "uncle"),
                                           ),
                                         ),
                                         mainPanel(
@@ -53,6 +57,29 @@ ui <- fluidPage(
                                         )
                           ),
                  ), 
+                 
+                tabPanel("Built in cases",
+                          p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
+                             will be computed for a specified number simulations of MP and REF conditioned on H1.
+                             The simulations use the n (specified below) first of the 35 markers in the database 
+                             `NorwegianFrequencies` documented in the R library forrel. The pedigree and the simulated LR distribution
+                             can be obtained below for some cases. This may take some time."),
+                          br(),
+                          sidebarLayout(position = "left",
+                                        sidebarPanel(
+                                          selectInput(
+                                            "pedigreePowerSimulated", label = "Built in pedigree for power simulation",
+                                            choices = list( "None selected", "brother", "uncle"),
+                                          ),
+                                        ),
+                                        mainPanel(
+                                          fluidRow(
+                                            column(plotOutput("powerPlotSimulated"),  width = 9)
+                                          )
+                                          
+                                        )
+                          ),
+                 ),
                
                  tabPanel("fam file",
                           p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
@@ -80,7 +107,7 @@ ui <- fluidPage(
                                       sidebarPanel(
                                         selectInput(
                                           "pedigreePri", label = "Built in pedigree for priority simulation",
-                                          choices = list( "None selected", "brother", "halfBrother"),
+                                          choices = list( "None selected", "brother", "uncle"),
                                         ),
                                       ),
                                       mainPanel(
@@ -188,12 +215,8 @@ ui <- fluidPage(
                               checkboxInput("mutation", label = "Mutation", value = FALSE),                              
                               sidebarLayout(position = "left",
                                             sidebarPanel(
-                                            numericInput(
-                                                        "nMissing", 
-                                                        "No of missing.",
-                                                         min = -1,
-                                                        value = -1
-                                                        ),                                              
+                                              numericInput("nMissing", "No of missing", min = -1, value = -1),
+                                            
                                               selectInput(
                                                 "analysis",
                                                 label = "Choose DVI analysis",
@@ -216,7 +239,14 @@ ui <- fluidPage(
                      ),
                         
               ),              
-                            
+###
+               tabPanel("Settings",
+                       p("Some default settings can be changed below"),
+                       numericInput("nSimulation", "No of simulations", min = 1, max = 1001, step = 100, value = 100),
+                                 ),                       
+
+
+###
               
               
     )
@@ -226,11 +256,11 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   output$powerPlotPremade = renderImage( {
     if(input$pedigreePower == "brother")
-      list(src = "hardCoded/brotherPow.png")
-    else if(input$pedigreePower == "halfBrother")
-      list(src = "hardCoded/halfBrotherPow.png")
+      list(src = "figures/brotherPow.png")
+    else if(input$pedigreePower == "uncle")
+      list(src = "figures/unclePow.png")
     else if (TRUE)
-      list(src = "hardCoded/empty.png")
+      list(src = "figures/empty.png")
   } 
   , deleteFile = FALSE)
   
@@ -243,11 +273,11 @@ server <- function(input, output, session) {
   
   output$priPlotPremade = renderImage( {
     if(input$pedigreePri == "brother")
-       list(src = "hardCoded/brotherPri.png")
-    else if(input$pedigreePri == "halfBrother")
-          list(src = "hardCoded/halfBrotherPri.png")
+       list(src = "figures/brotherPri.png")
+    else if(input$pedigreePri == "uncle")
+          list(src = "figures/unclePri.png")
     else if (TRUE)
-      list(src = "hardCoded/empty.png")
+      list(src = "figures/empty.png")
   } 
 
     , deleteFile = FALSE)
@@ -466,12 +496,7 @@ server <- function(input, output, session) {
     
   observe({
 
-    # if (!is.null(input$famPower))
-    #   updateSelectInput(session, "pedigreePower", label = "Built in pedigree for power simulation",
-    #       choices = list( "None selected", "brother", "halfBrother"), selected = "None selected")
-    # if(!is.null(input$priPower))
-    #   updateSelectInput(session, "pedigreePri", label = "Built in pedigree for priority simulation",
-    #       choices = list( "None selected", "brother", "halfBrother"), selected = "None selected")
+
     if(!is.null(input$file1))
       updateSelectInput(session, "dat", label = "Built in data for DVI",
                         choices = list("None selected","Tutorial example", "grave", "planecrash"),
