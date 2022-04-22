@@ -40,17 +40,20 @@ ui <- fluidPage(
         navbarMenu("Power",
                           
           tabPanel("Demonstrations",
-            p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
-               has been computed for 1000 unconditional simulations of MP and REF conditioned on H1.
-               The simulations use the 35 markers in the database `NorwegianFrequencies` 
-               documented in the R library forrel. The pedigree and the simulated LR distribution
-               can be obtained below for some cases, instantly, since this is precomputed. "),
+            p("The below explanation applies to the example obtained if 'brother' (default) is chosen in the pull down menu below.
+               The LR comparing H1: MP and REF full brothers, versus H2: MP and REF unrelated,
+               has been computed for 100 unconditional simulations of MP and REF conditioned on H1 below.
+               The simulations use the 22 first markers in the database `NorwegianFrequencies` 
+               documented in the R library forrel. At the bottom of the histogram, the probaility that LR exceeds the
+               threshold 10000, is given, in this case 0.79. In `Power > Built in cases` parameters like the number of markers used, 
+               can  be changed. In `Power > Load data`, similar output is obtained by loading a familias file, either one 
+               that comes with this app or your own"),
             br(),
               sidebarLayout(position = "left",
                 sidebarPanel(
                   selectInput(
                     "pedigreePower", label = "Built in pedigree for power simulation",
-                     choices = list( "None selected", "brother", "uncle"),
+                     choices = list( "None selected", "brother", "uncle"), selected = "brother",
                   ),
                 ),
                 mainPanel(
@@ -63,11 +66,9 @@ ui <- fluidPage(
             ), 
                  
             tabPanel("Built in cases",
-              p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
-                 will be computed for a specified number simulations of MP and REF conditioned on H1.
-                 The simulations use the n (change from default `100 in`Settings`) first of the 35 markers in the database 
-                 `NorwegianFrequencies` documented in the R library forrel. The pedigree and the simulated LR distribution
-                  can be obtained below for some cases. This may take some time."),
+              p("The functionality is explained in `Power > Demonstrations`. The threshold for the LR can be reduced from the
+                default of 10,000 below. Also, you can choose to include only markers 1,..., Last Marker of the database 
+                `NorwegianFrequencies. The number of simulations and the seed can be changed in `Settings`."),
               br(),
                 sidebarLayout(position = "left",
                   sidebarPanel(
@@ -87,12 +88,20 @@ ui <- fluidPage(
                 ),
               ),
                
-              tabPanel("fam file",
-                p("Explain what this is all about."),
+              tabPanel("Load data",
+                p("Power is calculated by uploading a Familias file below and checking `Simulate`. The missing person should be
+                   named `MP` and the reference `REF`. The file `BrotherPower.fam` gives output similar to that
+                   in `Power > Demonstrations` (but not identical, even for the same seed, since the simulation
+                   implementation is not identical). Further information on the fam file loaded, and potential 
+                   errors in the conversion of the fam file, are reported
+                   to the console."),
                 br(),
                   sidebarLayout(position = "left",
                     sidebarPanel(
-                      fileInput("famPower", "Familias file for power simulation"), ),
+                      sliderInput("thresholdFam", "Threshold", min = 0, max = 10000, step = 100, value = 10000),
+                      fileInput("famPower", "Familias file for power simulation"), 
+                      checkboxInput("simulateFam", "Simulate", value = FALSE),
+                    ),
                         mainPanel(
                           fluidRow(
                             column(plotOutput("powerPlotFam"),  width = 9)
@@ -105,12 +114,24 @@ ui <- fluidPage(
                navbarMenu("Prioritise",
                           
                  tabPanel("Demonstrations",
-                        p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
+                        p("The below explanation applies to the example obtained if 'brother' (default) 
+                        is chosen in the pull down menu below.
+                        The LR comparing H1: MP and REF full brothers, versus H2: MP and REF unrelated,
+                        has been computed for 100 unconditional simulations of MP and REF conditioned on H1 below.
+                        This corresponds to `REF`case in the panel to the right. We see that we can expect no exclusions
+                        (in fact exclusions are impossible with only two brothers) and log10(LR) slightly exceeding 10. If one brother, 
+                        `E1` is genotyped we can expect more than 10 exclusions and a log10(LR) slightly exceeding 20. Finally,
+                        if both brothers `E1`and `E2` are genotyped, the expected number exclusions and LR increase further.
+                        10 profiles are simulated for the relatives, assuming H1,  of `MP`. For each of these 10 profiles,
+                        corresponding to the smaller circles, 1000 simulations are performed for `MP` under H1 and H2.
+                        In `Prioritise > Built in cases` simulations can be performed for various parameter choices. In
+                        `Prioritise > load` simillar simulations can be performed from a fam file that comes with the app our your own.
+                        "),
                         br(),
                         sidebarLayout(position = "left",
                           sidebarPanel(
                             selectInput("pedigreePri", label = "Built in pedigree for priority simulation",
-                                        choices = list( "None selected", "brother", "uncle"),
+                                        choices = list( "None selected", "brother"),
                             ),
                           ),
                            mainPanel(
@@ -122,16 +143,12 @@ ui <- fluidPage(
                  ), 
 
                  tabPanel("Built in cases",
-                          p("The LR comparing H1: MP = POI, versus H2: MP and POI unrelated,
-                 will be computed for a specified number simulations of MP and REF conditioned on H1.
-                 The simulations use the n (change from default `100 in`Settings`) first of the 35 markers in the database 
-                 `NorwegianFrequencies` documented in the R library forrel. The pedigree and the simulated LR distribution
-                  can be obtained below for some cases. This may take some time."),
+                          p("Simulations explained in `Prioritise > Demonstrations` can be performed"),
                           br(),
                           sidebarLayout(position = "left",
                             sidebarPanel(
-                              checkboxInput("plotOnly", label = "Plot only", value = FALSE),
-                              numericInput("nProfiles", "No of sims for references", min = 1, max = 10, value = 2),
+                              checkboxInput("plotOnly", label = "Only plot pedigree", value = FALSE),
+                              numericInput("nProfiles", "No of sims for references", min = 1, max = 10, value = 1),
                               sliderInput("lastMarkerPri", "Last Marker", min = 1, max = 35, step = 1, value = 13),
                               selectInput("pedigreePowerSimulatedPri", 
                                         label = "Built in pedigree for power simulation",
@@ -147,7 +164,7 @@ ui <- fluidPage(
                           ),
                  ),
                                   
-                 tabPanel("fam file",
+                 tabPanel("Load data",
                           p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
                           br(),
                           sidebarLayout(position = "left",
@@ -161,7 +178,7 @@ ui <- fluidPage(
                ),
                           
                 navbarMenu("DVI",
-                     tabPanel("Built in data",
+                     tabPanel("Built in cases",
                               p("Select built in data below (or go to `Load data` if you would like to analyse 
                                  your own data)"),
                               br(),
@@ -311,6 +328,7 @@ server <- function(input, output, session) {
     }
     else if(input$pedigreePowerSimulated == "Missing GF, 2 grandchildren typed"){
       IDS = c("MP","REF1", "REF2")
+      x = cousinPed(1)
       claim = relabel(x, IDS, c(1,7, 8))
       pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
                thresh = input$threshold, lastMarker = input$lastMarker)
@@ -340,7 +358,9 @@ server <- function(input, output, session) {
   output$powerPlotFam = renderPlot({
       file = input$famPower
       ext = getExt(file = file)
-      familias(file = file, method = "Power", DVI = FALSE)
+      if(input$simulateFam)
+        familias(file = file, method = "Power", DVI = FALSE, threshold = input$thresholdFam,
+               seed = input$seed, lrSims = input$nSimulations)
   })
   
   
@@ -578,19 +598,22 @@ server <- function(input, output, session) {
   })
  
    observeEvent(input$reset, {
-
+    updateSelectInput(session, "pedigreePower", selected = "brother")
 
     updateSliderInput(session, "threshold", value = 10000)
+    updateSliderInput(session, "thresholdFam", value = 10000)
     updateSliderInput(session, "lastMarker", value = 35)
     updateSelectInput(session, "pedigreePowerSimulated", selected = "None selected")
     
     updateCheckboxInput(session, "plotOnly", value = FALSE)
-    updateNumericInput(session, "nProfiles", value = 2)
-    updateSliderInput(session, "lastMarkerPri", value = 35)    
+    updateNumericInput(session, "nProfiles", value = 1)
+    updateSliderInput(session, "lastMarkerPri", value = 13)    
     updateSelectInput(session, "pedigreePowerSimulatedPri", selected = "None selected")
     
-    updateSelectInput(session, "pedigreePri", selected = "None selected")
+    updateSelectInput(session, "pedigreePri", selected = "brother")
+    updateSelectInput(session, "powerPlotFam", selected = "None selected")
     updateSelectInput(session, "dat", selected = "None selected")
+    updateCheckboxInput(session, "simulateFam", value = FALSE)
     updateCheckboxInput(session, "relabel", value = FALSE)
     updateNumericInput(session, "refFam", value = 1)
     updateNumericInput(session, "nMissing", value = -1)

@@ -166,7 +166,7 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
 
 familias =  function(file = NULL, method = NULL, 
                      relabel = TRUE, miss = 'Missing person', refFam = 1, DVI = TRUE,
-                     nProfiles = 1, lrSims = 100, seed = 17){
+                     nProfiles = 1, lrSims = 100, seed = 17, threshold = 10000){
   x = readFam(file$datapath)
   
   #Relabel if DVI and not power
@@ -225,17 +225,23 @@ familias =  function(file = NULL, method = NULL,
     plot(x[[1]], hatched = "REF", col = list(red = "Missing", blue = c("REF", "E1","E2")))
   else if (method == "Prioritise"){
     sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))
-    simData = MPPsims(x[[1]], missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
+    simData = MPPsims(x[[1]], missing = "MP", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
                       selections = sel, thresholdIP = NULL, addBaseline = FALSE, 
                       numCores = 1)
     powerPlot(simData, type = 3)
   }
   else if (method == "Power"){
-    simData = MPPsims(x[[1]], missing = "Missing", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
+    simData = MPPsims(x[[1]], missing = "MP", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
                       selections = list("REF"), thresholdIP = NULL, addBaseline = FALSE,
                       numCores = 1)
-    hist(log10(simData$REF$ip[[1]]$LRperSim), xlab = "log10(LR)", ylab = "",
-         main ="Power plot from fam file")
+    LR = simData$REF$ip[[1]]$LRperSim
+    p = length(LR[LR > threshold])/lrSims
+    par(mfcol = c(1,2))
+    plot(x[[1]], hatched = c("MP", "REF"), col = list(red = "MP", blue = "REF"))
+    hist(log10(LR), xlab = "log10(LR)",
+         main = paste("No sims: ", lrSims, ". Markers: 1 - ", nMarkers(x[[1]])), 
+         sub = paste("P(LR > ", threshold,"|H1) = ", p))
+    par(mfcol = c(1,1))
   }
 }
 
