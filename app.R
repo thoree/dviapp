@@ -3,6 +3,7 @@ suppressPackageStartupMessages({
   library(dvir)
   library(forrel)
   library(glue)
+  library(ggplot2)
 })
 
 version = 1.0
