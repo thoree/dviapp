@@ -39,7 +39,7 @@ ui <- fluidPage(
                
         navbarMenu("Power",
                           
-          tabPanel("Demonstrations",
+          tabPanel("Explanations",
             p("The below explanation applies to the example obtained if 'brother' (default) is chosen in the pull down menu below.
                The LR comparing H1: MP and REF full brothers, versus H2: MP and REF unrelated,
                has been computed for 100 unconditional simulations of MP and REF conditioned on H1 below.
@@ -51,6 +51,7 @@ ui <- fluidPage(
             br(),
               sidebarLayout(position = "left",
                 sidebarPanel(
+               
                   selectInput(
                     "pedigreePower", label = "Built in pedigree for power simulation",
                      choices = list( "None selected", "brother", "uncle"), selected = "brother",
@@ -65,13 +66,16 @@ ui <- fluidPage(
               ),
             ), 
                  
-            tabPanel("Built in cases",
-              p("The functionality is explained in `Power > Demonstrations`. The threshold for the LR can be reduced from the
-                default of 10,000 below. Also, you can choose to include only markers 1,..., Last Marker of the database 
-                `NorwegianFrequencies. The number of simulations and the seed can be changed in `Settings`."),
+            tabPanel("Analyses based on built in cases",
+              p("The functionality is explained in `Power > Explanations`. The threshold for the LR can be reduced from the
+                default of 10,000 below. Also, you can choose to include only markers 1,..., `Last Marker` of the database 
+                `NorwegianFrequencies`. The number of simulations and the seed can be changed in `Settings`.
+                To perform the simulation, uncheck `Only plot pedigree`."),
               br(),
                 sidebarLayout(position = "left",
+                                
                   sidebarPanel(
+                    checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),                     
                     sliderInput("threshold", "Threshold", min = 0, max = 10000, step = 100, value = 10000),
                     sliderInput("lastMarker", "Last Marker", min = 1, max = 35, step = 1, value = 35),
                     selectInput("pedigreePowerSimulated", label = "Built in pedigree for power simulation",
@@ -88,19 +92,20 @@ ui <- fluidPage(
                 ),
               ),
                
-              tabPanel("Load data",
-                p("Power is calculated by uploading a Familias file below and checking `Simulate`. The missing person should be
+              tabPanel("Analyses based on user loaded data",
+                p("Power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`. The missing person should be
                    named `MP` and the reference `REF`. The file `BrotherPower.fam` gives output similar to that
-                   in `Power > Demonstrations` (but not identical, even for the same seed, since the simulation
+                   in `Power > Explanations` (but not identical, even for the same seed, since the simulation
                    implementation is not identical). Further information on the fam file loaded, and potential 
                    errors in the conversion of the fam file, are reported
                    to the console."),
                 br(),
                   sidebarLayout(position = "left",
                     sidebarPanel(
+                      checkboxInput("plotOnlyFamPower", "Only plot pedigree", value = TRUE),
                       sliderInput("thresholdFam", "Threshold", min = 0, max = 10000, step = 100, value = 10000),
                       fileInput("famPower", "Familias file for power simulation"), 
-                      checkboxInput("simulateFam", "Simulate", value = FALSE),
+
                     ),
                         mainPanel(
                           fluidRow(
@@ -113,7 +118,7 @@ ui <- fluidPage(
  
                navbarMenu("Prioritise",
                           
-                 tabPanel("Demonstrations",
+                 tabPanel("Explanations",
                         p("The below explanation applies to the example obtained if 'brother' (default) 
                         is chosen in the pull down menu below.
                         The LR comparing H1: MP and REF full brothers, versus H2: MP and REF unrelated,
@@ -142,12 +147,12 @@ ui <- fluidPage(
                         ),
                  ), 
 
-                 tabPanel("Built in cases",
-                          p("Simulations explained in `Prioritise > Demonstrations` can be performed"),
+                 tabPanel("Analyses based on built in cases",
+                          p("Simulations explained in `Prioritise > Explanations` can be performed"),
                           br(),
                           sidebarLayout(position = "left",
                             sidebarPanel(
-                              checkboxInput("plotOnly", label = "Only plot pedigree", value = FALSE),
+                              checkboxInput("plotOnlyBuiltPri", label = "Only plot pedigree", value = TRUE),
                               numericInput("nProfiles", "No of sims for references", min = 1, max = 10, value = 1),
                               sliderInput("lastMarkerPri", "Last Marker", min = 1, max = 35, step = 1, value = 13),
                               selectInput("pedigreePowerSimulatedPri", 
@@ -164,11 +169,17 @@ ui <- fluidPage(
                           ),
                  ),
                                   
-                 tabPanel("Load data",
-                          p("Explain what this is all about bla bla bla bla bla bla bla bla bla bla"),
+                 tabPanel("Analyses based on user loaded data",
+                          p("Priority power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`. 
+                            The missing person should be named `MP`, the reference `REF` and the extra candidatesfor
+                            genotyping `E1`and `E2`. The file `Brother.fam` gives output similar to that
+                            in `Priority > Explanations` (but not identical, even for the same seed, since the simulation
+                            implementation is not identical). Further information on the fam file loaded, and potential 
+                            errors in the conversion of the fam file, are reported to the console."),
                           br(),
                           sidebarLayout(position = "left",
                             sidebarPanel(
+                              checkboxInput("plotOnlyFamPri", label = "Only plot pedigree", value = TRUE),
                               fileInput("priPower", "Familias file for priority simulation"), ),
                                 mainPanel(
                                   fluidRow( column(plotOutput("priPlotFam"),  width = 9))
@@ -178,7 +189,34 @@ ui <- fluidPage(
                ),
                           
                 navbarMenu("DVI",
-                     tabPanel("Built in cases",
+                           
+                           tabPanel("Explanations",
+                                    p("Analyses can be done in this module from built in cases, from Familias (`fam`)
+                                      files or from R data. The below figure shows the planecrash data. When the
+                                      data is loaded in `DVI > Built in cases`, the following summary is provided"),
+                                    p("- DVI data. 8 victims: V1 ,..., V8 . 5 missing: M1 ,..., M5 . 
+                                      5 typed refs: R1 ,..., R5 . 5 reference families."),
+                                    p("See the documentation for the details on the five analyses implemented. Here
+                                      we only provide brief explanations"),
+                                    p("- IBD estimates.  The pairwise relationship between all pairs of victims is
+                                         estimated"),
+                                    p("- Exlusion. Each victim is tried as each missing person and the number 
+                                         of exclusions is given"),
+                                    p("- Pairwise LR. For each victim V and each missing person M, the LR comparing
+                                      `V = M` to `V and M unrelated` is calculated"),
+                                    p("- Joint.  All possible assignments of victims to missing,
+                                      are evaluated and solutions ranked according to the likelihood."),
+                                    p("- Posterior.  Computes posterior pairing and non-pairing probabilities, 
+                                      based on a prior and the output from `Joint`."),
+                                    mainPanel(
+                                      fluidRow(
+                                        column(plotOutput("planecrashPlot"),  width = 9)
+                                      )
+                                      
+                                    ),
+                           ),
+                           
+                     tabPanel("Analyses based on built in cases",
                               p("Select built in data below (or go to `Load data` if you would like to analyse 
                                  your own data)"),
                               br(),
@@ -188,97 +226,78 @@ ui <- fluidPage(
                                                 "dat", 
                                                 label = "Built in data for DVI",
                                                 choices = list("None selected",
-                                                               "Tutorial example", 
+                                                               "Family with three missing", 
                                                                "grave",
                                                                "planecrash")
                                               ),
-
+                                            numericInput(
+                                              "refFam", 
+                                              "Reference family to plot",
+                                              min = 0,
+                                              value = 0
+                                            ),                                        
+                                            selectInput(
+                                              "analysis",
+                                              label = "Choose DVI analysis",
+                                              choices = list("None selected",
+                                                             "IBD estimates",
+                                                             "Exclusion",
+                                                             "Pairwise",
+                                                             "Joint",
+                                                             "Posterior")
+                                            ),
+                                            downloadButton("downloadTable", "Download DVI table output")
                                             ),
                                             mainPanel(
                                               fluidRow(
-                                                column(textOutput("DVISummaryBuiltIn"),  width = 8)
-                                              )
-                                              
-                                            )
-                              ),
-                     ),
-                     
-                      tabPanel("Load data",
-                              p("No action required here unless you would like to load and analyse your own data.
-                                 If `Relabel` is ticked, names are changed to V1, ..(for pm-samples); 
-                                 M1,..., (for am-samples) and F1, .... (for reference families). Relabelling is
-                                 required for some analyses as explained later"),
-                              br(),
-                              sidebarLayout(position = "left",
-                                            sidebarPanel(
-                                              checkboxInput("relabel", label = "Relabel", value =  FALSE),
-                                              fileInput("file1", "User data (optional fam or RData file) for DVI"),
-                                            ),
-                                            mainPanel(
-                                              fluidRow(
-                                                column(textOutput("DVISummaryLoad"),  width = 8)
-                                              )
-                                              
-                                            )
-                              ),
-                     ),                    
-                     
-                     tabPanel("Plot am data",
-                              p("plot"),
-
-                              sidebarLayout(position = "left",
-                                            sidebarPanel(
-                                                        numericInput(
-                                                           "refFam", 
-                                                           "Reference family to plot",
-                                                           min = 1,
-                                                           value = 1
-                                                         ),
-                                            ),
-                                            mainPanel(
-                                              fluidRow(
-                                                column(plotOutput("plot"),  width = 8)
-                                              )
-                                              
-                                            )
-                              ),
-                     ),
-                     tabPanel("Analysis",
-                              
-                              p("The previous setting 'Relabel DVI' need to be ticked for fam file except for 
-                                the IBD estimates below."),
-                              br(),
-                              p("The entry 'No of missing' should only be changed 
-                                when a fam file that has multiple missing in on family is used."), 
-                              p("In this case the total number of
-                                missing shoulod be given and these should be named M1, M2, ... in the fam file"),
-                              br(),
-                                                         
-                              sidebarLayout(position = "left",
-                                            sidebarPanel(
-                                              numericInput("nMissing", "No of missing", min = -1, value = -1),
-                                            
-                                              selectInput(
-                                                "analysis",
-                                                label = "Choose DVI analysis",
-                                                choices = list("None selected",
-                                                               "IBD estimates",
-                                                               "Exclusion",
-                                                               "Pairwise",
-                                                               "Joint",
-                                                               "Posterior")
-                                              ),
-                                              downloadButton("downloadTable", "Download DVI table output")
-                                            ),
-                                            mainPanel(
-                                              fluidRow(
+                                                column(textOutput("DVISummaryBuiltIn"),  width = 8),
+                                                column(plotOutput("plot"),  width = 8),
                                                 column(tableOutput("table"),  width = 8)
                                               )
                                               
                                             )
                               ),
                      ),
-                        
+                     
+                      tabPanel("Analyses based on user loaded data",
+                              p("Analyses based on  your own data (Familias fam files or R RData files).
+                                 If `Relabel` is ticked, names are changed to V1, ..(for pm-samples); 
+                                 M1,..., (for am-samples) and F1, .... (for reference families). 
+                                 Relabelling is required for some analyses."),
+                              br(),
+                              sidebarLayout(position = "left",
+                                sidebarPanel(
+                                  fileInput("file1", "User data (optional fam or RData file) for DVI"),
+                                  checkboxInput("relabel", label = "Relabel", value =  FALSE),
+                                  numericInput("nMissing", "Total no of missing. Only required for fam files with multiple missing in families", min = -1, value = -1),
+                                  numericInput(
+                                    "refFamLoad", 
+                                    "Reference family to plot",
+                                    min = 0,
+                                    value = 0
+                                  ),                                        
+                                  selectInput(
+                                    "analysisLoad",
+                                    label = "Choose DVI analysis",
+                                    choices = list("None selected",
+                                                   "IBD estimates",
+                                                   "Exclusion",
+                                                   "Pairwise",
+                                                   "Joint",
+                                                   "Posterior")
+                                  ),
+                                  downloadButton("downloadTableLoad", "Download DVI table output")
+                                ),
+                                            mainPanel(
+                                              fluidRow(
+                                                column(textOutput("DVISummaryLoad"),  width = 8),
+                                                column(plotOutput("plotLoad"),  width = 8),
+                                                column(tableOutput("tableLoad"),  width = 8)                                                
+                                              )
+                                              
+                                            )
+                              ),
+                     ),
               ),              
 ###
                tabPanel("Settings",
@@ -306,32 +325,41 @@ server <- function(input, output, session) {
       list(src = "figures/empty.png")
   } 
   , deleteFile = FALSE)
+  
+  output$planecrashPlot = renderImage( {
+      list(src = "figures/planecrash.png")
+  } 
+  , deleteFile = FALSE)
 
   output$powerPlotSimulated = renderPlot( {
     if(input$pedigreePowerSimulated == "Missing brother"){
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
       pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
-               thresh = input$threshold, lastMarker = input$lastMarker)
+               thresh = input$threshold, lastMarker = input$lastMarker,
+               plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
       x = addSon(x, parent = "BR",  id = "REF")
       claim = relabel(x, "MO2", "NN_1")
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
-               thresh = input$threshold, lastMarker = input$lastMarker)
+               thresh = input$threshold, lastMarker = input$lastMarker,
+               plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing first cousin"){
       x = cousinPed(1)
       claim = relabel(x, c("MP","REF"), 7:8)
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
-               thresh = input$threshold, lastMarker = input$lastMarker)
+               thresh = input$threshold, lastMarker = input$lastMarker,
+               plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing GF, 2 grandchildren typed"){
       IDS = c("MP","REF1", "REF2")
       x = cousinPed(1)
       claim = relabel(x, IDS, c(1,7, 8))
       pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
-               thresh = input$threshold, lastMarker = input$lastMarker)
+               thresh = input$threshold, lastMarker = input$lastMarker,
+               plotOnly = input$plotOnlyBuiltPower)
     }
   })  
   
@@ -340,7 +368,7 @@ server <- function(input, output, session) {
       ped = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
       ped = addChildren(ped, father = "FA", mother = "MO", nch = 2, 
                         sex = 1, ids = c("E1", "E2"))
-      priPower(ped, plotPed = input$plotOnly, nMark = input$lastMarkerPri, seed = input$seed,  
+      priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
                nProfiles = input$nProfiles, lrSims = input$nSimulations)
     }
     else if(input$pedigreePowerSimulatedPri == "Missing uncle"){
@@ -348,7 +376,7 @@ server <- function(input, output, session) {
       x = addSon(x, parent = "E2",  id = "REF")
       ped = relabel(x, "E1", "NN_1")      
 
-      priPower(ped, plotPed = input$plotOnly, nMark = input$lastMarkerPri, seed = input$seed,  
+      priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
                nProfiles = input$nProfiles, lrSims = input$nSimulations)
     }
 
@@ -358,9 +386,9 @@ server <- function(input, output, session) {
   output$powerPlotFam = renderPlot({
       file = input$famPower
       ext = getExt(file = file)
-      if(input$simulateFam)
-        familias(file = file, method = "Power", DVI = FALSE, threshold = input$thresholdFam,
-               seed = input$seed, lrSims = input$nSimulations)
+      familias(file = file, method = "Power", DVI = FALSE, threshold = input$thresholdFam,
+               seed = input$seed, lrSims = input$nSimulations, 
+               plotOnly = input$plotOnlyFamPower)
   })
   
   
@@ -378,12 +406,13 @@ server <- function(input, output, session) {
   output$priPlotFam = renderPlot({
     file = input$priPower
     ext = getExt(file = file)
-    familias(file = file, method = "Prioritise", DVI = FALSE)
+    familias(file = file, method = "Prioritise", DVI = FALSE,
+             plotOnly = input$plotOnlyFamPri)
   })
   
 
     output$DVISummaryBuiltIn <- renderText({
-      if(input$dat == "Tutorial example")
+      if(input$dat == "Family with three missing")
         summariseDVIreturned(example1$pm, example1$am, example1$missing, header = "Tutorial data. ")
       else if (input$dat == "grave")
         summariseDVIreturned(grave$pm, grave$am, grave$missing, header = "grave data. ")
@@ -413,11 +442,24 @@ server <- function(input, output, session) {
         tablePosterior()
     })
     
+    output$tableLoad <- renderTable(rownames = T,{
+      if(input$analysisLoad == "IBD estimates")
+        tableIBD()
+      else if (input$analysisLoad == "Exclusion")
+        tableExclusion()
+      else if (input$analysisLoad == "Pairwise")
+        tablePairwise()
+      else if (input$analysisLoad == "Joint")
+        tableJoint()
+      else if (input$analysisLoad == "Posterior")
+        tablePosterior()
+    })
+    
     # Defines reactive functions for table output, i.e., for
     # IBD estimates, exclusion, pairwise, joint and posterior
     
     tableIBD = reactive({
-      if(input$dat == "Tutorial example")
+      if(input$dat == "Family with three missing")
         IBDestimates(example1$pm, nlines = 10, sorter = TRUE)
       else if (input$dat == "grave")
         IBDestimates(grave$pm, nlines = 10, sorter = TRUE)
@@ -435,7 +477,7 @@ server <- function(input, output, session) {
     })
     
     tableExclusion = reactive({
-      if(input$dat == "Tutorial example")
+      if(input$dat == "Family with three missing")
         exclusionMatrix(example1$pm, example1$am , example1$missing)
       else if (input$dat == "grave")
         data.frame(ToDO = "Return saved table to save time")
@@ -460,7 +502,7 @@ server <- function(input, output, session) {
     })
     
     tablePairwise = reactive({
-      if (input$dat == "Tutorial example")
+      if (input$dat == "Family with three missing")
         pairwiseLR(example1$pm, example1$am , example1$missing)$LRmatrix
       else if (input$dat == "grave")
         pairwiseLR(grave$pm, grave$am , grave$missing)$LRmatrix
@@ -484,7 +526,7 @@ server <- function(input, output, session) {
     })
     
     tableJoint = reactive({
-      if(input$dat == "Tutorial example")
+      if(input$dat == "Family with three missing")
         myjointDVI(example1$pm, example1$am , example1$missing, mutation = input$mutation)
       else if (input$dat == "grave")
         data.frame(ToDO = "Return saved table to save time")
@@ -511,7 +553,7 @@ server <- function(input, output, session) {
     })
     
     tablePosterior = reactive({
-      if (input$dat == "Tutorial example")
+      if (input$dat == "Family with three missing")
         Bmarginal(myjointDVI(example1$pm, example1$am, example1$missing, 
                   mutation = input$mutation), example1$missing)
       else if (input$dat == "planecrash")
@@ -552,48 +594,91 @@ server <- function(input, output, session) {
         write.csv(tablePosterior(), file, row.names = TRUE, quote = F)
     })
 
+    output$downloadTableLoad <- downloadHandler(
+      filename = "DVITableOutput.csv",
+      content = function(file = filename) {
+        if(input$analysisLoad == "IBD estimates")
+          write.csv(tableIBD(), file, row.names = TRUE, quote = F)
+        else if (input$analysisLoad == "Exclusion")
+          write.csv(tableExclusion(), file, row.names = TRUE, quote = F)
+        else if (input$analysisLoad == "Pairwise")
+          write.csv(tablePairwise(), file, row.names = TRUE, quote = F)
+        else if (input$analysisLoad == "Joint")
+          write.csv(tableJoint(), file, row.names = TRUE, quote = F)
+        else if (input$analysisLoad == "Posterior")
+          write.csv(tablePosterior(), file, row.names = TRUE, quote = F)
+      })
+    
     output$plot <- renderPlot({
-      
-      file = input$file1
-      ext = tools::file_ext(file$datapath)
-      if(input$dat == "Tutorial example")
-        plot(example1$am, hatched = typedMembers, title = "Reference family",
-             cex = 1.2, col = list(red = planecrash$missing,
-                                   blue = typedMembers(example1$am)))
-      
-      else if (input$dat == "grave")
-        plot(grave$am, marker = 1, hatched = typedMembers, title = "Reference family",
-             col = list(red = grave$missing, blue = typedMembers(grave$am), cex = 1.2))
-      
-      else if (input$dat == "planecrash")
-        plot(planecrash$am[[input$refFam]], hatched = typedMembers, 
-                    title = paste("Reference family ", input$refFam),
-                    col = list(red = planecrash$missing,
-                               blue = typedMembers(planecrash$am[[input$refFam]])))
-      else{
+      if(input$refFam > 0) {
         file = input$file1
-        ext = getExt(file = file)
-        if (ext == "RData" |  ext == "rda") 
-          RData(file = input$file1, method = 'plot', refFam = input$refFam)
-        else if (ext == "fam"){
-            if (input$nMissing < 0)
-              MPs = 'Missing person'
-          else
-            MPs = paste0("M", 1:input$nMissing)
-          familias(file = file, method = 'plot', 
-                     relabel = input$relabel, refFam = input$refFam, miss = MPs)
-          }
+        ext = tools::file_ext(file$datapath)
+        if(input$dat == "Family with three missing"){
+          if(input$refFam > 1)
+             stop(safeError("Impossible value for `Reference family to plot`, only 1 reference family"))
+          plot(example1$am, hatched = typedMembers, title = "Reference family",
+               cex = 1.2, col = list(red = planecrash$missing,
+                                     blue = typedMembers(example1$am)))
         }
+        
+        else if (input$dat == "grave"){
+          if(input$refFam > 1)
+            stop(safeError("Impossible value for `Reference family to plot`, only 1 reference family"))
+          plot(grave$am, marker = 1, hatched = typedMembers, title = "Reference family",
+               col = list(red = grave$missing, blue = typedMembers(grave$am), cex = 1.2))
+        }
+        
+        else if (input$dat == "planecrash"){
+          if(input$refFam > 5)
+            stop(safeError("Impossible value for `Reference family to plot`, only 5 reference families"))
+          plot(planecrash$am[[input$refFam]], hatched = typedMembers, 
+                      title = paste("Reference family ", input$refFam),
+                      col = list(red = planecrash$missing,
+                                 blue = typedMembers(planecrash$am[[input$refFam]])))
+        }
+        else{
+          file = input$file1
+          ext = getExt(file = file)
+          if (ext == "RData" |  ext == "rda") 
+            RData(file = input$file1, method = 'plot', refFam = input$refFam)
+          else if (ext == "fam"){
+              if (input$nMissing < 0)
+                MPs = 'Missing person'
+            else
+              MPs = paste0("M", 1:input$nMissing)
+            familias(file = file, method = 'plot', 
+                       relabel = input$relabel, refFam = input$refFam, miss = MPs)
+            }
+        }
+      }
 
     })
     
+    output$plotLoad <- renderPlot({
+      if(input$refFamLoad > 0) {
+          file = input$file1
+          ext = getExt(file = file)
+          if (ext == "RData" |  ext == "rda") 
+            RData(file = input$file1, method = 'plot', refFam = input$refFamLoad)
+          else if (ext == "fam"){
+            if (input$nMissing < 0)
+              MPs = 'Missing person'
+            else
+              MPs = paste0("M", 1:input$nMissing)
+            familias(file = file, method = 'plot', 
+                     relabel = input$relabel, refFam = input$refFamLoad, miss = MPs)
+          }
+        }
+    })
+    
   observe({
-
-
-    if(!is.null(input$file1))
+    if(!is.null(input$file1)){
       updateSelectInput(session, "dat", label = "Built in data for DVI",
-                        choices = list("None selected","Tutorial example", "grave", "planecrash"),
-                        selected = "None selected")                                             
+                        choices = list("None selected","Family with three missing", "grave", "planecrash"),
+                        selected = "None selected") 
+      updateNumericInput(session, "refFam", value = 0) 
+      updateSelectInput(session, "analysis", selected = "None selected")
+    }
  
   })
  
@@ -604,8 +689,13 @@ server <- function(input, output, session) {
     updateSliderInput(session, "thresholdFam", value = 10000)
     updateSliderInput(session, "lastMarker", value = 35)
     updateSelectInput(session, "pedigreePowerSimulated", selected = "None selected")
-    
-    updateCheckboxInput(session, "plotOnly", value = FALSE)
+
+    updateCheckboxInput(session, "plotOnlyBuiltPower", value = TRUE)
+    updateCheckboxInput(session, "plotOnlyBuiltPri", value = TRUE)
+    updateCheckboxInput(session, "plotOnlyFamPri", value = TRUE)
+
+    updateCheckboxInput(session, "input$plotOnlyFamPower", value = TRUE)
+
     updateNumericInput(session, "nProfiles", value = 1)
     updateSliderInput(session, "lastMarkerPri", value = 13)    
     updateSelectInput(session, "pedigreePowerSimulatedPri", selected = "None selected")
@@ -613,13 +703,15 @@ server <- function(input, output, session) {
     updateSelectInput(session, "pedigreePri", selected = "brother")
     updateSelectInput(session, "powerPlotFam", selected = "None selected")
     updateSelectInput(session, "dat", selected = "None selected")
-    updateCheckboxInput(session, "simulateFam", value = FALSE)
+    updateCheckboxInput(session, "plotOnlyFamPower", value = TRUE)
     updateCheckboxInput(session, "relabel", value = FALSE)
-    updateNumericInput(session, "refFam", value = 1)
+    updateNumericInput(session, "refFam", value = 0)
+    updateNumericInput(session, "refFamLoad", value = 0)
     updateNumericInput(session, "nMissing", value = -1)
     updateNumericInput(session, "nSimulations", value = 100)
     updateNumericInput(session, "seed", value = 1729)
     updateSelectInput(session, "analysis", selected = "None selected")
+    updateSelectInput(session, "analysisLoad", selected = "None selected")
     updateCheckboxInput(session, "mutation", label = "Mutation", value = FALSE) 
   })
 
