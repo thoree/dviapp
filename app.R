@@ -21,20 +21,35 @@ ui <- fluidPage(
       # Button to return to introduction         
       tabPanel(icon("home"),
                
-        fluidRow(
-          column(tags$img(src = "bookKETP.png", width = "160px", height = "200px"), width = 2), 
-                                
-          column(
-            p("Purpose: Explain what this is all about."),
-            br(), br(), br(), br(), br(),
-            p("More information:",
-            a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
-                   "Mass identications,",target="_blank"), 
-            a(href="https://www.familias.no", "Familias software,",target="_blank"),
-            a(href="https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2",  
-                   "Pedigree Analysis in R",target="_blank")),
+               fluidRow(
+                 column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 3), 
+                 
+                 column(
+                   "This app deals with Disaster Victim Identification (DVI) problems and power 
+                     calculation for kinship problems. Our goal has been to make  available functionality
+                     in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
+                     in the", a(href="https://www.familias.no", "Familias software.",target="_blank"),
+                   "There are tree modules, all based on built in cases or user data (Familias or R files):",
+                   br(),
+                   strong("- power:"), "Simulations can be done to 
+                   determine if goals are likely to be achieved.",
+                   br(),
+                   strong("- priority:"), "The aim is to find the optimal extra persons to genotype.",
+                   br(),
+                   strong("- DVI:"), "Methods to include or exclude missing persons are provided.",
+                   br(), 
+                      p("For more information, check the books:",
+                     a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
+                       "Mass identications,",target="_blank"), "(Kling et al., 2021),",
+                     a(href="https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2",  
+                       "Pedigree Analysis in R",target="_blank")," (Vigeland, 2021), and the",
+                     a(href=" paper", "dvir paper",target="_blank"),
+                     "(Vigeland and Egeland, 2021). For further documentation and bug reporting,
+                     please go ",
+                     a(href="https://github.com/thoree/dviapp", "here.",target="_blank"),),
+                   
                    width = 8)
-         ),
+               ),
        ),
                
         navbarMenu("Power",
@@ -187,15 +202,15 @@ ui <- fluidPage(
                                       See the documentation for the details on the five analyses implemented. Here
                                       we only provide brief explanations"),
                                     strong("IBD estimates:"),"The pairwise relationship between all pairs of victims is
-                                         estimated",
+                                         estimated.",
                                     br(),
                                     strong("Exclusion:"),"Each victim is tried as each missing person and the number 
-                                         of exclusions is given",
+                                         of exclusions is given.",
                                     br(),
                                     strong("Pairwise LR:"), "For each victim V and each missing person M, the LR comparing
-                                      `V = M` to `V and M unrelated` is calculated",
+                                      `V = M` to `V and M unrelated` is calculated.",
                                     br(),
-                                    strong("Joint"),  "All possible assignments of victims to missing,
+                                    strong("Joint:"),  "All possible assignments of victims to missing,
                                       are evaluated and solutions ranked according to the likelihood.",
                                     br(),
                                     strong("Posterior:"),  "Computes posterior pairing and non-pairing probabilities, 
@@ -282,9 +297,10 @@ ui <- fluidPage(
                                 ),
                                             mainPanel(
                                               fluidRow(
+                                                column(tableOutput("tableLoad"),  width = 8),
                                                 column(textOutput("DVISummaryLoad"),  width = 8),
-                                                column(plotOutput("plotLoad"),  width = 8),
-                                                column(tableOutput("tableLoad"),  width = 8)                                                
+                                                column(plotOutput("plotLoad"),  width = 8)
+                                              
                                               )
                                               
                                             )
