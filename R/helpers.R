@@ -8,7 +8,7 @@ pedPower = function(claim, nsim = 10, thresh = NULL, seed = 1729, lastMarker = 3
     unrel[[i]] = singleton(ids[i])
   unrel = transferMarkers(claim, unrel)
   if(plotOnly){
-    plot(claim, hatched = ids, col = list(red = ids[1], blue = ids[-1]))
+    plot(claim, hatched = typedMembers, col = list(red = ids[1], blue = ids[-1]))
   }
   else{
     pow1 = LRpower(claim, unrel,  ids = ids, nsim = nsim,
@@ -253,7 +253,7 @@ familias =  function(file = NULL, method = NULL,
   }
   else if (method == "Power"){
     if(plotOnly)
-      plot(x[[1]], hatched = c("MP", "REF"), col = list(red = "MP", blue = "REF"))
+      plot(x[[1]], hatched = typedMembers, col = list(red = "MP", blue = "REF"), marker = 1)
     else{
       simData = MPPsims(x[[1]], missing = "MP", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
                         selections = list("REF"), thresholdIP = NULL, addBaseline = FALSE,

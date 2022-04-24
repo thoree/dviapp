@@ -20,8 +20,7 @@ ui <- fluidPage(
                
       # Button to return to introduction         
       tabPanel(icon("home"),
-      
-        # Button to reset                
+               
         fluidRow(
           column(tags$img(src = "bookKETP.png", width = "160px", height = "200px"), width = 2), 
                                 
@@ -39,37 +38,26 @@ ui <- fluidPage(
        ),
                
         navbarMenu("Power",
-                          
+                   
           tabPanel("Explanations",
-            p("The below explanation applies to the example obtained if 'brother' (default) is chosen in the pull down menu below.
-               The LR comparing H1: MP and REF full brothers, versus H2: MP and REF unrelated,
-               has been computed for 100 unconditional simulations of MP and REF conditioned on H1 below.
-               The simulations use the 22 first markers in the database `NorwegianFrequencies` 
-               documented in the R library forrel. . In `Power > Built in cases` parameters like the number of markers used, 
-               can  be changed. In `Power > Load data`, similar output is obtained by loading a familias file. The simulations will
-               be conditioned on genotyped individuals."),
-            br(),
-              sidebarLayout(position = "left",
-                sidebarPanel(
-                  selectInput(
-                    "pedigreePower", label = "Built in pedigree for power simulation",
-                     choices = list( "None selected", "brother", "uncle"), selected = "brother",
-                  ),
-                ),
-                mainPanel(
-                  fluidRow(
-                    column(plotOutput("powerPlotPremade"),  width = 9)
-                  )
-                                          
-                )
-              ),
-            ), 
+               p("LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
+               has been computed for 1000 simulations of MP and REF conditioned on H1 below.
+               The simulations use the 35 markers in the database `NorwegianFrequencies` 
+               documented in the R library forrel. In `Power > Built in cases` some prepared
+               cases can be run and parameters like the number of markers, 
+               can  be changed. In `Power > Load data`, similar output is obtained by loading a familias file
+               prepared by the user. The simulations will be conditioned on genotyped individuals."),
+               fluidRow(
+                 column(tags$img(src = "brotherPow.png", width = "792px", height = "240px"), width = 12),
+                 ), 
+          ),
+
+                          
+
                  
             tabPanel("Analyses based on built in cases",
-              p("The functionality is explained in `Power > Explanations`. The threshold for the LR can be reduced from the
-                default of 10,000 below. Also, you can choose to include only markers 1,..., `Last Marker` of the database 
-                `NorwegianFrequencies`. The number of simulations and the seed can be changed in `Settings`.
-                To perform the simulation, uncheck `Only plot pedigree`."),
+              p("To perform the simulation, uncheck `Only plot pedigree`. Genotyped individuals are hatched in the plot
+                and these will be conditioned on."),
               br(),
                 sidebarLayout(position = "left",
                                 
@@ -95,7 +83,8 @@ ui <- fluidPage(
                 p("Power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`. The missing person should be
                    named `MP` and the reference `REF`. The file `BrotherPower.fam` gives output similar to that
                    in `Power > Explanations` (but not identical, even for the same seed, since the simulation
-                   implementation is not identical). Further information on the fam file loaded, and potential 
+                   implementation is not identical).  Genotyped individuals are hatched and first marker displayed in the plot
+                   and these individuals will be conditioned on. Further information on the fam file loaded, and potential 
                    errors in the conversion of the fam file, are reported
                    to the console."),
                 br(),
@@ -149,7 +138,6 @@ ui <- fluidPage(
 
                  tabPanel("Analyses based on built in cases",
                           p("Simulations explained in `Prioritise > Explanations` can be performed"),
-                          br(),
                           sidebarLayout(position = "left",
                             sidebarPanel(
                               checkboxInput("plotOnlyBuiltPri", label = "Only plot pedigree", value = TRUE),
@@ -193,21 +181,25 @@ ui <- fluidPage(
                            tabPanel("Explanations",
                                     p("Analyses can be done in this module from built in cases, from Familias (`fam`)
                                       files or from R data. The below figure shows the planecrash data. When the
-                                      data is loaded in `DVI > Built in cases`, the following summary is provided"),
-                                    p("- DVI data. 8 victims: V1 ,..., V8 . 5 missing: M1 ,..., M5 . 
-                                      5 typed refs: R1 ,..., R5 . 5 reference families."),
-                                    p("See the documentation for the details on the five analyses implemented. Here
+                                      data is loaded in `DVI > Built in cases`, the following summary is provided:,
+                                    `DVI data. 8 victims: V1 ,..., V8 . 5 missing: M1 ,..., M5 . 
+                                      5 typed refs: R1 ,..., R5 . 5 reference families.`
+                                      See the documentation for the details on the five analyses implemented. Here
                                       we only provide brief explanations"),
-                                    p("- IBD estimates.  The pairwise relationship between all pairs of victims is
-                                         estimated"),
-                                    p("- Exlusion. Each victim is tried as each missing person and the number 
-                                         of exclusions is given"),
-                                    p("- Pairwise LR. For each victim V and each missing person M, the LR comparing
-                                      `V = M` to `V and M unrelated` is calculated"),
-                                    p("- Joint.  All possible assignments of victims to missing,
-                                      are evaluated and solutions ranked according to the likelihood."),
-                                    p("- Posterior.  Computes posterior pairing and non-pairing probabilities, 
-                                      based on a prior and the output from `Joint`."),
+                                    strong("IBD estimates:"),"The pairwise relationship between all pairs of victims is
+                                         estimated",
+                                    br(),
+                                    strong("Exclusion:"),"Each victim is tried as each missing person and the number 
+                                         of exclusions is given",
+                                    br(),
+                                    strong("Pairwise LR:"), "For each victim V and each missing person M, the LR comparing
+                                      `V = M` to `V and M unrelated` is calculated",
+                                    br(),
+                                    strong("Joint"),  "All possible assignments of victims to missing,
+                                      are evaluated and solutions ranked according to the likelihood.",
+                                    br(),
+                                    strong("Posterior:"),  "Computes posterior pairing and non-pairing probabilities, 
+                                      based on a prior and the output from `Joint`.",
                                     mainPanel(
                                       fluidRow(
                                         column(plotOutput("planecrashPlot"),  width = 9)
@@ -250,9 +242,9 @@ ui <- fluidPage(
                                             ),
                                             mainPanel(
                                               fluidRow(
-                                                column(textOutput("DVISummaryBuiltIn"),  width = 8),
-                                                column(plotOutput("plot"),  width = 8),
-                                                column(tableOutput("table"),  width = 8)
+                                                column(tableOutput("table"),  width = 8),
+                                                column(textOutput("DVISummaryBuiltIn"),  width = 8),                                    
+                                                column(plotOutput("plot"),  width = 8)
                                               )
                                               
                                             )
@@ -316,15 +308,6 @@ ui <- fluidPage(
 
 
 server <- function(input, output, session) {
-  output$powerPlotPremade = renderImage( {
-    if(input$pedigreePower == "brother")
-      list(src = "figures/brotherPow.png")
-    else if(input$pedigreePower == "uncle")
-      list(src = "figures/unclePow.png")
-    else if (TRUE)
-      list(src = "figures/empty.png")
-  } 
-  , deleteFile = FALSE)
   
   output$planecrashPlot = renderImage( {
       list(src = "figures/planecrash.png")
@@ -480,7 +463,7 @@ server <- function(input, output, session) {
       if(input$dat == "Family with three missing")
         exclusionMatrix(example1$pm, example1$am , example1$missing)
       else if (input$dat == "grave")
-        data.frame(ToDO = "Return saved table to save time")
+        data.frame( Warning = "Not implemented, takes too much time. Runs in R library dvir")
       else if (input$dat == "planecrash")
         exclusionMatrix(planecrash$pm, planecrash$am , planecrash$missing)
       else{
@@ -529,7 +512,7 @@ server <- function(input, output, session) {
       if(input$dat == "Family with three missing")
         myjointDVI(example1$pm, example1$am , example1$missing, mutation = input$mutation)
       else if (input$dat == "grave")
-        data.frame(ToDO = "Return saved table to save time")
+        data.frame( Warning = "Not implemented, takes too much time. Runs in R library dvir")
       else if (input$dat == "planecrash")
         myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, mutation = input$mutation)
       else{
@@ -556,6 +539,8 @@ server <- function(input, output, session) {
       if (input$dat == "Family with three missing")
         Bmarginal(myjointDVI(example1$pm, example1$am, example1$missing, 
                   mutation = input$mutation), example1$missing)
+      else if (input$dat == "grave")
+        data.frame( Warning = "Not implemented, takes too much time. Runs in R library dvir")
       else if (input$dat == "planecrash")
         Bmarginal(myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, 
                   mutation = input$mutation), planecrash$missing)
@@ -683,7 +668,7 @@ server <- function(input, output, session) {
   })
  
    observeEvent(input$reset, {
-    updateSelectInput(session, "pedigreePower", selected = "brother")
+
     updateSliderInput(session, "lastMarker", value = 35)
     updateSelectInput(session, "pedigreePowerSimulated", selected = "None selected")
 
