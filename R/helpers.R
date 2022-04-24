@@ -1,7 +1,7 @@
 # Power plot
 
-pedPower = function(claim, nsim = 10, thresh = 10000, seed = 1729, lastMarker = 35,
-                    ids = c("MP", "REF"), plotOnly = TRUE){
+pedPower = function(claim, nsim = 10, thresh = NULL, seed = 1729, lastMarker = 35,
+                    ids = c("MP", "REF"), plotOnly = TRUE, Log10 = TRUE){
   claim = setMarkers(claim, locusAttributes = NorwegianFrequencies[1:lastMarker])
   unrel = list()
   for(i in 1:length(ids))
@@ -13,11 +13,22 @@ pedPower = function(claim, nsim = 10, thresh = 10000, seed = 1729, lastMarker = 
   else{
     pow1 = LRpower(claim, unrel,  ids = ids, nsim = nsim,
                    threshold = thresh, seed = seed, plot = F, verbose = F)
-    par(mfcol = c(1,2))
-    plot(claim, hatched = ids, col = list(red = ids[1], blue = ids[-1]))
-    tittel = paste("No sims: ", nsim,". Markers: 1 - ", lastMarker)
-    subt = paste("P(LR > ", thresh,"|H1) = ", pow1$IP)
-    hist(log10(pow1$LRperSim), xlab = "log10(LR)", main = tittel, sub = subt)
+    par(mfcol = c(1,2), oma = c(0,0, 2, 0))
+    if(Log10){
+      y = log10(pow1$LRperSim)
+      xl = "log10(LR)"
+    } else{
+      y = pow1$LRperSim
+      xl = "LR"
+    }
+      
+    hist(y, xlab = xl, main = "", prob = TRUE)
+    f <- ecdf(y)
+    r = range(y)
+    curve(1-f(x), from = r[1], to = r[2],  xlim = r,
+          ylab = "Excedance probability", xlab = "x", lty = 1)
+    tittel = paste("No of simulations: ", nsim,". Markers: 1 - ", lastMarker)
+    title(tittel, outer = TRUE)
     par(mfcol = c(1,1))
   }
 }
@@ -171,7 +182,7 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
 familias =  function(file = NULL, method = NULL, 
                      relabel = TRUE, miss = 'Missing person', refFam = 1, DVI = TRUE,
                      nProfiles = 1, lrSims = 100, seed = 17, threshold = 10000,
-                     plotOnly = TRUE){
+                     plotOnly = TRUE, Log10 = TRUE){
   x = readFam(file$datapath)
   
   #Relabel if DVI and not power
@@ -247,14 +258,25 @@ familias =  function(file = NULL, method = NULL,
       simData = MPPsims(x[[1]], missing = "MP", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
                         selections = list("REF"), thresholdIP = NULL, addBaseline = FALSE,
                         numCores = 1)
-      LR = simData$REF$ip[[1]]$LRperSim
-      p = length(LR[LR > threshold])/lrSims
-      par(mfcol = c(1,2))
-      plot(x[[1]], hatched = c("MP", "REF"), col = list(red = "MP", blue = "REF"))
-      hist(log10(LR), xlab = "log10(LR)",
-           main = paste("No sims: ", lrSims, ". Markers: 1 - ", nMarkers(x[[1]])), 
-           sub = paste("P(LR > ", threshold,"|H1) = ", p))
-      par(mfcol = c(1,1))
+
+      par(mfcol = c(1,2), oma = c(0, 0, 2, 0))
+      if(Log10){
+        y = log10(simData$REF$ip[[1]]$LRperSim)
+        xl ="log10(LR)"
+      }
+      else {
+        y = simData$REF$ip[[1]]$LRperSim
+        xl = "LR"
+      }
+      hist(y, xlab = xl, main = "", prob = TRUE)
+      f = ecdf(y)
+      r = range(y)
+      curve(1-f(x), from = r[1], to = r[2],  xlim = r,
+            ylab = "Excedance probability", xlab = "x", lty = 1)
+      tittel = paste("No of simulations: ", lrSims, ". Markers: 1 - ", nMarkers(x[[1]]) )
+      title(tittel, outer = TRUE)
+      par(mfcol = c(1,1))      
+      
     }
   }
 }

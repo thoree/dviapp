@@ -45,14 +45,12 @@ ui <- fluidPage(
                The LR comparing H1: MP and REF full brothers, versus H2: MP and REF unrelated,
                has been computed for 100 unconditional simulations of MP and REF conditioned on H1 below.
                The simulations use the 22 first markers in the database `NorwegianFrequencies` 
-               documented in the R library forrel. At the bottom of the histogram, the probaility that LR exceeds the
-               threshold 10000, is given, in this case 0.79. In `Power > Built in cases` parameters like the number of markers used, 
-               can  be changed. In `Power > Load data`, similar output is obtained by loading a familias file, either one 
-               that comes with this app or your own"),
+               documented in the R library forrel. . In `Power > Built in cases` parameters like the number of markers used, 
+               can  be changed. In `Power > Load data`, similar output is obtained by loading a familias file. The simulations will
+               be conditioned on genotyped individuals."),
             br(),
               sidebarLayout(position = "left",
                 sidebarPanel(
-               
                   selectInput(
                     "pedigreePower", label = "Built in pedigree for power simulation",
                      choices = list( "None selected", "brother", "uncle"), selected = "brother",
@@ -76,8 +74,8 @@ ui <- fluidPage(
                 sidebarLayout(position = "left",
                                 
                   sidebarPanel(
-                    checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),                     
-                    sliderInput("threshold", "Threshold", min = 0, max = 10000, step = 100, value = 10000),
+                    checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),  
+                    checkboxInput("log10Power", label = "log10(LR)", value = TRUE),  
                     sliderInput("lastMarker", "Last Marker", min = 1, max = 35, step = 1, value = 35),
                     selectInput("pedigreePowerSimulated", label = "Built in pedigree for power simulation",
                       choices = list( "None selected", "Missing brother", 
@@ -104,7 +102,8 @@ ui <- fluidPage(
                   sidebarLayout(position = "left",
                     sidebarPanel(
                       checkboxInput("plotOnlyFamPower", "Only plot pedigree", value = TRUE),
-                      sliderInput("thresholdFam", "Threshold", min = 0, max = 10000, step = 100, value = 10000),
+                      checkboxInput("log10PowerFam", label = "log10(LR)", value = TRUE), 
+
                       fileInput("famPower", "Familias file for power simulation"), 
 
                     ),
@@ -336,22 +335,22 @@ server <- function(input, output, session) {
     if(input$pedigreePowerSimulated == "Missing brother"){
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
       pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
-               thresh = input$threshold, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower)
+               thresh = NULL, lastMarker = input$lastMarker,
+               plotOnly = input$plotOnlyBuiltPower, Log10 = input$log10Power)
     }
     else if(input$pedigreePowerSimulated == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
       x = addSon(x, parent = "BR",  id = "REF")
       claim = relabel(x, "MO2", "NN_1")
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
-               thresh = input$threshold, lastMarker = input$lastMarker,
+               thresh = NULL, lastMarker = input$lastMarker,
                plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing first cousin"){
       x = cousinPed(1)
       claim = relabel(x, c("MP","REF"), 7:8)
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
-               thresh = input$threshold, lastMarker = input$lastMarker,
+               thresh = NULL, lastMarker = input$lastMarker,
                plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing GF, 2 grandchildren typed"){
@@ -359,7 +358,7 @@ server <- function(input, output, session) {
       x = cousinPed(1)
       claim = relabel(x, IDS, c(1,7, 8))
       pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
-               thresh = input$threshold, lastMarker = input$lastMarker,
+               thresh = NULL, lastMarker = input$lastMarker,
                plotOnly = input$plotOnlyBuiltPower)
     }
   })  
@@ -387,9 +386,9 @@ server <- function(input, output, session) {
   output$powerPlotFam = renderPlot({
       file = input$famPower
       ext = getExt(file = file)
-      familias(file = file, method = "Power", DVI = FALSE, threshold = input$thresholdFam,
+      familias(file = file, method = "Power", DVI = FALSE, threshold = NULL,
                seed = input$seed, lrSims = input$nSimulations, 
-               plotOnly = input$plotOnlyFamPower)
+               plotOnly = input$plotOnlyFamPower, Log10 = input$log10PowerFam)
   })
   
   
@@ -685,12 +684,11 @@ server <- function(input, output, session) {
  
    observeEvent(input$reset, {
     updateSelectInput(session, "pedigreePower", selected = "brother")
-
-    updateSliderInput(session, "threshold", value = 10000)
-    updateSliderInput(session, "thresholdFam", value = 10000)
     updateSliderInput(session, "lastMarker", value = 35)
     updateSelectInput(session, "pedigreePowerSimulated", selected = "None selected")
 
+    updateCheckboxInput(session, "log10Power", value = TRUE)
+    updateCheckboxInput(session, "log10PowerFam", value = TRUE)
     updateCheckboxInput(session, "plotOnlyBuiltPower", value = TRUE)
     updateCheckboxInput(session, "plotOnlyBuiltPri", value = TRUE)
     updateCheckboxInput(session, "plotOnlyFamPri", value = TRUE)
