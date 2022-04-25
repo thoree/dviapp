@@ -12,9 +12,9 @@ ui <- fluidPage(
   
   titlePanel("Disaster Victim Identification"),
   
-    # Reset all input except file load ( don't know how)
-    actionButton("reset", "Reset all", class = "btn btn-danger",
-                  style = "position: absolute; bottom:30px; width: 170px"),
+    # # Reset all input except file load ( don't know how)
+    # actionButton("reset", "Reset all", class = "btn btn-danger",
+    #               style = "position: absolute; bottom:30px; width: 170px"),
                         
     navbarPage("Introduction",
                
@@ -71,6 +71,10 @@ ui <- fluidPage(
 
                  
             tabPanel("Analyses based on built in cases",
+                     
+              actionButton("resetPowerBuilt", "Reset window", class = "btn btn-danger",
+                  style = "position: absolute; bottom:30px; width: 170px"),
+                  
               p("To perform the simulation, uncheck `Only plot pedigree`. Genotyped individuals are hatched in the plot
                 and these will be conditioned on."),
               br(),
@@ -79,7 +83,7 @@ ui <- fluidPage(
                   sidebarPanel(
                     checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),  
                     checkboxInput("log10Power", label = "log10(LR)", value = TRUE),  
-                    sliderInput("lastMarker", "Last Marker", min = 1, max = 35, step = 1, value = 35),
+                    sliderInput("lastMarker", "No of markers", min = 1, max = 35, step = 1, value = 22),
                     selectInput("pedigreePowerSimulated", label = "Built in pedigree for power simulation",
                       choices = list( "None selected", "Missing brother", 
                                       "Missing uncle", "Missing first cousin",
@@ -95,6 +99,10 @@ ui <- fluidPage(
               ),
                
               tabPanel("Analyses based on user loaded data",
+                       
+              actionButton("resetPowerFam", "Reset window", class = "btn btn-danger",
+                  style = "position: absolute; bottom:30px; width: 170px"),
+
                 p("Power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`. The missing person should be
                    named `MP` and the reference `REF`. The file `BrotherPower.fam` gives output similar to that
                    in `Power > Explanations` (but not identical, even for the same seed, since the simulation
@@ -152,12 +160,16 @@ ui <- fluidPage(
                  ), 
 
                  tabPanel("Analyses based on built in cases",
+                          
+                  actionButton("resetPriBuilt", "Reset window", class = "btn btn-danger",
+                      style = "position: absolute; bottom:30px; width: 170px"),
+                          
                           p("Simulations explained in `Prioritise > Explanations` can be performed"),
                           sidebarLayout(position = "left",
                             sidebarPanel(
                               checkboxInput("plotOnlyBuiltPri", label = "Only plot pedigree", value = TRUE),
                               numericInput("nProfiles", "No of sims for references", min = 1, max = 10, value = 1),
-                              sliderInput("lastMarkerPri", "Last Marker", min = 1, max = 35, step = 1, value = 13),
+                              sliderInput("lastMarkerPri", "No of markers", min = 1, max = 35, step = 1, value = 22),
                               selectInput("pedigreePowerSimulatedPri", 
                                         label = "Built in pedigree for power simulation",
                                         choices = list( "None selected", "Missing brother", 
@@ -173,6 +185,10 @@ ui <- fluidPage(
                  ),
                                   
                  tabPanel("Analyses based on user loaded data",
+                          
+                  actionButton("resetPriFam", "Reset window", class = "btn btn-danger",
+                      style = "position: absolute; bottom:30px; width: 170px"),
+                                                    
                           p("Priority power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`. 
                             The missing person should be named `MP`, the reference `REF` and the extra candidatesfor
                             genotyping `E1`and `E2`. The file `Brother.fam` gives output similar to that
@@ -183,6 +199,7 @@ ui <- fluidPage(
                           sidebarLayout(position = "left",
                             sidebarPanel(
                               checkboxInput("plotOnlyFamPri", label = "Only plot pedigree", value = TRUE),
+                              numericInput("nProfilesFam", "No of sims for references", min = 1, max = 10, value = 1),
                               fileInput("priPower", "Familias file for priority simulation"), ),
                                 mainPanel(
                                   fluidRow( column(plotOutput("priPlotFam"),  width = 9))
@@ -224,6 +241,10 @@ ui <- fluidPage(
                            ),
                            
                      tabPanel("Analyses based on built in cases",
+                              
+                       actionButton("resetDVIBuilt", "Reset window", class = "btn btn-danger",
+                       style = "position: absolute; bottom:30px; width: 170px"),
+                  
                               p("Select built in data below (or go to `Load data` if you would like to analyse 
                                  your own data)"),
                               br(),
@@ -267,16 +288,20 @@ ui <- fluidPage(
                      ),
                      
                       tabPanel("Analyses based on user loaded data",
-                              p("Analyses based on  your own data (Familias fam files or R RData files).
-                                 If `Relabel` is ticked, names are changed to V1, ..(for pm-samples); 
-                                 M1,..., (for am-samples) and F1, .... (for reference families). 
-                                 Relabelling is required for some analyses."),
-                              br(),
+                               
+                       actionButton("resetDVILoad", "Reset window", class = "btn btn-danger",
+                       style = "position: absolute; bottom:30px; width: 170px"), 
+                       
+                              # p("Analyses based on  your own data (Familias fam files or R RData files).
+                              #    If `Relabel` is ticked, names are changed to V1, ..(for pm-samples); 
+                              #    M1,..., (for am-samples) and F1, .... (for reference families). 
+                              #    Relabelling is required for some analyses."),
+                              # 
                               sidebarLayout(position = "left",
                                 sidebarPanel(
                                   fileInput("file1", "User data (optional fam or RData file) for DVI"),
                                   checkboxInput("relabel", label = "Relabel", value =  FALSE),
-                                  numericInput("nMissing", "Total no of missing. Only required for fam files with multiple missing in families", min = -1, value = -1),
+                                  numericInput("nMissing", "No missing (relevant if mult miss in fam)", min = -1, value = -1),
                                   numericInput(
                                     "refFamLoad", 
                                     "Reference family to plot",
@@ -309,6 +334,9 @@ ui <- fluidPage(
               ),              
 ###
                tabPanel("Settings",
+                       actionButton("reset", "Reset all", class = "btn btn-danger",
+                       style = "position: absolute; bottom:30px; width: 170px"),
+    
                        p("Some default settings can be changed below"),
                        numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729),
                        numericInput("nSimulations", "No of simulations", min = 0, max = 10000, step = 100, value = 100),
@@ -406,7 +434,7 @@ server <- function(input, output, session) {
     file = input$priPower
     ext = getExt(file = file)
     familias(file = file, method = "Prioritise", DVI = FALSE,
-             plotOnly = input$plotOnlyFamPri)
+             plotOnly = input$plotOnlyFamPri, nProfiles = input$nProfilesFam)
   })
   
 
@@ -682,24 +710,61 @@ server <- function(input, output, session) {
     }
  
   })
+  
+  
+   observeEvent(input$resetPowerBuilt, {
+    updateCheckboxInput(session, "plotOnlyBuiltPower", value = TRUE)
+    updateCheckboxInput(session, "log10Power", value = TRUE)
+    updateSliderInput(session, "lastMarker", value = 22) 
+    updateSelectInput(session, "pedigreePowerSimulated", selected = "None selected")
+   })
  
-   observeEvent(input$reset, {
+   observeEvent(input$resetPowerFam, {
+    updateCheckboxInput(session, "plotOnlyFamPower", value = TRUE)
+    updateCheckboxInput(session, "log10PowerFam", value = TRUE)
 
+    updateSelectInput(session, "powerPlotFam", selected = "None selected")
+   })
+   
+  observeEvent(input$resetPriBuilt, {
+    updateCheckboxInput(session, "plotOnlyBuiltPri", value = TRUE)
+    updateNumericInput(session, "nProfiles", value = 1)
+    updateSliderInput(session, "lastMarkerPri", value = 22) 
+    updateSelectInput(session, "pedigreePowerSimulatedPri", selected = "None selected")
+   })
+  
+  observeEvent(input$resetPriFam, {
+    updateCheckboxInput(session, "plotOnlyFamPri", value = TRUE)
+   })
+  
+  observeEvent(input$resetDVIBuilt, {
+    updateSelectInput(session, "dat", selected = "None selected")
+    updateNumericInput(session, "nProfilesFam", value = 1)
+    updateNumericInput(session, "refFam", value = 0)
+    updateSelectInput(session, "analysis", selected = "None selected")
+
+   })
+  
+  observeEvent(input$resetDVILoad, {
+    updateCheckboxInput(session, "relabel", value = FALSE)
+    updateNumericInput(session, "nMissing", value = -1)
+    updateNumericInput(session, "refFamLoad", value = 0)
+    updateSelectInput(session, "analysisLoad", selected = "None selected")
+
+   })
+      
+   observeEvent(input$reset, {
     updateSliderInput(session, "lastMarker", value = 35)
     updateSelectInput(session, "pedigreePowerSimulated", selected = "None selected")
-
     updateCheckboxInput(session, "log10Power", value = TRUE)
     updateCheckboxInput(session, "log10PowerFam", value = TRUE)
     updateCheckboxInput(session, "plotOnlyBuiltPower", value = TRUE)
     updateCheckboxInput(session, "plotOnlyBuiltPri", value = TRUE)
     updateCheckboxInput(session, "plotOnlyFamPri", value = TRUE)
-
     updateCheckboxInput(session, "input$plotOnlyFamPower", value = TRUE)
-
     updateNumericInput(session, "nProfiles", value = 1)
     updateSliderInput(session, "lastMarkerPri", value = 13)    
     updateSelectInput(session, "pedigreePowerSimulatedPri", selected = "None selected")
-    
     updateSelectInput(session, "pedigreePri", selected = "brother")
     updateSelectInput(session, "powerPlotFam", selected = "None selected")
     updateSelectInput(session, "dat", selected = "None selected")
