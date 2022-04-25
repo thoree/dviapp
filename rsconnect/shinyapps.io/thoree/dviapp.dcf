@@ -5,7 +5,7 @@ account: thoree
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6006432
-bundleId: 5829240
+bundleId: 5834937
 url: https://thoree.shinyapps.io/dviapp/
-when: 1650709406.94493
-lastSyncTime: 1650709406.94493
+when: 1650902381.33233
+lastSyncTime: 1650902381.33233
