@@ -89,6 +89,7 @@ ui <- fluidPage(
                     sliderInput("lastMarker", "No of markers", min = 1, max = 35, step = 1, value = 22),
                     checkboxInput("log10Power", label = "log10(LR)", value = TRUE), 
                     checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),
+                    actionButton("goPowerBuilt", "Go!", class = "btn-success"),
 
                   ),
                   mainPanel(
@@ -117,6 +118,7 @@ ui <- fluidPage(
                       fileInput("famPower", "Familias file for power simulation"),
                       checkboxInput("log10PowerFam", label = "log10(LR)", value = TRUE), 
                       checkboxInput("plotOnlyFamPower", "Only plot pedigree", value = TRUE),
+                      actionButton("goPowerLoad", "Go!", class = "btn-success"),
                     ),
                         mainPanel(
                           fluidRow(
@@ -173,6 +175,7 @@ ui <- fluidPage(
                                            ),
                               sliderInput("lastMarkerPri", "No of markers", min = 1, max = 35, step = 1, value = 22),
                               checkboxInput("plotOnlyBuiltPri", label = "Only plot pedigree", value = TRUE),
+                              actionButton("goPriBuilt", "Go!", class = "btn-success"),
                                       ),
                                         mainPanel(
                                           fluidRow(
@@ -198,7 +201,9 @@ ui <- fluidPage(
                             sidebarPanel(
                               fileInput("priPower", "Familias file for priority simulation"),
                               
-                              checkboxInput("plotOnlyFamPri", label = "Only plot pedigree", value = TRUE),                              
+                              checkboxInput("plotOnlyFamPri", label = "Only plot pedigree", value = TRUE),
+                              actionButton("goPriLoad", "Go!", class = "btn-success"),
+
                               ),
                                 mainPanel(
                                   fluidRow( column(plotOutput("priPlotFam"),  width = 9))
@@ -244,8 +249,8 @@ ui <- fluidPage(
                        actionButton("resetDVIBuilt", "Reset window", class = "btn btn-danger",
                        style = "position: absolute; bottom:30px; width: 170px"),
                   
-                              p("Select built in data below (or go to `Load data` if you would like to analyse 
-                                 your own data)"),
+                              # p("Select built in data below (or go to `Load data` if you would like to analyse 
+                              #    your own data)"),
                               br(),
                               sidebarLayout(position = "left",
                                             sidebarPanel(
@@ -273,7 +278,8 @@ ui <- fluidPage(
                                                              "Joint",
                                                              "Posterior")
                                             ),
-                                            downloadButton("downloadTable", "Download DVI table output")
+                                            downloadButton("downloadTable", "Download DVI table output"),
+            
                                             ),
                                             mainPanel(
                                               fluidRow(
@@ -378,63 +384,67 @@ server <- function(input, output, session) {
   , deleteFile = FALSE)
 
   output$powerPlotSimulated = renderPlot( {
+    input$goPowerBuilt
     if(input$pedigreePowerSimulated == "Missing brother"){
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
-      pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
+      isolate(pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
                thresh = NULL, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower, Log10 = input$log10Power)
+               plotOnly = input$plotOnlyBuiltPower, Log10 = input$log10Power))
     }
     else if(input$pedigreePowerSimulated == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
       x = addSon(x, parent = "BR",  id = "REF")
       claim = relabel(x, "MO2", "NN_1")
-      pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
+      isolate(pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
                thresh = NULL, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower)
+               plotOnly = input$plotOnlyBuiltPower))
     }
     else if(input$pedigreePowerSimulated == "Missing first cousin"){
       x = cousinPed(1)
       claim = relabel(x, c("MP","REF"), 7:8)
-      pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
+      isolate(pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
                thresh = NULL, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower)
+               plotOnly = input$plotOnlyBuiltPower))
     }
     else if(input$pedigreePowerSimulated == "Missing GF, 2 grandchildren typed"){
       IDS = c("MP","REF1", "REF2")
       x = cousinPed(1)
       claim = relabel(x, IDS, c(1,7, 8))
-      pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
+      isolate(pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
                thresh = NULL, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower)
+               plotOnly = input$plotOnlyBuiltPower))
     }
   })  
   
   output$powerPlotSimulatedPri = renderPlot( {
+    input$goPriBuilt
     if(input$pedigreePowerSimulatedPri == "Missing brother"){
       ped = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
       ped = addChildren(ped, father = "FA", mother = "MO", nch = 2, 
                         sex = 1, ids = c("E1", "E2"))
-      priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
-               nProfiles = input$nProfiles, lrSims = input$nSimulations, thresholdIP = input$thresholdIP)
+      isolate(priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
+               nProfiles = input$nProfiles, lrSims = input$nSimulations, thresholdIP = input$thresholdIP))
     }
     else if(input$pedigreePowerSimulatedPri == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "E2"))
       x = addSon(x, parent = "E2",  id = "REF")
       ped = relabel(x, "E1", "NN_1")      
 
-      priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
-               nProfiles = input$nProfiles, lrSims = input$nSimulations,  thresholdIP = input$thresholdIP)
+      isolate(priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
+               nProfiles = input$nProfiles, lrSims = input$nSimulations,  thresholdIP = input$thresholdIP))
     }
 
   })   
   
   
   output$powerPlotFam = renderPlot({
+
       file = input$famPower
       ext = getExt(file = file)
-      familias(file = file, method = "Power", DVI = FALSE, threshold = NULL,
+      input$goPowerLoad
+      isolate(familias(file = file, method = "Power", DVI = FALSE, threshold = NULL,
                seed = input$seed, lrSims = input$nSimulations, 
-               plotOnly = input$plotOnlyFamPower, Log10 = input$log10PowerFam)
+               plotOnly = input$plotOnlyFamPower, Log10 = input$log10PowerFam))
   })
   
   
@@ -450,11 +460,12 @@ server <- function(input, output, session) {
     , deleteFile = FALSE)
   
   output$priPlotFam = renderPlot({
+    input$goPriLoad
     file = input$priPower
     ext = getExt(file = file)
-    familias(file = file, method = "Prioritise", DVI = FALSE,
+    isolate(familias(file = file, method = "Prioritise", DVI = FALSE,
              plotOnly = input$plotOnlyFamPri, nProfiles = input$nProfiles,
-             thresholdIP = input$thresholdIP)
+             thresholdIP = input$thresholdIP))
   })
   
 
