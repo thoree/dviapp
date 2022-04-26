@@ -4,6 +4,7 @@ suppressPackageStartupMessages({
   library(forrel)
   library(glue)
   library(ggplot2)
+  library(patchwork)
 })
 
 version = 1.0
@@ -81,14 +82,14 @@ ui <- fluidPage(
                 sidebarLayout(position = "left",
                                 
                   sidebarPanel(
-                    checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),  
-                    checkboxInput("log10Power", label = "log10(LR)", value = TRUE),  
-                    sliderInput("lastMarker", "No of markers", min = 1, max = 35, step = 1, value = 22),
                     selectInput("pedigreePowerSimulated", label = "Built in pedigree for power simulation",
                       choices = list( "None selected", "Missing brother", 
                                       "Missing uncle", "Missing first cousin",
-                                      "Missing GF, 2 grandchildren typed"),
-                    ),
+                                      "Missing GF, 2 grandchildren typed"),),
+                    sliderInput("lastMarker", "No of markers", min = 1, max = 35, step = 1, value = 22),
+                    checkboxInput("log10Power", label = "log10(LR)", value = TRUE), 
+                    checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),
+
                   ),
                   mainPanel(
                     fluidRow(
@@ -113,11 +114,9 @@ ui <- fluidPage(
                 br(),
                   sidebarLayout(position = "left",
                     sidebarPanel(
-                      checkboxInput("plotOnlyFamPower", "Only plot pedigree", value = TRUE),
+                      fileInput("famPower", "Familias file for power simulation"),
                       checkboxInput("log10PowerFam", label = "log10(LR)", value = TRUE), 
-
-                      fileInput("famPower", "Familias file for power simulation"), 
-
+                      checkboxInput("plotOnlyFamPower", "Only plot pedigree", value = TRUE),
                     ),
                         mainPanel(
                           fluidRow(
@@ -167,14 +166,13 @@ ui <- fluidPage(
                           p("Simulations explained in `Prioritise > Explanations` can be performed"),
                           sidebarLayout(position = "left",
                             sidebarPanel(
-                              checkboxInput("plotOnlyBuiltPri", label = "Only plot pedigree", value = TRUE),
-                              numericInput("nProfiles", "No of sims for references", min = 1, max = 10, value = 1),
-                              sliderInput("lastMarkerPri", "No of markers", min = 1, max = 35, step = 1, value = 22),
                               selectInput("pedigreePowerSimulatedPri", 
-                                        label = "Built in pedigree for power simulation",
-                                        choices = list( "None selected", "Missing brother", 
-                                        "Missing uncle"),
-                                        ),
+                                           label = "Built in pedigree for power simulation",
+                                           choices = list( "None selected", "Missing brother", 
+                                           "Missing uncle"),
+                                           ),
+                              sliderInput("lastMarkerPri", "No of markers", min = 1, max = 35, step = 1, value = 22),
+                              checkboxInput("plotOnlyBuiltPri", label = "Only plot pedigree", value = TRUE),
                                       ),
                                         mainPanel(
                                           fluidRow(
@@ -198,9 +196,10 @@ ui <- fluidPage(
                           br(),
                           sidebarLayout(position = "left",
                             sidebarPanel(
-                              checkboxInput("plotOnlyFamPri", label = "Only plot pedigree", value = TRUE),
-                              numericInput("nProfilesFam", "No of sims for references", min = 1, max = 10, value = 1),
-                              fileInput("priPower", "Familias file for priority simulation"), ),
+                              fileInput("priPower", "Familias file for priority simulation"),
+                              
+                              checkboxInput("plotOnlyFamPri", label = "Only plot pedigree", value = TRUE),                              
+                              ),
                                 mainPanel(
                                   fluidRow( column(plotOutput("priPlotFam"),  width = 9))
                                         )
@@ -301,7 +300,7 @@ ui <- fluidPage(
                                 sidebarPanel(
                                   fileInput("file1", "User data (optional fam or RData file) for DVI"),
                                   checkboxInput("relabel", label = "Relabel", value =  FALSE),
-                                  numericInput("nMissing", "No missing (relevant if mult miss in fam)", min = -1, value = -1),
+
                                   numericInput(
                                     "refFamLoad", 
                                     "Reference family to plot",
@@ -338,10 +337,30 @@ ui <- fluidPage(
                        style = "position: absolute; bottom:30px; width: 170px"),
     
                        p("Some default settings can be changed below"),
-                       numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729),
-                       numericInput("nSimulations", "No of simulations", min = 0, max = 10000, step = 100, value = 100),
-                       checkboxInput("mutation", label = "Mutation", value = FALSE),   
-                       ),                       
+                       fluidRow(
+                         
+                         column(3,
+                                numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729)),
+                         
+                         column(3,
+                                numericInput("nSimulations", "No of simulations", min = 0, max = 10000, step = 100, value = 100),)
+                       ),
+                       
+                       fluidRow(
+                         column(3,
+                               sliderInput("thresholdIP", "Threshold inclusion power", min = 0, max = 10000, 
+                                           step = 100, value = 10000)),
+                         column(3,
+                                checkboxInput("mutation", label = "Mutation", value = FALSE)), 
+                       ),
+                         
+                       fluidRow(
+                         column(3,
+                                numericInput("nProfiles", "No of sims for references", min = 1, max = 10, value = 1)),
+                         column(3,
+                                numericInput("nMissing", "No missing", min = -1, value = -1)),
+                       )      
+               )
 
 
 ###
@@ -396,7 +415,7 @@ server <- function(input, output, session) {
       ped = addChildren(ped, father = "FA", mother = "MO", nch = 2, 
                         sex = 1, ids = c("E1", "E2"))
       priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
-               nProfiles = input$nProfiles, lrSims = input$nSimulations)
+               nProfiles = input$nProfiles, lrSims = input$nSimulations, thresholdIP = input$thresholdIP)
     }
     else if(input$pedigreePowerSimulatedPri == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "E2"))
@@ -404,7 +423,7 @@ server <- function(input, output, session) {
       ped = relabel(x, "E1", "NN_1")      
 
       priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
-               nProfiles = input$nProfiles, lrSims = input$nSimulations)
+               nProfiles = input$nProfiles, lrSims = input$nSimulations,  thresholdIP = input$thresholdIP)
     }
 
   })   
@@ -434,7 +453,8 @@ server <- function(input, output, session) {
     file = input$priPower
     ext = getExt(file = file)
     familias(file = file, method = "Prioritise", DVI = FALSE,
-             plotOnly = input$plotOnlyFamPri, nProfiles = input$nProfilesFam)
+             plotOnly = input$plotOnlyFamPri, nProfiles = input$nProfiles,
+             thresholdIP = input$thresholdIP)
   })
   
 
@@ -739,7 +759,6 @@ server <- function(input, output, session) {
   
   observeEvent(input$resetDVIBuilt, {
     updateSelectInput(session, "dat", selected = "None selected")
-    updateNumericInput(session, "nProfilesFam", value = 1)
     updateNumericInput(session, "refFam", value = 0)
     updateSelectInput(session, "analysis", selected = "None selected")
 
@@ -747,7 +766,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$resetDVILoad, {
     updateCheckboxInput(session, "relabel", value = FALSE)
-    updateNumericInput(session, "nMissing", value = -1)
+
     updateNumericInput(session, "refFamLoad", value = 0)
     updateSelectInput(session, "analysisLoad", selected = "None selected")
 
@@ -778,6 +797,7 @@ server <- function(input, output, session) {
     updateSelectInput(session, "analysis", selected = "None selected")
     updateSelectInput(session, "analysisLoad", selected = "None selected")
     updateCheckboxInput(session, "mutation", label = "Mutation", value = FALSE) 
+    updateSliderInput(session, "thresholdIP", value = 10000) 
   })
 
    # Change 0 simulations to 1 always 

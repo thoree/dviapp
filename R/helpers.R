@@ -5,8 +5,8 @@ pedPower = function(claim, nsim = 10, thresh = NULL, seed = 1729, lastMarker = 3
   claim = setMarkers(claim, locusAttributes = NorwegianFrequencies[1:lastMarker])
   unrel = list()
   for(i in 1:length(ids))
-    unrel[[i]] = singleton(ids[i])
-  unrel = transferMarkers(claim, unrel)
+    unrel[[i]] = pedtools::singleton(ids[i])
+  unrel = pedtools::transferMarkers(claim, unrel)
   if(plotOnly){
     plot(claim, hatched = typedMembers, col = list(red = ids[1], blue = ids[-1]))
   }
@@ -64,7 +64,7 @@ myjointDVI = function(pm, am, missing, mutation = FALSE){
 #' 
 
 priPower = function(ped, plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSims = 10,
-                    sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))) {
+                    thresholdIP = NULL, sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))) {
   
   if(plotPed)
     plot(ped, col = list(red = "MP", blue = c("REF", "E1", "E2")))
@@ -72,9 +72,11 @@ priPower = function(ped, plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSi
     ped = setMarkers(ped, locusAttributes = NorwegianFrequencies[1:nMark])
     
     simData = MPPsims(ped, missing = "MP", nProfiles = nProfiles,
-                      lrSims = lrSims, seed = seed,
+                      lrSims = lrSims, seed = seed, thresholdIP = thresholdIP,
                       selections = sel, addBaseline = FALSE, numCores = 1)
-    powerPlot(simData, type = 3)
+    p1 = powerPlot(simData, type = 1)
+    p3 = powerPlot(simData, type = 3)
+    p1 + p3 + plot_layout(guides = 'collect')
 
   }
 }
@@ -189,7 +191,7 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
 
 familias =  function(file = NULL, method = NULL, 
                      relabel = TRUE, miss = 'Missing person', refFam = 1, DVI = TRUE,
-                     nProfiles = 1, lrSims = 100, seed = 17, threshold = 10000,
+                     nProfiles = 1, lrSims = 100, seed = 17, thresholdIP = 10000,
                      plotOnly = TRUE, Log10 = TRUE){
   x = readFam(file$datapath)
   
@@ -254,9 +256,11 @@ familias =  function(file = NULL, method = NULL,
     else{    
       sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))
       simData = MPPsims(x[[1]], missing = "MP", nProfiles = nProfiles, lrSims = lrSims, seed = seed,
-                        selections = sel, thresholdIP = NULL, addBaseline = FALSE, 
+                        selections = sel, thresholdIP = thresholdIP, addBaseline = FALSE, 
                         numCores = 1)
-      powerPlot(simData, type = 3)
+      p1 = powerPlot(simData, type = 1)
+      p3 = powerPlot(simData, type = 3)
+      p1 + p3 + plot_layout(guides = 'collect')
     }
   }
   else if (method == "Power"){
