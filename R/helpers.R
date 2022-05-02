@@ -204,7 +204,7 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
 familias =  function(file = NULL, method = NULL, 
                      relabel = TRUE, miss = 'Missing person', refFam = 1, DVI = TRUE,
                      nProfiles = 1, lrSims = 100, seed = 17, thresholdIP = 10000,
-                     plotOnly = TRUE, Log10 = TRUE){
+                     plotOnly = TRUE, Log10 = TRUE, mutation = FALSE){
   x = readFam(file$datapath)
   
   #Relabel if DVI and not power
@@ -257,12 +257,12 @@ familias =  function(file = NULL, method = NULL,
   else if (method == "Joint"){
     if(differentMarkers(pm, am))
       stop(safeError("Must have the same markers for all pm and am data"))
-    jointDVI(pm, am, miss)
+    myjointDVI(pm, am, miss, mutation)
   }
   else if (method == "Posterior"){
     if(differentMarkers(pm, am))
       stop(safeError("Must have the same markers for all pm and am data"))
-    Bmarginal(jointDVI(pm, am, miss), miss)
+    Bmarginal(myjointDVI(pm, am, miss, mutation), miss)
   }
   
   else if (method == "plot")

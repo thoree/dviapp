@@ -284,7 +284,7 @@ ui <- fluidPage(
                                                              "Posterior")
                                             ),
                                             downloadButton("downloadTable", "Download DVI table output"),
-            
+                                            #actionButton("goDVIBuilt", "Go!", class = "btn-success"),
                                             ),
                                             mainPanel(
                                               fluidRow(
@@ -535,7 +535,6 @@ server <- function(input, output, session) {
           RData(file = file, method = "IBD estimates",  nlines = 10, sorter = TRUE)
         else if(ext == "fam")
           familias(file = file, method = "IBD estimates", relabel = input$relabel)
-        
       }
     })
     
@@ -608,7 +607,8 @@ server <- function(input, output, session) {
             MPs = 'Missing person'
         else
             MPs = paste0("M", 1:input$nMissing)
-          familias(file = file, method = 'Joint',  relabel = input$relabel, miss = MPs)
+          familias(file = file, method = 'Joint',  relabel = input$relabel, miss = MPs,
+                   mutation = input$mutation)
         }
         
       }
