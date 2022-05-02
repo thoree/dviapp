@@ -527,9 +527,9 @@
 0
 8	(DatabaseSize = 2500 , Dropout probability = 0 , Minor allele frequency = 0 )
 "6"
-0.0008983829557
+0.0008983829556
 "7"
-0.0008983829557
+0.0008983829556
 "8"
 0.5593929726
 "9"
@@ -541,7 +541,7 @@
 "12"
 0.03284089839
 "13"
-0.0008983829557
+0.0008983829556
 "FGA"
 0.001
 0.001
@@ -775,7 +775,7 @@
 0
 7	(DatabaseSize = 2500 , Dropout probability = 0 , Minor allele frequency = 0 )
 "11"
-0.004673004676
+0.004673004677
 "12"
 0.02803702804
 "13"
@@ -892,7 +892,7 @@
 "17"
 0.07944262453
 "18"
-0.009346431124
+0.009346431125
 "D2S441"
 0.001
 0.001
@@ -1180,7 +1180,7 @@ Allele1= 16
 Allele2= 18
 [[[Person 6 ]]]
 Name= PM6
-Gender= Male
+Gender= Female
 [[[[DNA data]]]]
 nSystems= 15
 SystemName= CSF1PO
