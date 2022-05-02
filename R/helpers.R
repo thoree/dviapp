@@ -118,16 +118,28 @@ IBDestimates = function(pm, nlines = 10, sorter = FALSE){
 RData = function(file = input$file1, nlines = 10, sorter = TRUE,
                  method = NULL, refFam = 1, mutation = FALSE){
   load(file$datapath)
-  if(method == 'Exclusion')
+  if(method == 'Exclusion'){
+    if(differentMarkers(pm, am))
+      stop(safeError("Must have the same markers for all pm and am data"))
     exclusionMatrix(pm, am, missing)
+  }
   else if (method == 'IBD estimates')
      checkPairwise(pm, plot = F)
-  else if (method == 'Pairwise')
+  else if (method == 'Pairwise'){
+    if(differentMarkers(pm, am))
+      stop(safeError("Must have the same markers for all pm and am data"))
     pairwiseLR(pm, am, missing)$LRmatrix
-  else if (method == 'Joint')
+  }
+  else if (method == 'Joint'){
+    if(differentMarkers(pm, am))
+      stop(safeError("Must have the same markers for all pm and am data"))
     myjointDVI(pm, am, missing, mutation)
-  else if (method == 'Posterior')
+  }
+  else if (method == 'Posterior'){
+    if(differentMarkers(pm, am))
+      stop(safeError("Must have the same markers for all pm and am data"))
     Bmarginal(myjointDVI(pm, am, missing, mutation), missing)
+  }
   else if (method == 'plot'){
     if (is.ped(am))
       plot(am,  hatched = typedMembers, title = "Reference family",
@@ -202,15 +214,18 @@ familias =  function(file = NULL, method = NULL,
       am = x[[2]][[2]]
     else{
       am = lapply(x[-1], function(dat) {
-      ref = dat$`Reference pedigree`     
-      ref[[which(pedsize(ref) > 1)]]     # remove redundant singleton
+        ref = dat$`Reference pedigree`
+        if(!is.ped(ref))
+          ref = ref[[which(pedsize(ref) > 1)]]     # remove redundant singleton
+        ref
       })
     }
     
     # Rename pm samples to V1, V2 ...; reference families to F1, F2, ...
     # and missing to M1, M2, ... 
     # We need to rename missing
-    
+    if(any(duplicated(typedMembers(am))))
+      stop(safeError("Typed members of reference families must be named differently"))
     z = relabelDVI(pm, am, missing = miss)
     miss = z$missing
     
@@ -225,19 +240,30 @@ familias =  function(file = NULL, method = NULL,
     summariseDVIreturned(pm, am, miss, header = "Familias data. ")
   
   else if (method == "IBD estimates")
-    checkPairwise(pm, plot = F)
+    checkPairwise(pm, plot = F)[,-c(7:9)]
   
-  else if (method == "Exclusion")
+  else if (method == "Exclusion"){
+    if(differentMarkers(pm, am))
+      stop(safeError("Must have the same markers for all pm and am data"))
     exclusionMatrix(pm, am, miss)
+  }
   
-  else if (method == "Pairwise")
+  else if (method == "Pairwise"){
+    if(differentMarkers(pm, am))
+      stop(safeError("Must have the same markers for all pm and am data"))
     pairwiseLR(pm, am, miss)$LRmatrix
+  }
   
-  else if (method == "Joint")
+  else if (method == "Joint"){
+    if(differentMarkers(pm, am))
+      stop(safeError("Must have the same markers for all pm and am data"))
     jointDVI(pm, am, miss)
-  
-  else if (method == "Posterior")
+  }
+  else if (method == "Posterior"){
+    if(differentMarkers(pm, am))
+      stop(safeError("Must have the same markers for all pm and am data"))
     Bmarginal(jointDVI(pm, am, miss), miss)
+  }
   
   else if (method == "plot")
     if (is.ped(am))
@@ -309,4 +335,9 @@ getExt = function(file){
   tools::file_ext(file$datapath)
 }
 
+differentMarkers = function(pm, am){
+  nPM = unlist(lapply(pm, function(x) nMarkers(x)))
+  nAM = unlist(lapply(am, function(x) nMarkers(x)))
+  length(unique(c(nPM,nAM))) != 1
+}
   

@@ -76,8 +76,7 @@ ui <- fluidPage(
               actionButton("resetPowerBuilt", "Reset window", class = "btn btn-danger",
                   style = "position: absolute; bottom:30px; width: 170px"),
                   
-              p("To perform the simulation, uncheck `Only plot pedigree`. Genotyped individuals are hatched in the plot
-                and these will be conditioned on."),
+              p("To perform the simulation, uncheck `Only plot pedigree` and press `Go!`."),
               br(),
                 sidebarLayout(position = "left",
                                 
@@ -105,13 +104,15 @@ ui <- fluidPage(
               actionButton("resetPowerFam", "Reset window", class = "btn btn-danger",
                   style = "position: absolute; bottom:30px; width: 170px"),
 
-                p("Power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`. The missing person should be
-                   named `MP` and the reference `REF`. The file `BrotherPower.fam` gives output similar to that
+                "Power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`. The missing person should be
+                   named `MP` and the reference `REF`. The file",
+                   a(href="https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
+                   "gives output similar to that
                    in `Power > Explanations` (but not identical, even for the same seed, since the simulation
-                   implementation is not identical).  Genotyped individuals are hatched and first marker displayed in the plot
+                   implementation is not identical).  Genotyped individuals (if any) are hatched and first marker displayed in the plot
                    and these individuals will be conditioned on. Further information on the fam file loaded, and potential 
                    errors in the conversion of the fam file, are reported
-                   to the console."),
+                   to the console.",
                 br(),
                   sidebarLayout(position = "left",
                     sidebarPanel(
@@ -134,22 +135,21 @@ ui <- fluidPage(
                  tabPanel("Explanations",
                         p("The below explanation applies to the example obtained if 'brother' (default) 
                         is chosen in the pull down menu below.
-                        The LR comparing H1: MP and REF full brothers, versus H2: MP and REF unrelated,
+                        The LR comparing H1: `MP and REF full brothers, versus H2: ``MP and REF unrelated`,
                         has been computed for 100 unconditional simulations of MP and REF conditioned on H1 below.
-                        This corresponds to `REF`case in the panel to the right. We see that we can expect no exclusions
+                        This corresponds to the `REF` case in the panel to the right. We see that we can expect no exclusions
                         (in fact exclusions are impossible with only two brothers) and log10(LR) slightly exceeding 10. If one brother, 
                         `E1` is genotyped we can expect more than 10 exclusions and a log10(LR) slightly exceeding 20. Finally,
                         if both brothers `E1`and `E2` are genotyped, the expected number exclusions and LR increase further.
-                        10 profiles are simulated for the relatives, assuming H1,  of `MP`. For each of these 10 profiles,
-                        corresponding to the smaller circles, 1000 simulations are performed for `MP` under H1 and H2.
+                        10 profiles are simulated for the relatives (only 'REF' below), assuming H1. For each of these 10 profiles,
+                        corresponding to the smaller circles, 1000 simulations are performed for `Missing` under H1 and H2.
                         In `Prioritise > Built in cases` simulations can be performed for various parameter choices. In
-                        `Prioritise > load` simillar simulations can be performed from a fam file that comes with the app our your own.
-                        "),
+                        `Prioritise > load` similar simulations can be performed from yourfam file."),
                         br(),
                         sidebarLayout(position = "left",
                           sidebarPanel(
                             selectInput("pedigreePri", label = "Built in pedigree for priority simulation",
-                                        choices = list( "None selected", "brother"),
+                                        choices = list( "brother", "None selected" ),
                             ),
                           ),
                            mainPanel(
@@ -190,12 +190,13 @@ ui <- fluidPage(
                   actionButton("resetPriFam", "Reset window", class = "btn btn-danger",
                       style = "position: absolute; bottom:30px; width: 170px"),
                                                     
-                          p("Priority power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`. 
-                            The missing person should be named `MP`, the reference `REF` and the extra candidatesfor
-                            genotyping `E1`and `E2`. The file `Brother.fam` gives output similar to that
+                          "Priority power is calculated by uploading a Familias file. Here's an example:", 
+                           a(href="https://familias.name/dviapp/BrotherPriority.fam", "BrotherPriority.fam", target="_blank"),
+                            ". The missing person should be named `MP`, the reference `REF` and the extra candidates
+                            for genotyping `E1`and `E2`. The mentioned file gives output similar to that
                             in `Priority > Explanations` (but not identical, even for the same seed, since the simulation
                             implementation is not identical). Further information on the fam file loaded, and potential 
-                            errors in the conversion of the fam file, are reported to the console."),
+                            errors in the conversion of the fam file, are reported to the console.",
                           br(),
                           sidebarLayout(position = "left",
                             sidebarPanel(
@@ -215,13 +216,17 @@ ui <- fluidPage(
                 navbarMenu("DVI",
                            
                            tabPanel("Explanations",
-                                    p("Analyses can be done in this module from built in cases, from Familias (`fam`)
+                                    "Analyses can be done in this module from built in cases, from Familias (`fam`)
                                       files or from R data. The below figure shows the planecrash data. When the
                                       data is loaded in `DVI > Built in cases`, the following summary is provided:,
                                     `DVI data. 8 victims: V1 ,..., V8 . 5 missing: M1 ,..., M5 . 
                                       5 typed refs: R1 ,..., R5 . 5 reference families.`
-                                      See the documentation for the details on the five analyses implemented. Here
-                                      we only provide brief explanations"),
+                                      The data is also available as a fam file:",
+                                    a(href="https://familias.name/dviapp/planecrash.fam", "planecrash.fam", target="_blank"),
+                                    ", and can also be downloaded as RData: ",
+                                    a(href="https://familias.name/dviapp/planecrash.RData", "planecrash.RData", target="_blank"),
+                                      ". See the documentation for the details on the five analyses implemented. Here
+                                      we only provide brief explanations:", br(), br(), 
                                     strong("IBD estimates:"),"The pairwise relationship between all pairs of victims is
                                          estimated.",
                                     br(),
@@ -235,7 +240,7 @@ ui <- fluidPage(
                                       are evaluated and solutions ranked according to the likelihood.",
                                     br(),
                                     strong("Posterior:"),  "Computes posterior pairing and non-pairing probabilities, 
-                                      based on a prior and the output from `Joint`.",
+                                      based on a prior and the output from `Joint`.", br(),
                                     mainPanel(
                                       fluidRow(
                                         column(plotOutput("planecrashPlot"),  width = 9)
@@ -484,7 +489,7 @@ server <- function(input, output, session) {
         if (ext == "RData" |  ext == "rda" )
           RData(file = file, method = "Describe data")
         else if (ext ==  "fam")
-         familias(file = file, method = "Describe data", relabel = input$relabel)
+         familias(file = file, method = "Describe data", relabel = input$relabel, DVI = TRUE)
      })      
     
     output$table <- renderTable(rownames = T,{
@@ -734,7 +739,8 @@ server <- function(input, output, session) {
   observe({
     if(!is.null(input$file1)){
       updateSelectInput(session, "dat", label = "Built in data for DVI",
-                        choices = list("None selected","Family with three missing", "grave", "planecrash"),
+                        choices = list("None selected","Family with three missing", "grave", 
+                                       "planecrash"),
                         selected = "None selected") 
       updateNumericInput(session, "refFam", value = 0) 
       updateSelectInput(session, "analysis", selected = "None selected")
