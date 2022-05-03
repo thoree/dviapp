@@ -385,68 +385,67 @@ server <- function(input, output, session) {
   , deleteFile = FALSE)
 
   output$powerPlotSimulated = renderPlot( {
-    input$goPowerBuilt
+
     if(input$pedigreePowerSimulated == "Missing brother"){
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
-      isolate(pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
+      pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
                thresh = NULL, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower, Log10 = input$log10Power))
+               plotOnly = input$plotOnlyBuiltPower, Log10 = input$log10Power)
     }
     else if(input$pedigreePowerSimulated == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
       x = addSon(x, parent = "BR",  id = "REF")
       claim = relabel(x, "MO2", "NN_1")
-      isolate(pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
+      pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
                thresh = NULL, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower))
+               plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing first cousin"){
       x = cousinPed(1)
       claim = relabel(x, c("MP","REF"), 7:8)
-      isolate(pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
+      pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
                thresh = NULL, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower))
+               plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing GF, 2 grandchildren typed"){
       IDS = c("MP","REF1", "REF2")
       x = cousinPed(1)
       claim = relabel(x, IDS, c(1,7, 8))
-      isolate(pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
+      pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
                thresh = NULL, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower))
+               plotOnly = input$plotOnlyBuiltPower)
     }
-  })  
+  }) %>%
+    bindEvent(input$goPowerBuilt)
   
   output$powerPlotSimulatedPri = renderPlot( {
-    input$goPriBuilt
     if(input$pedigreePowerSimulatedPri == "Missing brother"){
       ped = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
       ped = addChildren(ped, father = "FA", mother = "MO", nch = 2, 
                         sex = 1, ids = c("E1", "E2"))
-      isolate(priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
-               nProfiles = input$nProfiles, lrSims = input$nSimulations, thresholdIP = input$thresholdIP))
+      priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
+               nProfiles = input$nProfiles, lrSims = input$nSimulations, thresholdIP = input$thresholdIP)
     }
     else if(input$pedigreePowerSimulatedPri == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "E2"))
       x = addSon(x, parent = "E2",  id = "REF")
-      ped = relabel(x, "E1", "NN_1")      
-
-      isolate(priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
-               nProfiles = input$nProfiles, lrSims = input$nSimulations,  thresholdIP = input$thresholdIP))
+      ped = relabel(x, "E1", "NN_1")     
+      priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
+               nProfiles = input$nProfiles, lrSims = input$nSimulations,  thresholdIP = input$thresholdIP)
     }
-
-  })   
+  }) %>%
+  bindEvent(input$goPriBuilt)
   
   
   output$powerPlotFam = renderPlot({
-
       file = input$famPower
       ext = getExt(file = file)
-      input$goPowerLoad
-      isolate(familias(file = file, method = "Power", DVI = FALSE, threshold = NULL,
+      familias(file = file, method = "Power", DVI = FALSE,
                seed = input$seed, lrSims = input$nSimulations, 
-               plotOnly = input$plotOnlyFamPower, Log10 = input$log10PowerFam))
-  })
+               plotOnly = input$plotOnlyFamPower, Log10 = input$log10PowerFam)
+  }) %>%
+  bindEvent(input$goPowerLoad)
+  
   
   
   output$priPlotPremade = renderImage( {
@@ -461,15 +460,16 @@ server <- function(input, output, session) {
     , deleteFile = FALSE)
   
   output$priPlotFam = renderPlot({
-    input$goPriLoad
+
     file = input$priPower
     ext = getExt(file = file)
-    isolate(familias(file = file, method = "Prioritise", DVI = FALSE,
+    familias(file = file, method = "Prioritise", DVI = FALSE,
              plotOnly = input$plotOnlyFamPri, nProfiles = input$nProfiles,
-             thresholdIP = input$thresholdIP))
-  })
+             thresholdIP = input$thresholdIP)
+  }) %>%
+    bindEvent(input$goPriLoad)
   
-      output$DVISummaryBuiltIn <- renderText({
+    output$DVISummaryBuiltIn <- renderText({
         if(input$dat == "Family with three missing")
           summariseDVIreturned(example1$pm, example1$am, example1$missing, header = "Tutorial data. ")
         else if (input$dat == "grave")
