@@ -1,6 +1,6 @@
-"Output from Familias, version 3.2.9"
+"Output from Familias, version 3.3"
 "DO NOT EDIT!"
-3.2.9 (DVI)
+3.3 (DVI)
 ""
 0
 "Known relations"
@@ -527,9 +527,9 @@
 0
 8	(DatabaseSize = 2500 , Dropout probability = 0 , Minor allele frequency = 0 )
 "6"
-0.0008983829556
+0.0008983829555
 "7"
-0.0008983829556
+0.0008983829555
 "8"
 0.5593929726
 "9"
@@ -541,7 +541,7 @@
 "12"
 0.03284089839
 "13"
-0.0008983829556
+0.0008983829555
 "FGA"
 0.001
 0.001
@@ -775,7 +775,7 @@
 0
 7	(DatabaseSize = 2500 , Dropout probability = 0 , Minor allele frequency = 0 )
 "11"
-0.004673004677
+0.004673004678
 "12"
 0.02803702804
 "13"
@@ -892,7 +892,7 @@
 "17"
 0.07944262453
 "18"
-0.009346431125
+0.009346431126
 "D2S441"
 0.001
 0.001
@@ -1340,7 +1340,7 @@ nFamilies= 5
 [[[Family 1 ]]]
 Name= Family 1
 [[[[Persons]]]]
-nPersons= 1
+nPersons= 2
 [[[[[Person 1]]]]]
 Name= Father
 Gender= Male
@@ -1391,6 +1391,11 @@ Allele2= 11
 SystemName= VWA
 Allele1= 16
 Allele2= 19
+[[[[[Person 2]]]]]
+Name= Missing female 1
+Gender= Female
+[[[[[[DNA data]]]]]]
+nSystems= 0
 [[[[Pedigrees]]]]
 nPedigrees= 2
 [[[[[Pedigree 1]]]]]
@@ -1406,7 +1411,7 @@ Child= Missing person
 [[[Family 2 ]]]
 Name= Family 2
 [[[[Persons]]]]
-nPersons= 3
+nPersons= 4
 [[[[[Person 1]]]]]
 Name= Brother
 Gender= Male
@@ -1467,6 +1472,11 @@ Name= Mother
 Gender= Female
 [[[[[[DNA data]]]]]]
 nSystems= 0
+[[[[[Person 4]]]]]
+Name= Missing female 1
+Gender= Female
+[[[[[[DNA data]]]]]]
+nSystems= 0
 [[[[Pedigrees]]]]
 nPedigrees= 2
 [[[[[Pedigree 1]]]]]
@@ -1494,7 +1504,7 @@ Child= Brother
 [[[Family 3 ]]]
 Name= Family 3
 [[[[Persons]]]]
-nPersons= 1
+nPersons= 2
 [[[[[Person 1]]]]]
 Name= Mother
 Gender= Female
@@ -1545,6 +1555,11 @@ Allele2= 9
 SystemName= VWA
 Allele1= 16
 Allele2= 17
+[[[[[Person 2]]]]]
+Name= Missing female 1
+Gender= Female
+[[[[[[DNA data]]]]]]
+nSystems= 0
 [[[[Pedigrees]]]]
 nPedigrees= 2
 [[[[[Pedigree 1]]]]]
@@ -1560,7 +1575,7 @@ Child= Missing person
 [[[Family 4 ]]]
 Name= Family 4
 [[[[Persons]]]]
-nPersons= 1
+nPersons= 2
 [[[[[Person 1]]]]]
 Name= Son
 Gender= Male
@@ -1611,6 +1626,11 @@ Allele2= 8
 SystemName= VWA
 Allele1= 17
 Allele2= 20
+[[[[[Person 2]]]]]
+Name= Missing female 1
+Gender= Female
+[[[[[[DNA data]]]]]]
+nSystems= 0
 [[[[Pedigrees]]]]
 nPedigrees= 2
 [[[[[Pedigree 1]]]]]
@@ -1626,7 +1646,7 @@ Child= Son
 [[[Family 5 ]]]
 Name= Family 5
 [[[[Persons]]]]
-nPersons= 3
+nPersons= 4
 [[[[[Person 1]]]]]
 Name= Brother2
 Gender= Male
@@ -1684,6 +1704,11 @@ Gender= Male
 nSystems= 0
 [[[[[Person 3]]]]]
 Name= Mother
+Gender= Female
+[[[[[[DNA data]]]]]]
+nSystems= 0
+[[[[[Person 4]]]]]
+Name= Missing female 1
 Gender= Female
 [[[[[[DNA data]]]]]]
 nSystems= 0
