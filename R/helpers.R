@@ -45,11 +45,12 @@ pedPower = function(claim, nsim = 10, thresh = NULL, seed = 1729, lastMarker = 3
 
 # Wrapper for jointDVI
 
-myjointDVI = function(pm, am, missing, mutation = FALSE){
+myjointDVI = function(pm, am, missing, mutation = FALSE, thresholdLR = 0){
   if(mutation)
-    jointDVI(pm, am, missing, disableMutation = FALSE)
+    res = jointDVI(pm, am, missing, disableMutation = FALSE)
    else
-    jointDVI(pm, am, missing)
+    res = jointDVI(pm, am, missing)
+   res[res$LR >= thresholdLR, ]
 }
 
 #' Help functions for dviapp
@@ -104,39 +105,39 @@ priPower = function(ped, plotPed = T, nMark = 22, seed = 17, nProfiles = 1, lrSi
 
 
 
-IBDestimates = function(pm, nlines = 10, sorter = FALSE){
+IBDestimates = function(pm,  sorter = TRUE, thresholdLR = 0){
   res = checkPairwise(pm, plot = F)
   if(sorter)
     res = res[order(res$LR, decreasing = TRUE),]
-  head(res[,-c(7:9)])
+  res[res$LR >= thresholdLR,-c(7:9)]
 }
 
 #' RData
 #' Function to process RData input to DVI
 #' 
 
-RData = function(file = input$file1, nlines = 10, sorter = TRUE,
-                 method = NULL, refFam = 1, mutation = FALSE){
+RData = function(file = input$file1, sorter = TRUE,
+                 method = NULL, refFam = 1, mutation = FALSE, thresholdLR = NULL){
   load(file$datapath)
   if(method == 'Exclusion'){
-    if(differentMarkers(pm, am))
+    if(differentMarkers(pm, am)$ulike)
       stop(safeError("Must have the same markers for all pm and am data"))
     exclusionMatrix(pm, am, missing)
   }
   else if (method == 'IBD estimates')
-     checkPairwise(pm, plot = F)
+     IBDestimates(pm, thresholdLR = thresholdLR)
   else if (method == 'Pairwise'){
-    if(differentMarkers(pm, am))
+    if(differentMarkers(pm, am)$ulike)
       stop(safeError("Must have the same markers for all pm and am data"))
     pairwiseLR(pm, am, missing)$LRmatrix
   }
   else if (method == 'Joint'){
-    if(differentMarkers(pm, am))
+    if(differentMarkers(pm, am)$ulike)
       stop(safeError("Must have the same markers for all pm and am data"))
-    myjointDVI(pm, am, missing, mutation)
+    myjointDVI(pm, am, missing, mutation, thresholdLR = thresholdLR)
   }
   else if (method == 'Posterior'){
-    if(differentMarkers(pm, am))
+    if(differentMarkers(pm, am)$ulike)
       stop(safeError("Must have the same markers for all pm and am data"))
     Bmarginal(myjointDVI(pm, am, missing, mutation), missing)
   }
@@ -190,8 +191,9 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
   
   if(nam == 1 ) t7 = paste(nam, "reference family. ")
   if(nam > 1 ) t7 = paste(nam, "reference families. ")
+  t8 = differentMarkers(pm, am)$tekst
 
-  text = glue(header, t1, t2, t3, t4, t5, t6, t7)
+  text = glue(header, t1, t2, t3, t4, t5, t6, t7, t8)
   
   text
   
@@ -204,7 +206,7 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
 familias =  function(file = NULL, method = NULL, 
                      relabel = TRUE, miss = 'Missing person', refFam = 1, DVI = TRUE,
                      nProfiles = 1, lrSims = 100, seed = 17, thresholdIP = 10000,
-                     plotOnly = TRUE, Log10 = TRUE, mutation = FALSE){
+                     plotOnly = TRUE, Log10 = TRUE, mutation = FALSE, thresholdLR = 0){
   x = readFam(file$datapath)
   
   #Relabel if DVI and not power
@@ -240,27 +242,27 @@ familias =  function(file = NULL, method = NULL,
     summariseDVIreturned(pm, am, miss, header = "Familias data. ")
   
   else if (method == "IBD estimates")
-    checkPairwise(pm, plot = F)[,-c(7:9)]
-  
+    IBDestimates(pm, thresholdLR = thresholdLR)
+
   else if (method == "Exclusion"){
-    if(differentMarkers(pm, am))
+    if(differentMarkers(pm, am)$ulike)
       stop(safeError("Must have the same markers for all pm and am data"))
     exclusionMatrix(pm, am, miss)
   }
   
   else if (method == "Pairwise"){
-    if(differentMarkers(pm, am))
+    if(differentMarkers(pm, am)$ulike)
       stop(safeError("Must have the same markers for all pm and am data"))
     pairwiseLR(pm, am, miss)$LRmatrix
   }
   
   else if (method == "Joint"){
-    if(differentMarkers(pm, am))
+    if(differentMarkers(pm, am)$ulike)
       stop(safeError("Must have the same markers for all pm and am data"))
-    myjointDVI(pm, am, miss, mutation)
+    myjointDVI(pm, am, miss, mutation, thresholdLR = thresholdLR)
   }
   else if (method == "Posterior"){
-    if(differentMarkers(pm, am))
+    if(differentMarkers(pm, am)$ulike)
       stop(safeError("Must have the same markers for all pm and am data"))
     Bmarginal(myjointDVI(pm, am, miss, mutation), miss)
   }
@@ -336,8 +338,26 @@ getExt = function(file){
 }
 
 differentMarkers = function(pm, am){
-  nPM = unlist(lapply(pm, function(x) nMarkers(x)))
-  nAM = unlist(lapply(am, function(x) nMarkers(x)))
-  length(unique(c(nPM,nAM))) != 1
+  if(length(pm) == 1)
+    nPM = nMarkers(pm)
+  else
+    nPM = unlist(lapply(pm, function(x) nMarkers(x)))
+  if(is.ped(am))
+    nAM = nMarkers(am)
+  else
+   nAM = unlist(lapply(am, function(x) nMarkers(x)))
+  nM = unique(c(nPM,nAM))
+  ulike = (length(nM) != 1)
+  if(ulike){
+    ra = range(nM)
+    tekst = paste("The number of markers are in the range", ra[1],"-", ra[2],".")
+  }
+  else{
+    if(nM == 1)
+       tekst = "There is 1 marker."
+    else
+      tekst = paste("There are", nM, "markers.")
+  }
+  list(ulike = ulike, tekst = tekst)
 }
   

@@ -5,6 +5,7 @@ suppressPackageStartupMessages({
   library(glue)
   library(ggplot2)
   library(patchwork)
+  library(magrittr)
 })
 
 version = 1.0
@@ -22,64 +23,56 @@ ui <- fluidPage(
       # Button to return to introduction         
       tabPanel(icon("home"),
                
-               fluidRow(
-                 column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 3), 
-                 
+            fluidRow(
+                 column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 3),
                  column(
                    "This app deals with Disaster Victim Identification (DVI) problems and power 
-                     calculation for kinship problems. Our goal has been to make  available functionality
-                     in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
-                     in the", a(href="https://www.familias.no", "Familias software.",target="_blank"),
+                    calculation for kinship problems. Our goal has been to make  available functionality
+                    in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
+                    in the", a(href="https://www.familias.no", "Familias software.",target="_blank"),
                    "There are tree modules, all based on built in cases or user data (Familias or R files):",
                    br(),
-                   strong("- power:"), "Simulations can be done to 
-                   determine if goals are likely to be achieved.",
+                   strong("- power:"), "Simulations can be done to determine if goals are likely to be achieved.",
                    br(),
                    strong("- priority:"), "The aim is to find the optimal extra persons to genotype.",
                    br(),
                    strong("- DVI:"), "Methods to include or exclude missing persons are provided.",
                    br(), 
-                      p("For more information, check the books:",
-                     a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
-                       "Mass identications,",target="_blank"), "(Kling et al., 2021),",
-                     a(href="https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2",  
-                       "Pedigree Analysis in R",target="_blank")," (Vigeland, 2021), and the",
-                     a(href=" paper", "dvir paper",target="_blank"),
-                     "(Vigeland and Egeland, 2021). For further documentation and bug reporting,
-                     please go ",
-                     a(href="https://github.com/thoree/dviapp", "here.",target="_blank"),),
-                   
+                   "For more information, check the books:",
+                   a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
+                   "Mass identications,",target="_blank"), "(Kling et al., 2021),",
+                   a(href="https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2",  
+                   "Pedigree Analysis in R",target="_blank")," (Vigeland, 2021), and the",
+                    a(href=" paper", "dvir paper",target="_blank"),
+                    "(Vigeland and Egeland, 2021). For further documentation and bug reporting,
+                    please go ",
+                    a(href="https://github.com/thoree/dviapp", "here.",target="_blank"),
                    width = 8)
                ),
        ),
                
         navbarMenu("Power",
-                   
           tabPanel("Explanations",
-               p("LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
+               "LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
                has been computed for 1000 simulations of MP and REF conditioned on H1 below.
                The simulations use the 35 markers in the database `NorwegianFrequencies` 
                documented in the R library forrel. In `Power > Built in cases` some prepared
                cases can be run and parameters like the number of markers, 
                can  be changed. In `Power > Load data`, similar output is obtained by loading a familias file
-               prepared by the user. The simulations will be conditioned on genotyped individuals."),
+               prepared by the user. The simulations will be conditioned on genotyped individuals.",
                fluidRow(
                  column(tags$img(src = "brotherPow.png", width = "792px", height = "240px"), width = 12),
                  ), 
           ),
-
-                          
-
                  
-            tabPanel("Analyses based on built in cases",
+          tabPanel("Analyses based on built in cases",
                      
               actionButton("resetPowerBuilt", "Reset window", class = "btn btn-danger",
                   style = "position: absolute; bottom:30px; width: 170px"),
                   
-              p("To perform the simulation, uncheck `Only plot pedigree` and press `Go!`."),
+              "To perform the simulation, uncheck `Only plot pedigree` and press `Go!`.",
               br(),
                 sidebarLayout(position = "left",
-                                
                   sidebarPanel(
                     selectInput("pedigreePowerSimulated", label = "Built in pedigree for power simulation",
                       choices = list( "None selected", "Missing brother", 
@@ -89,7 +82,6 @@ ui <- fluidPage(
                     checkboxInput("log10Power", label = "log10(LR)", value = TRUE), 
                     checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),
                     actionButton("goPowerBuilt", "Go!", class = "btn-success"),
-
                   ),
                   mainPanel(
                     fluidRow(
@@ -104,15 +96,14 @@ ui <- fluidPage(
               actionButton("resetPowerFam", "Reset window", class = "btn btn-danger",
                   style = "position: absolute; bottom:30px; width: 170px"),
 
-                "Power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`. The missing person should be
-                   named `MP` and the reference `REF`. The file",
-                   a(href="https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
-                   "gives output similar to that
-                   in `Power > Explanations` (but not identical, even for the same seed, since the simulation
-                   implementation is not identical).  Genotyped individuals (if any) are hatched and first marker displayed in the plot
-                   and these individuals will be conditioned on. Further information on the fam file loaded, and potential 
-                   errors in the conversion of the fam file, are reported
-                   to the console.",
+                "Power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`.
+                The missing person should be named `MP` and the reference `REF`. The file",
+                a(href="https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
+                "gives output similar to that in `Power > Explanations` (but not identical, even for the 
+                same seed, since the simulation implementation is not identical).  Genotyped individuals 
+                (if any) are hatched and first marker displayed in the plot and these individuals
+                will be conditioned on. Further information on the fam file loaded, and potential 
+                errors in the conversion of the fam file, are reported to the console.",
                 br(),
                   sidebarLayout(position = "left",
                     sidebarPanel(
@@ -130,21 +121,20 @@ ui <- fluidPage(
                  ),              
                ), 
  
-               navbarMenu("Prioritise",
-                          
+               navbarMenu("Prioritise", 
                  tabPanel("Explanations",
-                        p("The below explanation applies to the example obtained if 'brother' (default) 
-                        is chosen in the pull down menu below.
-                        The LR comparing H1: `MP and REF full brothers, versus H2: ``MP and REF unrelated`,
-                        has been computed for 100 unconditional simulations of MP and REF conditioned on H1 below.
-                        This corresponds to the `REF` case in the panel to the right. We see that we can expect no exclusions
+                        "The below explanation applies to the example obtained if 'brother' (default) 
+                        is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers, 
+                        versus H2: ``MP and REF unrelated`, has been computed for 100 unconditional simulations 
+                        of MP and REF conditioned on H1 below. This corresponds to the `REF` case in the panel 
+                        to the right. We see that we can expect no exclusions
                         (in fact exclusions are impossible with only two brothers) and log10(LR) slightly exceeding 10. If one brother, 
                         `E1` is genotyped we can expect more than 10 exclusions and a log10(LR) slightly exceeding 20. Finally,
                         if both brothers `E1`and `E2` are genotyped, the expected number exclusions and LR increase further.
                         10 profiles are simulated for the relatives (only 'REF' below), assuming H1. For each of these 10 profiles,
                         corresponding to the smaller circles, 1000 simulations are performed for `Missing` under H1 and H2.
                         In `Prioritise > Built in cases` simulations can be performed for various parameter choices. In
-                        `Prioritise > load` similar simulations can be performed from yourfam file."),
+                        `Prioritise > load` similar simulations can be performed from yourfam file.",
                         br(),
                         sidebarLayout(position = "left",
                           sidebarPanel(
@@ -283,8 +273,8 @@ ui <- fluidPage(
                                                              "Joint",
                                                              "Posterior")
                                             ),
-                                            downloadButton("downloadTable", "Download DVI table output"),
-                                            #actionButton("goDVIBuilt", "Go!", class = "btn-success"),
+                                            actionButton("goDVIBuilt", "Go!", class = "btn-success"),
+                                            downloadButton("downloadTable", "Download DVI table output")
                                             ),
                                             mainPanel(
                                               fluidRow(
@@ -309,7 +299,7 @@ ui <- fluidPage(
                               # 
                               sidebarLayout(position = "left",
                                 sidebarPanel(
-                                  fileInput("file1", "User data (optional fam or RData file) for DVI"),
+                                  fileInput("file1", "fam - or RData file"),
                                   checkboxInput("relabel", label = "Relabel", value =  FALSE),
 
                                   numericInput(
@@ -328,6 +318,7 @@ ui <- fluidPage(
                                                    "Joint",
                                                    "Posterior")
                                   ),
+                                  actionButton("goDVILoad", "Go!", class = "btn-success"),
                                   downloadButton("downloadTableLoad", "Download DVI table output")
                                 ),
                                             mainPanel(
@@ -350,25 +341,30 @@ ui <- fluidPage(
                        p("Some default settings can be changed below"),
                        fluidRow(
                          
-                         column(3,
+                         column(2,
                                 numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729)),
                          
-                         column(3,
-                                numericInput("nSimulations", "No of simulations", min = 0, max = 10000, step = 100, value = 100),)
+                         column(2,
+                                numericInput("nSimulations", "No of simulations", min = 0, max = 10000, 
+                                             step = 100, value = 100),),
+                         column(2,
+                                numericInput("nProfiles", "No of sims for refs", min = 1, max = 10, value = 1)),
                        ),
                        
                        fluidRow(
-                         column(3,
-                               sliderInput("thresholdIP", "Threshold inclusion power", min = 0, max = 10000, 
-                                           step = 100, value = 10000)),
-                         column(3,
-                                checkboxInput("mutation", label = "Mutation", value = FALSE)), 
+                         column(4,
+                               sliderInput("thresholdIP", "LR threshold inclusion power", min = 0, max = 10000, 
+                                           step = 1000, value = 10000)),
+                         column(4,
+                                sliderInput("thresholdLRDisplay", "Show LR above", min = 0, max = 1000, 
+                                            step = 10, value = 0)),
+                
                        ),
                          
                        fluidRow(
-                         column(3,
-                                numericInput("nProfiles", "No of sims for references", min = 1, max = 10, value = 1)),
-                         column(3,
+                         column(2,
+                                checkboxInput("mutation", label = "Mutation", value = FALSE)),
+                         column(2,
                                 numericInput("nMissing", "No missing", min = -1, value = -1)),
                        )      
                )
@@ -473,15 +469,18 @@ server <- function(input, output, session) {
              thresholdIP = input$thresholdIP))
   })
   
+      output$DVISummaryBuiltIn <- renderText({
+        if(input$dat == "Family with three missing")
+          summariseDVIreturned(example1$pm, example1$am, example1$missing, header = "Tutorial data. ")
+        else if (input$dat == "grave")
+          summariseDVIreturned(grave$pm, grave$am, grave$missing, header = "grave data. ")
+        else if (input$dat == "planecrash")
+          summariseDVIreturned(planecrash$pm, planecrash$am, planecrash$missing, header = "planecrash data. ")
+      }) 
+      # %>%
+      # bindEvent(input$goDVIBuilt)
 
-    output$DVISummaryBuiltIn <- renderText({
-      if(input$dat == "Family with three missing")
-        summariseDVIreturned(example1$pm, example1$am, example1$missing, header = "Tutorial data. ")
-      else if (input$dat == "grave")
-        summariseDVIreturned(grave$pm, grave$am, grave$missing, header = "grave data. ")
-      else if (input$dat == "planecrash")
-        summariseDVIreturned(planecrash$pm, planecrash$am, planecrash$missing, header = "planecrash data. ")
-    })
+    
     
     output$DVISummaryLoad <- renderText({
         file = input$file1
@@ -492,18 +491,21 @@ server <- function(input, output, session) {
          familias(file = file, method = "Describe data", relabel = input$relabel, DVI = TRUE)
      })      
     
-    output$table <- renderTable(rownames = T,{
-      if(input$analysis == "IBD estimates")
-        tableIBD()
-      else if (input$analysis == "Exclusion")
-        tableExclusion()
-      else if (input$analysis == "Pairwise")
-        tablePairwise()
-      else if (input$analysis == "Joint")
-        tableJoint()
-      else if (input$analysis == "Posterior")
-        tablePosterior()
-    })
+
+      output$table <- renderTable(rownames = T,{
+        if(input$analysis == "IBD estimates")
+          tableIBD()
+        else if (input$analysis == "Exclusion")
+          tableExclusion()
+        else if (input$analysis == "Pairwise")
+          tablePairwise()
+        else if (input$analysis == "Joint")
+          tableJoint()
+        else if (input$analysis == "Posterior")
+          tablePosterior()
+      }) %>%
+        bindEvent(input$goDVIBuilt)
+
     
     output$tableLoad <- renderTable(rownames = T,{
       if(input$analysisLoad == "IBD estimates")
@@ -516,25 +518,28 @@ server <- function(input, output, session) {
         tableJoint()
       else if (input$analysisLoad == "Posterior")
         tablePosterior()
-    })
+    }) %>%
+      bindEvent(input$goDVILoad)
     
     # Defines reactive functions for table output, i.e., for
     # IBD estimates, exclusion, pairwise, joint and posterior
     
     tableIBD = reactive({
       if(input$dat == "Family with three missing")
-        IBDestimates(example1$pm, nlines = 10, sorter = TRUE)
+        IBDestimates(example1$pm, thresholdLR = input$thresholdLRDisplay)
       else if (input$dat == "grave")
-        IBDestimates(grave$pm, nlines = 10, sorter = TRUE)
+        IBDestimates(grave$pm, thresholdLR = input$thresholdLRDisplay)
       else if(input$dat == "planecrash")
-        IBDestimates(planecrash$pm, nlines = 10, sorter = TRUE)
+        IBDestimates(planecrash$pm,  thresholdLR = input$thresholdLRDisplay)
       else{ 
         file = input$file1
         ext = getExt(file = file)
         if(ext == "RData" |  ext == "rda")
-          RData(file = file, method = "IBD estimates",  nlines = 10, sorter = TRUE)
+          RData(file = file, method = "IBD estimates",  sorter = TRUE,
+                thresholdLR = input$thresholdLRDisplay)
         else if(ext == "fam")
-          familias(file = file, method = "IBD estimates", relabel = input$relabel)
+          familias(file = file, method = "IBD estimates", relabel = input$relabel,
+                   thresholdLR = input$thresholdLRDisplay)
       }
     })
     
@@ -589,11 +594,13 @@ server <- function(input, output, session) {
     
     tableJoint = reactive({
       if(input$dat == "Family with three missing")
-        myjointDVI(example1$pm, example1$am , example1$missing, mutation = input$mutation)
+        myjointDVI(example1$pm, example1$am , example1$missing, mutation = input$mutation,
+                   thresholdLR = input$thresholdLRDisplay)
       else if (input$dat == "grave")
         data.frame( Warning = "Not implemented, takes too much time. Runs in R library dvir")
       else if (input$dat == "planecrash")
-        myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, mutation = input$mutation)
+        myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, mutation = input$mutation,
+                   thresholdLR = input$thresholdLRDisplay)
       else{
         if(!input$relabel)
           stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
@@ -601,14 +608,15 @@ server <- function(input, output, session) {
         file = input$file1
         ext = getExt(file = file)
         if (ext == "RData" |  ext == "rda")
-          RData(file = file, method = 'Joint', mutation = input$mutation)
+          RData(file = file, method = 'Joint', mutation = input$mutation,
+                thresholdLR = input$thresholdLRDisplay)
         else {
         if (input$nMissing < 0)
             MPs = 'Missing person'
         else
             MPs = paste0("M", 1:input$nMissing)
           familias(file = file, method = 'Joint',  relabel = input$relabel, miss = MPs,
-                   mutation = input$mutation)
+                   mutation = input$mutation, thresholdLR = input$thresholdLRDisplay)
         }
         
       }
@@ -736,17 +744,17 @@ server <- function(input, output, session) {
         }
     })
     
-  observe({
-    if(!is.null(input$file1)){
-      updateSelectInput(session, "dat", label = "Built in data for DVI",
-                        choices = list("None selected","Family with three missing", "grave", 
-                                       "planecrash"),
-                        selected = "None selected") 
-      updateNumericInput(session, "refFam", value = 0) 
-      updateSelectInput(session, "analysis", selected = "None selected")
-    }
- 
-  })
+  # observe({
+  #   if(!is.null(input$file1)){
+  #     updateSelectInput(session, "dat", label = "Built in data for DVI",
+  #                       choices = list("None selected","Family with three missing", "grave", 
+  #                                      "planecrash"),
+  #                       selected = "None selected") 
+  #     updateNumericInput(session, "refFam", value = 0) 
+  #     updateSelectInput(session, "analysis", selected = "None selected")
+  #   }
+  # 
+  # })
   
   
    observeEvent(input$resetPowerBuilt, {
@@ -815,6 +823,7 @@ server <- function(input, output, session) {
     updateSelectInput(session, "analysisLoad", selected = "None selected")
     updateCheckboxInput(session, "mutation", label = "Mutation", value = FALSE) 
     updateSliderInput(session, "thresholdIP", value = 10000) 
+    updateSliderInput(session,"thresholdLRDisplay", value = 0)
   })
 
    # Change 0 simulations to 1 always 
