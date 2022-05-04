@@ -486,9 +486,10 @@ server <- function(input, output, session) {
         file = input$file1
         ext = getExt(file = file)
         if (ext == "RData" |  ext == "rda" )
-          RData(file = file, method = "Describe data")
+          RData(file = file, method = "Describe data", nMissingSpecified = input$nMissing)
         else if (ext ==  "fam")
-         familias(file = file, method = "Describe data", relabel = input$relabel, DVI = TRUE)
+         familias(file = file, method = "Describe data", relabel = input$relabel, DVI = TRUE,
+                  nMissingSpecified = input$nMissing)
      })      
     
 

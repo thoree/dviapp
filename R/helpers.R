@@ -117,7 +117,8 @@ IBDestimates = function(pm,  sorter = TRUE, thresholdLR = 0){
 #' 
 
 RData = function(file = input$file1, sorter = TRUE,
-                 method = NULL, refFam = 1, mutation = FALSE, thresholdLR = NULL){
+                 method = NULL, refFam = 1, mutation = FALSE, thresholdLR = NULL,
+                 nMissingSpecified = -1){
   load(file$datapath)
   if(method == 'Exclusion'){
     if(differentMarkers(pm, am)$ulike)
@@ -152,7 +153,7 @@ RData = function(file = input$file1, sorter = TRUE,
     }
 
   else if (method == 'Describe data')
-    summariseDVIreturned(pm, am, missing)
+    summariseDVIreturned(pm, am, missing, nMissingSpecified = nMissingSpecified)
 }
 
 
@@ -160,11 +161,14 @@ RData = function(file = input$file1, sorter = TRUE,
 #' modification of summariseDVI to return output
 #'
 
-summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
+summariseDVIreturned = function (pm, am, missing, header = "DVI data.", nMissingSpecified = -1){
   
   vics = unlist(labels(pm))
   nvics = length(vics)
-  nmissing = length(missing)
+  if(nMissingSpecified >- 1)
+    nmissing = nMissingSpecified
+  else
+    nmissing = length(missing)
   refs = typedMembers(am)
   nrefs = length(refs)
   nam = if (is.ped(am)) 
@@ -174,10 +178,10 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
   if(nvics == 1) t2 = paste(vics[1],". ")
   if(nvics > 1) t2 = paste(vics[1],",...,",vics[nvics], ". ")
 
-  t3 = paste(nmissing, "missing: ")
-  if(nmissing == 1) t4 = paste(missing[1], ". ")
-  if(nmissing > 1) t4 = paste(missing[1],",...,",missing[nmissing], ". ")
-  
+  t3 = paste(nmissing, "missing. ")
+  # if(nmissing == 1) t4 = paste(missing[1], ". ")
+  # if(nmissing > 1) t4 = paste(missing[1],",...,",missing[nmissing], ". ")
+  # 
 
   if(nrefs == 1){
     t5 = paste(nrefs, "typed ref: ")
@@ -193,7 +197,7 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
   if(nam > 1 ) t7 = paste(nam, "reference families. ")
   t8 = differentMarkers(pm, am)$tekst
 
-  text = glue(header, t1, t2, t3, t4, t5, t6, t7, t8)
+  text = glue(header, t1, t2, t3, t5, t6, t7, t8)
   
   text
   
@@ -206,7 +210,8 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data."){
 familias =  function(file = NULL, method = NULL, 
                      relabel = TRUE, miss = 'Missing person', refFam = 1, DVI = TRUE,
                      nProfiles = 1, lrSims = 100, seed = 17, thresholdIP = 10000,
-                     plotOnly = TRUE, Log10 = TRUE, mutation = FALSE, thresholdLR = 0){
+                     plotOnly = TRUE, Log10 = TRUE, mutation = FALSE, thresholdLR = 0,
+                     nMissingSpecified = -1){
   x = readFam(file$datapath)
   
   #Relabel if DVI and not power
@@ -239,7 +244,7 @@ familias =  function(file = NULL, method = NULL,
   }
 
   if(method == "Describe data")
-    summariseDVIreturned(pm, am, miss, header = "Familias data. ")
+    summariseDVIreturned(pm, am, miss, header = "Familias data. ", nMissingSpecified = nMissingSpecified)
   
   else if (method == "IBD estimates")
     IBDestimates(pm, thresholdLR = thresholdLR)
