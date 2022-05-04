@@ -8,46 +8,55 @@ suppressPackageStartupMessages({
   library(magrittr)
 })
 
-version = 1.0
+VERSION = 1.0
 
 ui <- fluidPage(
   
   titlePanel("Disaster Victim Identification"),
   
-    # # Reset all input except file load ( don't know how)
-    # actionButton("reset", "Reset all", class = "btn btn-danger",
-    #               style = "position: absolute; bottom:30px; width: 170px"),
-                        
     navbarPage("Introduction",
                
       # Button to return to introduction         
-      tabPanel(icon("home"),
+       tabPanel(icon("home"),
                
             fluidRow(
-                 column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 3),
-                 column(
-                   "This app deals with Disaster Victim Identification (DVI) problems and power 
-                    calculation for kinship problems. Our goal has been to make  available functionality
-                    in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
-                    in the", a(href="https://www.familias.no", "Familias software.",target="_blank"),
-                   "There are tree modules, all based on built in cases or user data (Familias or R files):",
-                   br(),
-                   strong("- power:"), "Simulations can be done to determine if goals are likely to be achieved.",
-                   br(),
-                   strong("- priority:"), "The aim is to find the optimal extra persons to genotype.",
-                   br(),
-                   strong("- DVI:"), "Methods to include or exclude missing persons are provided.",
-                   br(), 
-                   "For more information, check the books:",
-                   a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
-                   "Mass identications,",target="_blank"), "(Kling et al., 2021),",
-                   a(href="https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2",  
-                   "Pedigree Analysis in R",target="_blank")," (Vigeland, 2021), and the",
-                    a(href=" paper", "dvir paper",target="_blank"),
-                    "(Vigeland and Egeland, 2021). For further documentation and bug reporting,
-                    please go ",
-                    a(href="https://github.com/thoree/dviapp", "here.",target="_blank"),
-                   width = 8)
+              
+              column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 3),
+              column(
+                "This app deals with Disaster Victim Identification (DVI) problems and power 
+                calculation for kinship problems. Our goal has been to make  available functionality
+                in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
+                in the", 
+                a(href="https://www.familias.no", "Familias software.",target="_blank"),
+                "There are tree modules, all based on built in cases or user data (Familias or R files):",
+                br(),
+                strong("- power:"), "Simulations can be done to determine if goals are likely to be achieved.",
+                br(),
+                strong("- priority:"), "The aim is to find the optimal extra persons to genotype.",
+                br(),
+                strong("- DVI:"), "Methods to include or exclude missing persons are provided.",
+                br(), 
+                "For more information, check the books:",
+                
+                a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
+                "Mass identications,",target="_blank"), 
+                
+                "(Kling et al., 2021),",
+                
+                a(href="https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2",
+                "Pedigree Analysis in R",target="_blank")," 
+                
+                (Vigeland, 2021), and the",
+                
+                a(href="https://www.nature.com/articles/s41598-021-93071-5", "dvir paper",target="_blank"),
+                
+                "(Vigeland and Egeland, 2021). 
+                
+                For further documentation and bug reporting, please go ",
+                
+                a(href="https://github.com/thoree/dviapp", "here.",target="_blank"),
+                
+                width = 8)
                ),
        ),
                
@@ -67,17 +76,17 @@ ui <- fluidPage(
                  
           tabPanel("Analyses based on built in cases",
                      
-              actionButton("resetPowerBuilt", "Reset window", class = "btn btn-danger",
-                  style = "position: absolute; bottom:30px; width: 170px"),
+            actionButton("resetPowerBuilt", "Reset window", class = "btn btn-danger",
+              style = "position: absolute; bottom:30px; width: 170px"),
                   
-              "To perform the simulation, uncheck `Only plot pedigree` and press `Go!`.",
-              br(),
-                sidebarLayout(position = "left",
-                  sidebarPanel(
-                    selectInput("pedigreePowerSimulated", label = "Built in pedigree for power simulation",
-                      choices = list( "None selected", "Missing brother", 
-                                      "Missing uncle", "Missing first cousin",
-                                      "Missing GF, 2 grandchildren typed"),),
+            "To perform a simulation, choose a built in pedigree, uncheck `Only plot pedigree` and press `Go!`.",
+            br(),
+              sidebarLayout(position = "left",
+                sidebarPanel(
+                  selectInput("pedigreePowerSimulated", label = "Built in pedigree for power simulation",
+                    choices = list( "None selected", "Missing brother", "Missing uncle", "Missing first cousin",
+                                    "Missing GF, 2 grandchildren typed"),
+                    ),
                     sliderInput("lastMarker", "No of markers", min = 1, max = 35, step = 1, value = 22),
                     checkboxInput("log10Power", label = "log10(LR)", value = TRUE), 
                     checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),
@@ -92,11 +101,10 @@ ui <- fluidPage(
               ),
                
               tabPanel("Analyses based on user loaded data",
-                       
-              actionButton("resetPowerFam", "Reset window", class = "btn btn-danger",
+                actionButton("resetPowerFam", "Reset window", class = "btn btn-danger",
                   style = "position: absolute; bottom:30px; width: 170px"),
 
-                "Power is calculated by uploading a Familias file below and unchecking  `Only plot pedigree`.
+                "To perform a simulation, load a familias file, uncheck `Only plot pedigree` and press `Go!`.
                 The missing person should be named `MP` and the reference `REF`. The file",
                 a(href="https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
                 "gives output similar to that in `Power > Explanations` (but not identical, even for the 
@@ -122,270 +130,231 @@ ui <- fluidPage(
                ), 
  
                navbarMenu("Prioritise", 
+                          
                  tabPanel("Explanations",
-                        "The below explanation applies to the example obtained if 'brother' (default) 
-                        is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers, 
-                        versus H2: ``MP and REF unrelated`, has been computed for 100 unconditional simulations 
-                        of MP and REF conditioned on H1 below. This corresponds to the `REF` case in the panel 
-                        to the right. We see that we can expect no exclusions
-                        (in fact exclusions are impossible with only two brothers) and log10(LR) slightly exceeding 10. If one brother, 
-                        `E1` is genotyped we can expect more than 10 exclusions and a log10(LR) slightly exceeding 20. Finally,
-                        if both brothers `E1`and `E2` are genotyped, the expected number exclusions and LR increase further.
-                        10 profiles are simulated for the relatives (only 'REF' below), assuming H1. For each of these 10 profiles,
-                        corresponding to the smaller circles, 1000 simulations are performed for `Missing` under H1 and H2.
-                        In `Prioritise > Built in cases` simulations can be performed for various parameter choices. In
-                        `Prioritise > load` similar simulations can be performed from yourfam file.",
-                        br(),
-                        sidebarLayout(position = "left",
-                          sidebarPanel(
-                            selectInput("pedigreePri", label = "Built in pedigree for priority simulation",
-                                        choices = list( "brother", "None selected" ),
-                            ),
+                          
+                   "The below explanation applies to the example obtained if 'brother' (default) 
+                    is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers, 
+                    versus H2: ``MP and REF unrelated`, has been computed for 100 unconditional simulations 
+                    of MP and REF conditioned on H1 below. This corresponds to the `REF` case in the panel 
+                    to the right. We see that we can expect no exclusions
+                    (in fact exclusions are impossible with only two brothers) and log10(LR) slightly exceeding 10. 
+                    If one brother, 
+                    `E1` is genotyped we can expect more than 10 exclusions and a log10(LR) slightly exceeding 20. Finally,
+                    if both brothers `E1`and `E2` are genotyped, the expected number exclusions and LR increase further.
+                    10 profiles are simulated for the relatives (only 'REF' below), assuming H1. For each of these 10 profiles,
+                    corresponding to the smaller circles, 1000 simulations are performed for `Missing` under H1 and H2.
+                    In `Prioritise > Built in cases` simulations can be performed for various parameter choices. In
+                    `Prioritise > load` similar simulations can be performed from yourfam file.",
+                   
+                    br(),
+                    sidebarLayout(position = "left",
+                      sidebarPanel(
+                        selectInput("pedigreePri", label = "Built in pedigree for priority simulation",
+                          choices = list( "brother", "None selected" ),
                           ),
-                           mainPanel(
-                            fluidRow(
-                              column(plotOutput("priPlotPremade"),  width = 9)
+                        ),
+                        mainPanel(
+                          fluidRow(
+                            column(plotOutput("priPlotPremade"),  width = 9)
                             )
                           )
-                        ),
+                      ),
                  ), 
 
                  tabPanel("Analyses based on built in cases",
                           
-                  actionButton("resetPriBuilt", "Reset window", class = "btn btn-danger",
-                      style = "position: absolute; bottom:30px; width: 170px"),
+                   actionButton("resetPriBuilt", "Reset window", class = "btn btn-danger",
+                     style = "position: absolute; bottom:30px; width: 170px"),
                           
-                          p("Simulations explained in `Prioritise > Explanations` can be performed"),
-                          sidebarLayout(position = "left",
-                            sidebarPanel(
-                              selectInput("pedigreePowerSimulatedPri", 
-                                           label = "Built in pedigree for power simulation",
-                                           choices = list( "None selected", "Missing brother", 
-                                           "Missing uncle"),
-                                           ),
-                              sliderInput("lastMarkerPri", "No of markers", min = 1, max = 35, step = 1, value = 22),
-                              checkboxInput("plotOnlyBuiltPri", label = "Only plot pedigree", value = TRUE),
-                              actionButton("goPriBuilt", "Go!", class = "btn-success"),
-                                      ),
-                                        mainPanel(
-                                          fluidRow(
-                                            column(plotOutput("powerPlotSimulatedPri"),  width = 9)
-                                          )
-                                        )
-                          ),
+                     p("Simulations explained in `Prioritise > Explanations` can be performed"),
+                     sidebarLayout(position = "left",
+                       sidebarPanel(
+                         selectInput("pedigreePowerSimulatedPri", 
+                           label = "Built in pedigree for power simulation",
+                             choices = list( "None selected", "Missing brother", 
+                               "Missing uncle"),
+                           ),
+                         sliderInput("lastMarkerPri", "No of markers", min = 1, max = 35, step = 1, value = 22),
+                         checkboxInput("plotOnlyBuiltPri", label = "Only plot pedigree", value = TRUE),
+                         actionButton("goPriBuilt", "Go!", class = "btn-success"),
+                       ),
+                       mainPanel(
+                         fluidRow(
+                           column(plotOutput("powerPlotSimulatedPri"),  width = 9)
+                           )
+                         )
+                       ),
                  ),
                                   
                  tabPanel("Analyses based on user loaded data",
                           
-                  actionButton("resetPriFam", "Reset window", class = "btn btn-danger",
-                      style = "position: absolute; bottom:30px; width: 170px"),
+                   actionButton("resetPriFam", "Reset window", class = "btn btn-danger",
+                     style = "position: absolute; bottom:30px; width: 170px"),
                                                     
-                          "Priority power is calculated by uploading a Familias file. Here's an example:", 
-                           a(href="https://familias.name/dviapp/BrotherPriority.fam", "BrotherPriority.fam", target="_blank"),
-                            ". The missing person should be named `MP`, the reference `REF` and the extra candidates
-                            for genotyping `E1`and `E2`. The mentioned file gives output similar to that
-                            in `Priority > Explanations` (but not identical, even for the same seed, since the simulation
-                            implementation is not identical). Further information on the fam file loaded, and potential 
-                            errors in the conversion of the fam file, are reported to the console.",
-                          br(),
-                          sidebarLayout(position = "left",
-                            sidebarPanel(
-                              fileInput("priPower", "Familias file for priority simulation"),
-                              
-                              checkboxInput("plotOnlyFamPri", label = "Only plot pedigree", value = TRUE),
-                              actionButton("goPriLoad", "Go!", class = "btn-success"),
-
-                              ),
-                                mainPanel(
-                                  fluidRow( column(plotOutput("priPlotFam"),  width = 9))
-                                        )
-                          ),
-                  ),
+                  "Priority power is calculated by uploading a Familias file. Here's an example:",
+                  
+                  a(href="https://familias.name/dviapp/BrotherPriority.fam", "BrotherPriority.fam", target="_blank"),
+                  
+                  ". The missing person should be named `MP`, the reference `REF`, and the extra candidates
+                  for genotyping `E1`and `E2`. The mentioned file gives output similar to that
+                  in `Priority > Explanations` (but not identical, even for the same seed, since the simulation
+                  implementation is not identical). Further information on the fam file loaded, and potential 
+                  errors in the conversion of the fam file, are reported to the console.",
+                  
+                  br(),
+                    sidebarLayout(position = "left",
+                      sidebarPanel(
+                        fileInput("priPower", "Familias file for priority simulation"),
+                        checkboxInput("plotOnlyFamPri", label = "Only plot pedigree", value = TRUE),
+                        actionButton("goPriLoad", "Go!", class = "btn-success"),
+                        ),
+                      mainPanel(
+                        fluidRow( column(plotOutput("priPlotFam"),  width = 9))
+                        )
+                      ),
+                   ),
                ),
                           
                 navbarMenu("DVI",
-                           
-                           tabPanel("Explanations",
-                                    "Analyses can be done in this module from built in cases, from Familias (`fam`)
-                                      files or from R data. The below figure shows the planecrash data. When the
-                                      data is loaded in `DVI > Built in cases`, the following summary is provided:,
-                                    `DVI data. 8 victims: V1 ,..., V8 . 5 missing: M1 ,..., M5 . 
-                                      5 typed refs: R1 ,..., R5 . 5 reference families.`
-                                      The data is also available as a fam file:",
-                                    a(href="https://familias.name/dviapp/planecrash.fam", "planecrash.fam", target="_blank"),
-                                    ", and can also be downloaded as RData: ",
-                                    a(href="https://familias.name/dviapp/planecrash.RData", "planecrash.RData", target="_blank"),
-                                      ". See the documentation for the details on the five analyses implemented. Here
-                                      we only provide brief explanations:", br(), br(), 
-                                    strong("IBD estimates:"),"The pairwise relationship between all pairs of victims is
-                                         estimated.",
-                                    br(),
-                                    strong("Exclusion:"),"Each victim is tried as each missing person and the number 
-                                         of exclusions is given.",
-                                    br(),
-                                    strong("Pairwise LR:"), "For each victim V and each missing person M, the LR comparing
-                                      `V = M` to `V and M unrelated` is calculated.",
-                                    br(),
-                                    strong("Joint:"),  "All possible assignments of victims to missing,
-                                      are evaluated and solutions ranked according to the likelihood.",
-                                    br(),
-                                    strong("Posterior:"),  "Computes posterior pairing and non-pairing probabilities, 
-                                      based on a prior and the output from `Joint`.", br(),
-                                    mainPanel(
-                                      fluidRow(
-                                        column(plotOutput("planecrashPlot"),  width = 9)
-                                      )
-                                      
-                                    ),
-                           ),
-                           
-                     tabPanel("Analyses based on built in cases",
-                              
-                       actionButton("resetDVIBuilt", "Reset window", class = "btn btn-danger",
-                       style = "position: absolute; bottom:30px; width: 170px"),
                   
-                              # p("Select built in data below (or go to `Load data` if you would like to analyse 
-                              #    your own data)"),
-                              br(),
-                              sidebarLayout(position = "left",
-                                            sidebarPanel(
-                                            selectInput(
-                                                "dat", 
-                                                label = "Built in data for DVI",
-                                                choices = list("None selected",
-                                                               "Family with three missing", 
-                                                               "grave",
-                                                               "planecrash")
-                                              ),
-                                            numericInput(
-                                              "refFam", 
-                                              "Reference family to plot",
-                                              min = 0,
-                                              value = 0
-                                            ),                                        
-                                            selectInput(
-                                              "analysis",
-                                              label = "Choose DVI analysis",
-                                              choices = list("None selected",
-                                                             "IBD estimates",
-                                                             "Exclusion",
-                                                             "Pairwise",
-                                                             "Joint",
-                                                             "Posterior")
-                                            ),
-                                            actionButton("goDVIBuilt", "Go!", class = "btn-success"),
-                                            downloadButton("downloadTable", "Download DVI table output")
-                                            ),
-                                            mainPanel(
-                                              fluidRow(
-                                                column(tableOutput("table"),  width = 8),
-                                                column(textOutput("DVISummaryBuiltIn"),  width = 8),                                    
-                                                column(plotOutput("plot"),  width = 8)
-                                              )
-                                              
-                                            )
+                  tabPanel("Explanations",
+                           
+                    "Analyses can be done in this module from built in cases, from Familias (`fam`)
+                    files or from R data. The below figure shows the planecrash data. When the
+                    data is loaded in `DVI > Built in cases`, the following summary is provided:,
+                    `DVI data. 8 victims: V1 ,..., V8 . 5 missing. 
+                    5 typed refs: R1 ,..., R5 . 5 reference families.`
+                    The data is also available as a fam file:",
+                   
+                     a(href="https://familias.name/dviapp/planecrash.fam", "planecrash.fam", target="_blank"),
+                                    
+                    ", and can also be downloaded as RData: ",
+                                    
+                    a(href="https://familias.name/dviapp/planecrash.RData", "planecrash.RData", target="_blank"),
+                                      
+                    ". See the documentation for the details on the five analyses implemented. Here
+                    we only provide brief explanations:", br(), br(), 
+                    strong("IBD estimates:"),"The pairwise relationship between all pairs of victims is estimated.",
+                    
+                    br(),
+                    strong("Exclusion:"),"Each victim is tried as each missing person and the number 
+                    of exclusions is given.",
+                    br(),
+                    strong("Pairwise LR:"), "For each victim V and each missing person M, the LR comparing
+                    `V = M` to `V and M unrelated` is calculated.",
+                    br(),
+                    strong("Joint:"),  "All possible assignments of victims to missing,
+                    are evaluated and solutions ranked according to the likelihood.",
+                    br(),
+                    strong("Posterior:"),  "Computes posterior pairing and non-pairing probabilities, 
+                    based on a prior and the output from `Joint`.", 
+                    br(),
+                    
+                    mainPanel(
+                      fluidRow(
+                        column(plotOutput("planecrashPlot"),  width = 9)
+                        )
+                      ),
+                    ),
+                           
+                    tabPanel("Analyses based on built in cases",
+                              
+                      actionButton("resetDVIBuilt", "Reset window", class = "btn btn-danger",
+                        style = "position: absolute; bottom:30px; width: 170px"),
+                          sidebarLayout(position = "left",
+                            sidebarPanel(
+                              selectInput("dat", 
+                                label = "Built in data for DVI",
+                                choices = list("None selected", "Family with three missing", 
+                                  "grave", "planecrash")
+                                ),
+                              numericInput("refFam", 
+                                "Reference family to plot", min = 0, value = 0
+                                ),                                        
+                              selectInput("analysis",
+                                label = "Choose DVI analysis",
+                                choices = list("None selected", "IBD estimates", "Exclusion","Pairwise",
+                                  "Joint", "Posterior")
+                                ),
+                              actionButton("goDVIBuilt", "Go!", class = "btn-success"),
+                              downloadButton("downloadTable", "Download DVI table output")
                               ),
-                     ),
+                              mainPanel(
+                                fluidRow(
+                                  column(tableOutput("table"),  width = 8),
+                                  column(textOutput("DVISummaryBuiltIn"),  width = 8),                                    
+                                  column(plotOutput("plot"),  width = 8)
+                                  )
+                                )
+                            ),
+                      ),
                      
                       tabPanel("Analyses based on user loaded data",
                                
-                       actionButton("resetDVILoad", "Reset window", class = "btn btn-danger",
-                       style = "position: absolute; bottom:30px; width: 170px"), 
+                        actionButton("resetDVILoad", "Reset window", class = "btn btn-danger",
+                        style = "position: absolute; bottom:30px; width: 170px"), 
                        
-                              # p("Analyses based on  your own data (Familias fam files or R RData files).
-                              #    If `Relabel` is ticked, names are changed to V1, ..(for pm-samples); 
-                              #    M1,..., (for am-samples) and F1, .... (for reference families). 
-                              #    Relabelling is required for some analyses."),
-                              # 
-                              sidebarLayout(position = "left",
-                                sidebarPanel(
-                                  fileInput("file1", "fam - or RData file"),
-                                  checkboxInput("relabel", label = "Relabel", value =  FALSE),
-
-                                  numericInput(
-                                    "refFamLoad", 
-                                    "Reference family to plot",
-                                    min = 0,
-                                    value = 0
-                                  ),                                        
-                                  selectInput(
-                                    "analysisLoad",
-                                    label = "Choose DVI analysis",
-                                    choices = list("None selected",
-                                                   "IBD estimates",
-                                                   "Exclusion",
-                                                   "Pairwise",
-                                                   "Joint",
-                                                   "Posterior")
-                                  ),
-                                  actionButton("goDVILoad", "Go!", class = "btn-success"),
-                                  downloadButton("downloadTableLoad", "Download DVI table output")
+                          sidebarLayout(position = "left",
+                            sidebarPanel(
+                              fileInput("file1", "fam - or RData file"),
+                              checkboxInput("relabel", label = "Relabel", value =  FALSE),
+                              numericInput("refFamLoad", "Reference family to plot", min = 0, value = 0),                                        
+                              selectInput("analysisLoad",
+                                label = "Choose DVI analysis",
+                                choices = list("None selected", "IBD estimates", "Exclusion","Pairwise",
+                                  "Joint", "Posterior")
                                 ),
-                                            mainPanel(
-                                              fluidRow(
-                                                column(tableOutput("tableLoad"),  width = 8),
-                                                column(textOutput("DVISummaryLoad"),  width = 8),
-                                                column(plotOutput("plotLoad"),  width = 8)
-                                              
-                                              )
-                                              
-                                            )
+                              actionButton("goDVILoad", "Go!", class = "btn-success"),
+                              downloadButton("downloadTableLoad", "Download DVI table output")
                               ),
-                     ),
-              ),              
-###
-               tabPanel("Settings",
+                              mainPanel(
+                                fluidRow(
+                                  column(tableOutput("tableLoad"),  width = 8),
+                                  column(textOutput("DVISummaryLoad"),  width = 8),
+                                  column(plotOutput("plotLoad"),  width = 8)
+                                  )
+                                )
+                            ),
+                        ),
+                     ),              
+
+                     tabPanel("Settings",
+                              
                        actionButton("reset", "Reset all", class = "btn btn-danger",
                        style = "position: absolute; bottom:30px; width: 170px"),
     
-                       p("Some default settings can be changed below"),
+                       "Some default settings can be changed below",
                        fluidRow(
-                         
-                         column(2,
-                                numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729)),
-                         
-                         column(2,
-                                numericInput("nSimulations", "No of simulations", min = 0, max = 10000, 
-                                             step = 100, value = 100),),
-                         column(2,
-                                numericInput("nProfiles", "No of sims for refs", min = 1, max = 10, value = 1)),
-                       ),
+                         column(2, numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729)),
+                         column(2, numericInput("nSimulations", "No of simulations", min = 0, max = 10000, 
+                            step = 100, value = 100),),
+                         column(2, numericInput("nProfiles", "No of sims for refs", min = 1, max = 10, value = 1)),
+                         ),
                        
                        fluidRow(
-                         column(4,
-                               sliderInput("thresholdIP", "LR threshold inclusion power", min = 0, max = 10000, 
-                                           step = 1000, value = 10000)),
-                         column(4,
-                                sliderInput("thresholdLRDisplay", "Show LR above", min = 0, max = 1000, 
-                                            step = 10, value = 0)),
-                
-                       ),
+                         column(4, sliderInput("thresholdIP", "LR threshold inclusion power", min = 0, max = 10000, 
+                          step = 1000, value = 10000)),
+                         column(4, sliderInput("thresholdLRDisplay", "Show LR above", min = 0, max = 1000, 
+                          step = 10, value = 0)),
+                         ),
                          
                        fluidRow(
-                         column(2,
-                                checkboxInput("mutation", label = "Mutation", value = FALSE)),
-                         column(2,
-                                numericInput("nMissing", "No missing", min = -1, value = -1)),
-                       )      
-               )
-
-
-###
+                         column(2, checkboxInput("mutation", label = "Mutation", value = FALSE)),
+                         column(2, numericInput("nMissing", "No missing", min = -1, value = -1)),
+                         )      
+                    )
               
-              
-    )
+        )
 )   
 
 
 server <- function(input, output, session) {
+
+  ### Power
   
-  output$planecrashPlot = renderImage( {
-      list(src = "figures/planecrash.png")
-  } 
-  , deleteFile = FALSE)
-
+  # Power > Analysis based on built in cases
   output$powerPlotSimulated = renderPlot( {
-
     if(input$pedigreePowerSimulated == "Missing brother"){
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
       pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
@@ -408,7 +377,7 @@ server <- function(input, output, session) {
                plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing GF, 2 grandchildren typed"){
-      IDS = c("MP","REF1", "REF2")
+      IDS = c("MP", "REF1", "REF2")
       x = cousinPed(1)
       claim = relabel(x, IDS, c(1,7, 8))
       pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
@@ -417,7 +386,32 @@ server <- function(input, output, session) {
     }
   }) %>%
     bindEvent(input$goPowerBuilt)
+
   
+  # Power > Analyses based on user loaded data
+  output$powerPlotFam = renderPlot({
+      file = input$famPower
+      ext = getExt(file = file)
+      familias(file = file, method = "Power", DVI = FALSE, seed = input$seed, lrSims = input$nSimulations, 
+               plotOnly = input$plotOnlyFamPower, Log10 = input$log10PowerFam)
+  }) %>%
+  bindEvent(input$goPowerLoad)
+  
+  ### Prioritise
+  
+  # Prioritise > Explanations: Picture
+  output$priPlotPremade = renderImage( {
+    if(input$pedigreePri == "brother")
+       list(src = "figures/brotherPri.png")
+    else if(input$pedigreePri == "uncle")
+          list(src = "figures/unclePri.png")
+    else if (TRUE)
+      list(src = "figures/empty.png")
+  } 
+    , deleteFile = FALSE)
+  
+  
+  # Prioritise > Analyses based on built in cases
   output$powerPlotSimulatedPri = renderPlot( {
     if(input$pedigreePowerSimulatedPri == "Missing brother"){
       ped = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
@@ -434,33 +428,10 @@ server <- function(input, output, session) {
                nProfiles = input$nProfiles, lrSims = input$nSimulations,  thresholdIP = input$thresholdIP)
     }
   }) %>%
-  bindEvent(input$goPriBuilt)
+    bindEvent(input$goPriBuilt)
   
-  
-  output$powerPlotFam = renderPlot({
-      file = input$famPower
-      ext = getExt(file = file)
-      familias(file = file, method = "Power", DVI = FALSE,
-               seed = input$seed, lrSims = input$nSimulations, 
-               plotOnly = input$plotOnlyFamPower, Log10 = input$log10PowerFam)
-  }) %>%
-  bindEvent(input$goPowerLoad)
-  
-  
-  
-  output$priPlotPremade = renderImage( {
-    if(input$pedigreePri == "brother")
-       list(src = "figures/brotherPri.png")
-    else if(input$pedigreePri == "uncle")
-          list(src = "figures/unclePri.png")
-    else if (TRUE)
-      list(src = "figures/empty.png")
-  } 
-
-    , deleteFile = FALSE)
-  
+  # Prioritise > Analyses based on user loaded data
   output$priPlotFam = renderPlot({
-
     file = input$priPower
     ext = getExt(file = file)
     familias(file = file, method = "Prioritise", DVI = FALSE,
@@ -468,20 +439,28 @@ server <- function(input, output, session) {
              thresholdIP = input$thresholdIP)
   }) %>%
     bindEvent(input$goPriLoad)
+
+  ### DVI
+    
+  # DVI > Explanations: picture
+  output$planecrashPlot = renderImage( {
+    list(src = "figures/planecrash.png")
+  } 
+  , deleteFile = FALSE)
   
-    output$DVISummaryBuiltIn <- renderText({
-        if(input$dat == "Family with three missing")
-          summariseDVIreturned(example1$pm, example1$am, example1$missing, header = "Tutorial data. ")
-        else if (input$dat == "grave")
-          summariseDVIreturned(grave$pm, grave$am, grave$missing, header = "grave data. ")
-        else if (input$dat == "planecrash")
-          summariseDVIreturned(planecrash$pm, planecrash$am, planecrash$missing, header = "planecrash data. ")
-      }) 
-      # %>%
-      # bindEvent(input$goDVIBuilt)
+
+   # DVI > Analysis based on built in data: Summary
+  output$DVISummaryBuiltIn <- renderText({
+    if(input$dat == "Family with three missing")
+      summariseDVIreturned(example1$pm, example1$am, example1$missing, header = "Tutorial data. ")
+    else if (input$dat == "grave")
+      summariseDVIreturned(grave$pm, grave$am, grave$missing, header = "grave data. ")
+    else if (input$dat == "planecrash")
+      summariseDVIreturned(planecrash$pm, planecrash$am, planecrash$missing, header = "planecrash data. ")
+    }) 
 
     
-    
+    # DVI > Analysis based on user loaded data: Summary
     output$DVISummaryLoad <- renderText({
         file = input$file1
         ext = getExt(file = file)
@@ -492,8 +471,8 @@ server <- function(input, output, session) {
                   nMissingSpecified = input$nMissing)
      })      
     
-
-      output$table <- renderTable(rownames = T,{
+    # DVI > Analysis based on built in data
+    output$table <- renderTable(rownames = T,{
         if(input$analysis == "IBD estimates")
           tableIBD()
         else if (input$analysis == "Exclusion")
@@ -507,7 +486,7 @@ server <- function(input, output, session) {
       }) %>%
         bindEvent(input$goDVIBuilt)
 
-    
+    # DVI > Analysis based on user loaded data
     output$tableLoad <- renderTable(rownames = T,{
       if(input$analysisLoad == "IBD estimates")
         tableIBD()
@@ -522,9 +501,9 @@ server <- function(input, output, session) {
     }) %>%
       bindEvent(input$goDVILoad)
     
-    # Defines reactive functions for table output, i.e., for
-    # IBD estimates, exclusion, pairwise, joint and posterior
+    ### Reactive functions
     
+    #IBD, for built in and loaded data, fam or RData
     tableIBD = reactive({
       if(input$dat == "Family with three missing")
         IBDestimates(example1$pm, thresholdLR = input$thresholdLRDisplay)
@@ -544,6 +523,7 @@ server <- function(input, output, session) {
       }
     })
     
+    #Exclusion, for built in and loaded data, fam or RData
     tableExclusion = reactive({
       if(input$dat == "Family with three missing")
         exclusionMatrix(example1$pm, example1$am , example1$missing)
@@ -569,6 +549,7 @@ server <- function(input, output, session) {
       }
     })
     
+    #Pairwise, for built in and loaded data, fam or RData
     tablePairwise = reactive({
       if (input$dat == "Family with three missing")
         pairwiseLR(example1$pm, example1$am , example1$missing)$LRmatrix
@@ -593,6 +574,7 @@ server <- function(input, output, session) {
       }
     })
     
+    #Joint, for built in and loaded data, fam or RData
     tableJoint = reactive({
       if(input$dat == "Family with three missing")
         myjointDVI(example1$pm, example1$am , example1$missing, mutation = input$mutation,
@@ -616,14 +598,14 @@ server <- function(input, output, session) {
             MPs = 'Missing person'
         else
             MPs = paste0("M", 1:input$nMissing)
+        
           familias(file = file, method = 'Joint',  relabel = input$relabel, miss = MPs,
                    mutation = input$mutation, thresholdLR = input$thresholdLRDisplay)
         }
-        
       }
-      
     })
-    
+ 
+    #Posterior, for built in and loaded data, fam or RData   
     tablePosterior = reactive({
       if (input$dat == "Family with three missing")
         Bmarginal(myjointDVI(example1$pm, example1$am, example1$missing, 
@@ -648,11 +630,10 @@ server <- function(input, output, session) {
               MPs = paste0("M", 1:input$nMissing)
             familias(file = file, method = 'Posterior',  relabel = input$relabel, miss = MPs)
         }
-          
       }
-      
     })
     
+    #DVI > Analyses based on built in data, download
     output$downloadTable <- downloadHandler(
     filename = "DVITableOutput.csv",
     content = function(file = filename) {
@@ -668,6 +649,7 @@ server <- function(input, output, session) {
         write.csv(tablePosterior(), file, row.names = TRUE, quote = F)
     })
 
+    #DVI > Analyses based on user loaded data, download
     output$downloadTableLoad <- downloadHandler(
       filename = "DVITableOutput.csv",
       content = function(file = filename) {
@@ -683,6 +665,7 @@ server <- function(input, output, session) {
           write.csv(tablePosterior(), file, row.names = TRUE, quote = F)
       })
     
+    #DVI > Built in cases: plots reference families
     output$plot <- renderPlot({
       if(input$refFam > 0) {
         file = input$file1
@@ -728,6 +711,7 @@ server <- function(input, output, session) {
 
     })
     
+    #DVI > Analyses based on built in data: plots reference families
     output$plotLoad <- renderPlot({
       if(input$refFamLoad > 0) {
           file = input$file1
@@ -745,19 +729,16 @@ server <- function(input, output, session) {
         }
     })
     
-  # observe({
-  #   if(!is.null(input$file1)){
-  #     updateSelectInput(session, "dat", label = "Built in data for DVI",
-  #                       choices = list("None selected","Family with three missing", "grave", 
-  #                                      "planecrash"),
-  #                       selected = "None selected") 
-  #     updateNumericInput(session, "refFam", value = 0) 
-  #     updateSelectInput(session, "analysis", selected = "None selected")
-  #   }
-  # 
-  # })
-  
-  
+   ### Change 0 simulations to 1 always 
+    observeEvent(input$nSimulations, {
+      x = input$nSimulations
+      if(x == 0 | is.na(x))
+        updateNumericInput(session,"nSimulations", value = 10)
+    })
+    
+
+
+   ### Reset functions below
    observeEvent(input$resetPowerBuilt, {
     updateCheckboxInput(session, "plotOnlyBuiltPower", value = TRUE)
     updateCheckboxInput(session, "log10Power", value = TRUE)
@@ -768,7 +749,6 @@ server <- function(input, output, session) {
    observeEvent(input$resetPowerFam, {
     updateCheckboxInput(session, "plotOnlyFamPower", value = TRUE)
     updateCheckboxInput(session, "log10PowerFam", value = TRUE)
-
     updateSelectInput(session, "powerPlotFam", selected = "None selected")
    })
    
@@ -792,10 +772,8 @@ server <- function(input, output, session) {
   
   observeEvent(input$resetDVILoad, {
     updateCheckboxInput(session, "relabel", value = FALSE)
-
     updateNumericInput(session, "refFamLoad", value = 0)
     updateSelectInput(session, "analysisLoad", selected = "None selected")
-
    })
       
    observeEvent(input$reset, {
@@ -827,15 +805,7 @@ server <- function(input, output, session) {
     updateSliderInput(session,"thresholdLRDisplay", value = 0)
   })
 
-   # Change 0 simulations to 1 always 
-   observeEvent(input$nSimulations, {
-     x = input$nSimulations
-     if(x == 0 | is.na(x))
-       updateNumericInput(session,"nSimulations", value = 10)
-   })
-  
 }
-
 
 
   shinyApp(ui, server)

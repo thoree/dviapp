@@ -196,8 +196,9 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data.", nMissing
   if(nam == 1 ) t7 = paste(nam, "reference family. ")
   if(nam > 1 ) t7 = paste(nam, "reference families. ")
   t8 = differentMarkers(pm, am)$tekst
-
-  text = glue(header, t1, t2, t3, t5, t6, t7, t8)
+  t9 =" PS: The number of missing need to be given in Settings if there are families with
+       multiple missing."
+  text = glue(header, t1, t2, t3, t5, t6, t7, t8, t9)
   
   text
   
