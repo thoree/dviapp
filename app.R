@@ -413,7 +413,7 @@ server <- function(input, output, session) {
   
   output$TextPrioritiseBuilt = renderText({
     if(input$English)
-     "Simulations can be performed ..."
+       "Simulations can be performed ..."
     else
       "Se pueden realizar simulaciones ..."
       
