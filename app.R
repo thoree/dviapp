@@ -167,7 +167,7 @@ ui <- fluidPage(
                    actionButton("resetPriBuilt", "Reset window", class = "btn btn-danger",
                      style = "position: absolute; bottom:30px; width: 170px"),
                           
-                     p("Simulations explained in `Prioritise > Explanations` can be performed"),
+#                     p("Simulations explained in `Prioritise > Explanations` can be performed"),
                      sidebarLayout(position = "left",
                        sidebarPanel(
                          selectInput("pedigreePowerSimulatedPri", 
@@ -181,6 +181,7 @@ ui <- fluidPage(
                        ),
                        mainPanel(
                          fluidRow(
+                           column(textOutput("TextPrioritiseBuilt"),  width = 9),
                            column(plotOutput("powerPlotSimulatedPri"),  width = 9)
                            )
                          )
@@ -342,6 +343,7 @@ ui <- fluidPage(
                        fluidRow(
                          column(2, checkboxInput("mutation", label = "Mutation", value = FALSE)),
                          column(2, numericInput("nMissing", "No missing", min = -1, value = -1)),
+                         column(2, checkboxInput("English", label = "English", value = TRUE)),                         
                          )      
                     )
               
@@ -409,6 +411,13 @@ server <- function(input, output, session) {
   } 
     , deleteFile = FALSE)
   
+  output$TextPrioritiseBuilt = renderText({
+    if(input$English)
+     "Simulations can be performed ..."
+    else
+      "Se pueden realizar simulaciones ..."
+      
+  })
   
   # Prioritise > Analyses based on built in cases
   output$powerPlotSimulatedPri = renderPlot( {
