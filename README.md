@@ -4,7 +4,7 @@
 # DVI app
 
 The purpose of the app is to provide easy functionality for power
-calculations, selecting optimal individuals to genotye and DVI
+calculations, selecting optimal individuals to genotype and DVI
 functionality.
 
 The options of the app are described next.
