@@ -358,7 +358,7 @@ server <- function(input, output, session) {
     if(input$pedigreePowerSimulated == "Missing brother"){
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
       pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
-               thresh = NULL, lastMarker = input$lastMarker,
+               lastMarker = input$lastMarker,
                plotOnly = input$plotOnlyBuiltPower, Log10 = input$log10Power)
     }
     else if(input$pedigreePowerSimulated == "Missing uncle"){
@@ -366,14 +366,14 @@ server <- function(input, output, session) {
       x = addSon(x, parent = "BR",  id = "REF")
       claim = relabel(x, "MO2", "NN_1")
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
-               thresh = NULL, lastMarker = input$lastMarker,
+               lastMarker = input$lastMarker,
                plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing first cousin"){
       x = cousinPed(1)
       claim = relabel(x, c("MP","REF"), 7:8)
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
-               thresh = NULL, lastMarker = input$lastMarker,
+               lastMarker = input$lastMarker,
                plotOnly = input$plotOnlyBuiltPower)
     }
     else if(input$pedigreePowerSimulated == "Missing GF, 2 grandchildren typed"){
@@ -381,8 +381,7 @@ server <- function(input, output, session) {
       x = cousinPed(1)
       claim = relabel(x, IDS, c(1,7, 8))
       pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
-               thresh = NULL, lastMarker = input$lastMarker,
-               plotOnly = input$plotOnlyBuiltPower)
+               lastMarker = input$lastMarker,  plotOnly = input$plotOnlyBuiltPower)
     }
   }) %>%
     bindEvent(input$goPowerBuilt)
@@ -417,14 +416,15 @@ server <- function(input, output, session) {
       ped = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
       ped = addChildren(ped, father = "FA", mother = "MO", nch = 2, 
                         sex = 1, ids = c("E1", "E2"))
-      priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
-               nProfiles = input$nProfiles, lrSims = input$nSimulations, thresholdIP = input$thresholdIP)
+      priPower(ped, plotOnly = input$plotOnlyBuiltPri, lastMarker = input$lastMarkerPri, 
+               seed = input$seed,  nProfiles = input$nProfiles, 
+               lrSims = input$nSimulations, thresholdIP = input$thresholdIP)
     }
     else if(input$pedigreePowerSimulatedPri == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "E2"))
       x = addSon(x, parent = "E2",  id = "REF")
       ped = relabel(x, "E1", "NN_1")     
-      priPower(ped, plotPed = input$plotOnlyBuiltPri, nMark = input$lastMarkerPri, seed = input$seed,  
+      priPower(ped, plotOnly = input$plotOnlyBuiltPri, lastMarker = input$lastMarkerPri, seed = input$seed,  
                nProfiles = input$nProfiles, lrSims = input$nSimulations,  thresholdIP = input$thresholdIP)
     }
   }) %>%
@@ -483,6 +483,8 @@ server <- function(input, output, session) {
           tableJoint()
         else if (input$analysis == "Posterior")
           tablePosterior()
+        else
+          NULL
       }) %>%
         bindEvent(input$goDVIBuilt)
 
@@ -693,20 +695,6 @@ server <- function(input, output, session) {
                       col = list(red = planecrash$missing,
                                  blue = typedMembers(planecrash$am[[input$refFam]])))
         }
-        else{
-          file = input$file1
-          ext = getExt(file = file)
-          if (ext == "RData" |  ext == "rda") 
-            RData(file = input$file1, method = 'plot', refFam = input$refFam)
-          else if (ext == "fam"){
-              if (input$nMissing < 0)
-                MPs = 'Missing person'
-            else
-              MPs = paste0("M", 1:input$nMissing)
-            familias(file = file, method = 'plot', 
-                       relabel = input$relabel, refFam = input$refFam, miss = MPs)
-            }
-        }
       }
 
     })
@@ -763,11 +751,11 @@ server <- function(input, output, session) {
     updateCheckboxInput(session, "plotOnlyFamPri", value = TRUE)
    })
   
+
   observeEvent(input$resetDVIBuilt, {
     updateSelectInput(session, "dat", selected = "None selected")
     updateNumericInput(session, "refFam", value = 0)
     updateSelectInput(session, "analysis", selected = "None selected")
-
    })
   
   observeEvent(input$resetDVILoad, {
