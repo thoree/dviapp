@@ -563,24 +563,25 @@ server <- function(input, output, session) {
     #Pairwise, for built in and loaded data, fam or RData
     tablePairwise = reactive({
       if (input$dat == "Family with three missing")
-        pairwiseLR(example1$pm, example1$am , example1$missing)$LRmatrix
+        myPairwiseLR(example1$pm, example1$am , example1$missing, input$mutation)$LRmatrix
       else if (input$dat == "grave")
-        pairwiseLR(grave$pm, grave$am , grave$missing)$LRmatrix
+        myPairwiseLR(grave$pm, grave$am , grave$missing, input$mutation)$LRmatrix
       else if (input$dat == "planecrash")
-        pairwiseLR(planecrash$pm, planecrash$am, planecrash$missing)$LRmatrix
+        myPairwiseLR(planecrash$pm, planecrash$am, planecrash$missing, input$mutation)$LRmatrix
       else{
         if(!input$relabel)
           stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
         file = input$file1
         ext = getExt(file = file)
         if (ext == "RData" |  ext == "rda")
-          RData(file = file, method = 'Pairwise')
+          RData(file = file, method = 'Pairwise', mutation = input$mutation)
         else {
         if (input$nMissing < 0)
             MPs = 'Missing person'
         else
             MPs = paste0("M", 1:input$nMissing)
-          familias(file = file, method = 'Pairwise',  relabel = input$relabel, miss = MPs)
+          familias(file = file, method = 'Pairwise',  relabel = input$relabel, 
+                   miss = MPs, mutation = input$mutation)
         }
       }
     })

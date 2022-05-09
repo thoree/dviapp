@@ -159,7 +159,7 @@ RData = function(file = input$file1, sorter = TRUE,  method = NULL, refFam = 1,
   else if (method == 'Pairwise'){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorText))
-    pairwiseLR(pm, am, missing)$LRmatrix
+    myPairwiseLR(pm, am, missing, mutation)$LRmatrix
   }
   else if (method == 'Joint'){
     if(differentMarkers(pm, am)$ulike)
@@ -306,7 +306,7 @@ familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing
   else if (method == "Pairwise"){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorText))
-    pairwiseLR(pm, am, miss)$LRmatrix
+    myPairwiseLR(pm, am, miss, mutation)$LRmatrix
   }
   
   else if (method == "Joint"){
@@ -436,3 +436,15 @@ differentMarkers = function(pm, am){
   list(ulike = ulike, tekst = tekst)
 }
   
+#'
+#' myPairwiseLR
+#' 
+#' @param pm, am, missing: se dvir::pairwiseLR
+#' 
+myPairwiseLR = function(pm, am, miss, mutation){
+  if(!mutation){
+     pm = setMutationModel(pm, 'trivial')
+     am = setMutationModel(am, 'trivial')
+  }
+  pairwiseLR(pm, am, miss)  
+}
