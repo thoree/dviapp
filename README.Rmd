@@ -69,8 +69,6 @@ assuming $H_1$ to be true, i.e., assuming that POI is MP. For each
 of these simulations the LR is calculated. This gives 
 values $LR_1, \ldots, LR_{100}$. The app produces the plot:
 
-<!-- ![Power plot](C:/Users/theg/Dropbox/Rlibs/dviapp/figures/fig1.png) -->
-
 ```{r, echo = F,  fig.height = 4, fig.width = 8, out.width = "80%", fig.align = "center", cache = T}
 pedPower(x, nsim = 100, seed = 1729, lastMarker = 22,
    ids = c("MP", "REF"), plotOnly = FALSE, Log10 = TRUE)
