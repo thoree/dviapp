@@ -6,8 +6,8 @@ This app deals with Disaster Victim Identification (DVI) problems and
 power calculation for kinship problems. Our goal has been to make
 available functionality in the
 [`pedsuite`](https://magnusdv.github.io/pedsuite/) of R libraries and
-also the `dvir` library. Here’s the
-[dviapp](https://thoree.shinyapps.io/dviapp/)
+also the `dvir` library. Here’s the dviapp:
+<https://thoree.shinyapps.io/dviapp/>
 
 There are several built-in-cases. Alternatively, users can run run their
 own examples by uploading [Familias](https://www.familias.no) files or
@@ -38,7 +38,7 @@ on in `Settings` and other options can be changed there as well.
 
 Power calculations are generally performed prior to the actual analysis
 to determine if there is sufficient data to reach conclusions. The
-conclusion may be there is not sufficient information *or* that we are
+conclusion may be that there is sufficient information *or* that we are
 not likely to reach reliable conclusions. In the latter case more data
 is needed, either more markers or more genotyped reference individuals.
 This is explored in the `Prioritise` module.
@@ -66,15 +66,14 @@ and based on these values, the app produces the plot:
 
 <img src="figures/unnamed-chunk-2-1.png" title="Distribution of log10(LR)" alt="Distribution of log10(LR)" width="80%" style="display: block; margin: auto;" />
 
-The left panel shows that the expected
+The left panel shows that the mean
 ![\\log\_{10}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clog_%7B10%7D "\log_{10}")(LR)
-= 6.24, which corresponds to expected LR equal to 1,737,801. From the
-panel on the right hand side, we see that
+is 6.24, which corresponds to mean LR equal to 1,737,801. From the panel
+on the right hand side, we see that
 ![\\log\_{10}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clog_%7B10%7D "\log_{10}")(LR)
-exceeds 3.89 with probability 0.8, or equivalently
-![LR](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;LR "LR")
-exceeds 7762 with probability 0.8. If the treshold is 10,000, the power
-is therefore not quite satisfactory.
+exceeds 3.89 with probability 0.8, or equivalently LR exceeds 7762 with
+probability 0.8. If the treshold is 10,000, the power is therefore not
+quite satisfactory.
 
 ### Analyses based on built-in-cases
 
@@ -108,7 +107,7 @@ need to be genotyped in the hope of reaching sufficient power. We
 consider alternatives where extra family members `E1` and `E2` are
 available. Results are reported when `E1` is genotyped and both `E1` and
 `E2`. In addition to the LR distribution described previously, results
-are also given for the `Exclusion probability` (EP).
+are also given for the `Exclusion probability` (EP) explained below.
 
 ![Prioritise
 plot](C:/Users/theg/Dropbox/Rlibs/dviapp/figures/priPlot.png)
@@ -126,19 +125,20 @@ and
 ![H_2](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;H_2 "H_2").
 The smaller circles in the plot correspond to these 10 profile
 simulations while the larger circles represent averages. For both other
-alternatives, `E1`, and `E1, E2`, IP is very close to 1.
+alternatives, (`REF`, `E1`), and (`REF`,`E1, E2`), IP is very close to
+1.
 
-The Y-axis in the panel to the right, shows that the alternative `E1,E2`
-to be the most powerful, as expected. The X-axes give information on
-`EP`. The baseline alternative, with only `REF` genotyped, gives the
-values 0 in both plots. This is obvious, since exclusion is not possible
-if only one brother is genotyped as two brothers need not share alleles.
-If there are more than two brothers, exclusion is indicated if more than
-four alleles are observed. Mutations are disregarded for exclusion
-calculations since allowing them would prohibit exclusion. If additional
-brothers are genotyped, exclusion is probable and also likely as
-evidenced by EP in the plot to the left and by the expected number of
-exclusions to the right.
+The Y-axis in the panel to the right, shows the alternative
+(`REF`,`E1, E2`) to be the most powerful, as expected. The X-axes give
+information on `EP`. The baseline alternative, with only `REF`
+genotyped, gives the values 0 in both plots. This is obvious, since
+exclusion is not possible if only one brother is genotyped as two
+brothers need not share alleles. If there are more than two brothers,
+exclusion is indicated if more than four alleles are observed. Mutations
+are disregarded for exclusion calculations. If additional brothers are
+genotyped, exclusion is probable and also likely as evidenced by EP in
+the plot to the left and by the expected number of exclusions to the
+right.
 
 As for the `Power` module, simulations can be done either for
 built-in-cases or by loading a Familias file.
@@ -183,10 +183,7 @@ individuals. We define the IBD coefficients
 \kappa_0=P(Z=0),{\ \kappa}_1=P(Z=1),\ \text{and} \ \kappa_2=P(Z=2).
 ")
 
-The corresponding estimates are denoted
-![k_0, k_1](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;k_0%2C%20k_1 "k_0, k_1")
-and
-![k_2](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;k_2 "k_2").
+The corresponding estimates are denoted k0, k_1 and k2.
 
 The pairwise relationship between all pairs of victims is estimated and
 compared to unrelated. Here’s an example:
@@ -214,7 +211,7 @@ and this provides stong evidence in favor of V7 and V8 being related.
 
 Each victim is tried in each missing person position and the number of
 exclusions are counted. The results are summarised in the
-`exclusion matrix` as below:
+`exclusion matrix` below:
 
     ##    M1 M2 M3 M4 M5
     ## V1  0  0  8  9  0
@@ -227,7 +224,7 @@ exclusions are counted. The results are summarised in the
     ## V8  6  0  6  6  0
 
 We see that families 2 and 5, with missing persons M2 and M5, do not
-allow for exclusions as only a sibling has been genotyped. The
+allow for exclusions as only one sibling has been genotyped. The
 corresponding columns therefore only contain 0-s. Furthermore, we see
 that the only likely candidate for M1 is V1, since for the other victims
 there are at least two exclusions.
@@ -235,7 +232,7 @@ there are at least two exclusions.
 ### Pairwise LR
 
 For each victim V and each missing person M, the LR comparing `V = M` to
-`V and M unrelated` is calculated. Here’s an example :
+`V and M unrelated`, is calculated. Here’s an example :
 
     ##              M1           M2           M3           M4           M5
     ## V1 9.248816e+02 9.411564e-04 1.258106e-22 2.750399e-26 2.853849e-01
@@ -284,54 +281,67 @@ not taken into account. Each of these assignments are given a prior
 probability of 1/19081. The posterior is then calculated using Bayes
 Theorem.
 
+If mutations are modelled, the five best candidate assignments are
+
+    ##   V1 V2 V3 V4 V5 V6 V7 V8    loglik           LR    posterior
+    ## 1 M1 M3 M4 M5  * M2  *  * -557.3114 5.265386e+23 9.947433e-01
+    ## 2 M1 M3  * M5  * M2  *  * -562.8301 2.111943e+21 3.989910e-03
+    ## 3  * M3 M4 M5  * M2  *  * -564.1411 5.693038e+20 1.075536e-03
+    ## 4  * M3 M4 M5 M1 M2  *  * -566.5391 5.175064e+19 9.776795e-05
+    ## 5 M1  * M4 M5  * M2 M3  * -566.8239 3.892360e+19 7.353495e-05
+
+This gives the additional identification, V3 = M4. Note that the
+exclusion matrix presented earlier displayed only one inconsistency for
+V3 being M4.
+
 ### Posterior
 
 This functionality is most easily explained by an example:
 
-    ##           M1 M2 M3 M4 M5           *
-    ## V1 0.9989243  0  0  0  0 0.001075731
-    ## V2 0.0000000  0  1  0  0 0.000000000
-    ## V3 0.0000000  0  0  0  0 1.000000000
-    ## V4 0.0000000  0  0  0  1 0.000000000
-    ## V5 0.0000000  0  0  0  0 1.000000000
-    ## V6 0.0000000  1  0  0  0 0.000000000
-    ## V7 0.0000000  0  0  0  0 1.000000000
-    ## V8 0.0000000  0  0  0  0 1.000000000
+    ##              M1 M2           M3           M4 M5            *
+    ## V1 9.988219e-01  0 2.198990e-30 1.294484e-31  0 1.178114e-03
+    ## V2 1.437796e-17  0 9.999112e-01 8.271431e-26  0 8.875304e-05
+    ## V3 1.164115e-25  0 3.738601e-30 9.960050e-01  0 3.994971e-03
+    ## V4 0.000000e+00  0 0.000000e+00 0.000000e+00  1 0.000000e+00
+    ## V5 9.816881e-05  0 5.703210e-22 1.457939e-31  0 9.999018e-01
+    ## V6 0.000000e+00  1 0.000000e+00 0.000000e+00  0 0.000000e+00
+    ## V7 9.900903e-22  0 7.391698e-05 1.802754e-22  0 9.999261e-01
+    ## V8 5.005288e-19  0 4.737957e-19 7.086710e-19  0 1.000000e+00
 
 The output shows that
-![P(V1 = M1) = 0.9989243](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;P%28V1%20%3D%20M1%29%20%3D%200.9989243 "P(V1 = M1) = 0.9989243")
-while V1 is someone unrelated with probability 0.001075731. Note that
-these probabilities sum to 1, i.e.,
-![0.9989243 + 0.001075731 = 1](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;0.9989243%20%2B%200.001075731%20%3D%201 "0.9989243 + 0.001075731 = 1").
+![P(V1 = M1) = 0.9988](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;P%28V1%20%3D%20M1%29%20%3D%200.9988 "P(V1 = M1) = 0.9988")
+while V1 is someone unrelated with probability 0.0012. Note that the
+probabilities of each line sum to 1.
 
 ## Settings
 
-The settings are shown in the below figure
+The settings are shown in the below figure:
 
 ![Settings](figures/settings.PNG)
 
 The options are:
 
--   `Seed` Use the same seed to secure the same simulation results.
--   `No of Simulations` The default of a 100 may be increased to obtain
+-   `Seed:` Use the same seed to secure the same simulation results.
+-   `No of Simulations:` The default of a 100 may be increased to obtain
     more accurate results.
--   `No of sims for references` This only applies to the
+-   `No of sims for references:` This only applies to the
     `Prioritise module`. The indicated number (default is 2) of profiles
     are simulated for the relatives, assuming H1. For each of these
     profiles, the specified number of simulations are performed for `MP`
     under H1 and H2.
--   `LR threshold inclusion power` This only applies to the
+-   `LR threshold inclusion power:` This only applies to the
     `Prioritise module`. If the threshold is
     ![x](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x "x"),
     the default is 10,000, the inclusion power is
-    ![P(LR \> x \| H_1)](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;P%28LR%20%3E%20x%20%7C%20H_1%29 "P(LR > x | H_1)").
--   `Show LR above` Some tables in the DVI module may be large. They may
-    reduced by only displaying output where the LR exceeds the specified
-    value.
--   `Mutation` By default mutation is not accounted for. It may be
+    ![P(](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;P%28 "P(")
+    LR$ \> x \| H_1)$.
+-   `Show LR above:` Some tables in the DVI module may be large. They
+    may reduced by only displaying output where the LR exceeds the
+    specified value.
+-   `Mutation:` By default mutation is not accounted for. It may be
     turned on. Obviously, if there is no mutation in user input, this
     will have no impact.
--   `No of missing`. If any reference family contains more than one
+-   `No of missing:` If any reference family contains more than one
     missing, the total number of missing must be given here. Also, in
     this case the missing persons should be named M1, M2, … in the
     Familias file.
