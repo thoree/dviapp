@@ -30,9 +30,9 @@ ui <- fluidPage(
                 a(href="https://www.familias.no", "Familias software.",target="_blank"),
                 "There are tree modules, all based on built in cases or user data (Familias or R files):",
                 br(),
-                strong("- power:"), "Simulations can be done to determine if goals are likely to be achieved.",
+                strong("- Power:"), "Simulations can be done to determine if goals are likely to be achieved.",
                 br(),
-                strong("- priority:"), "The aim is to find the optimal extra persons to genotype.",
+                strong("- Priority:"), "The aim is to find the optimal extra persons to genotype.",
                 br(),
                 strong("- DVI:"), "Methods to include or exclude missing persons are provided.",
                 br(), 
@@ -65,10 +65,11 @@ ui <- fluidPage(
                "LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
                has been computed for 1000 simulations of MP and REF conditioned on H1 below.
                The simulations use the 35 markers in the database `NorwegianFrequencies` 
-               documented in the R library forrel. In `Power > Built in cases` some prepared
+               documented in the R library forrel. In `Power > Analyses based on built in cases` some prepared
                cases can be run and parameters like the number of markers, 
-               can  be changed. In `Power > Load data`, similar output is obtained by loading a familias file
-               prepared by the user. The simulations will be conditioned on genotyped individuals.",
+               can  be changed. In `Power > Analyses based on user loaded data`, 
+               similar output is obtained by loading a familias file
+               prepared by the user. The simulations will be conditioned on genotyped individuals, if any.",
                fluidRow(
                  column(tags$img(src = "brotherPow.png", width = "792px", height = "240px"), width = 12),
                  ), 
@@ -105,8 +106,8 @@ ui <- fluidPage(
                   style = "position: absolute; bottom:30px; width: 170px"),
 
                 "To perform a simulation, load a familias file, uncheck `Only plot pedigree` and press `Go!`.
-                The missing person should be named `MP` and the reference `REF`. The file",
-                a(href="https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
+                The missing person should be named `MP` and the reference `REF` in the file. The file",
+                a(href = "https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
                 "gives output similar to that in `Power > Explanations` (but not identical, even for the 
                 same seed, since the simulation implementation is not identical).  Genotyped individuals 
                 (if any) are hatched and first marker displayed in the plot and these individuals
@@ -134,18 +135,21 @@ ui <- fluidPage(
                  tabPanel("Explanations",
                           
                    "The below explanation applies to the example obtained if 'brother' (default) 
-                    is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers, 
-                    versus H2: ``MP and REF unrelated`, has been computed for 100 unconditional simulations 
+                    is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers`, 
+                    to H2: `MP and REF unrelated`, has been computed for 100 unconditional simulations 
                     of MP and REF conditioned on H1 below. This corresponds to the `REF` case in the panel 
                     to the right. We see that we can expect no exclusions
                     (in fact exclusions are impossible with only two brothers) and log10(LR) slightly exceeding 10. 
                     If one brother, 
-                    `E1` is genotyped we can expect more than 10 exclusions and a log10(LR) slightly exceeding 20. Finally,
-                    if both brothers `E1`and `E2` are genotyped, the expected number exclusions and LR increase further.
-                    10 profiles are simulated for the relatives (only 'REF' below), assuming H1. For each of these 10 profiles,
-                    corresponding to the smaller circles, 1000 simulations are performed for `Missing` under H1 and H2.
-                    In `Prioritise > Built in cases` simulations can be performed for various parameter choices. In
-                    `Prioritise > load` similar simulations can be performed from yourfam file.",
+                    `E1` is genotyped we can expect more than 10 exclusions and a log10(LR) slightly exceeding 20.
+                    Finally, if both brothers `E1`and `E2` are genotyped, the expected number of exclusions and 
+                    LR increase further.  10 profiles are simulated for the relatives ('REF', `E1` and `E2`), assuming H1. 
+                    For each of these 10 profiles, corresponding to the smaller circles, 1000 
+                    simulations are performed for `MP` under H1 and H2.
+                    In `Prioritise > Analyses based on built in cases` simulations can be performed 
+                    for various parameter choices. In
+                    `Prioritise > Analyses based on user loaded data` similar simulations can be performed from a
+                    fam file.",
                    
                     br(),
                     sidebarLayout(position = "left",
@@ -167,7 +171,7 @@ ui <- fluidPage(
                    actionButton("resetPriBuilt", "Reset window", class = "btn btn-danger",
                      style = "position: absolute; bottom:30px; width: 170px"),
                           
-#                     p("Simulations explained in `Prioritise > Explanations` can be performed"),
+                   "The simulation needs roughly 30 seconds to complete, plotting is instant.",
                      sidebarLayout(position = "left",
                        sidebarPanel(
                          selectInput("pedigreePowerSimulatedPri", 
@@ -199,8 +203,8 @@ ui <- fluidPage(
                   
                   ". The missing person should be named `MP`, the reference `REF`, and the extra candidates
                   for genotyping `E1`and `E2`. The mentioned file gives output similar to that
-                  in `Priority > Explanations` (but not identical, even for the same seed, since the simulation
-                  implementation is not identical). Further information on the fam file loaded, and potential 
+                  in `Priority > Explanations` (but not identical, even for the same seed, since this is simulation).
+                  Further information on the fam file loaded, and potential 
                   errors in the conversion of the fam file, are reported to the console.",
                   
                   br(),
@@ -223,7 +227,8 @@ ui <- fluidPage(
                            
                     "Analyses can be done in this module from built in cases, from Familias (`fam`)
                     files or from R data. The below figure shows the planecrash data. When the
-                    data is loaded in `DVI > Built in cases`, the following summary is provided:,
+                    data is loaded in `DVI > Analyses based on built in cases`, 
+                    the following summary is provided:,
                     `DVI data. 8 victims: V1 ,..., V8 . 5 missing. 
                     5 typed refs: R1 ,..., R5 . 5 reference families.`
                     The data is also available as a fam file:",
@@ -245,11 +250,11 @@ ui <- fluidPage(
                     strong("Pairwise LR:"), "For each victim V and each missing person M, the LR comparing
                     `V = M` to `V and M unrelated` is calculated.",
                     br(),
-                    strong("Joint:"),  "All possible assignments of victims to missing,
+                    strong("Joint:"),  "All possible assignments of victims to missing persons
                     are evaluated and solutions ranked according to the likelihood.",
                     br(),
-                    strong("Posterior:"),  "Computes posterior pairing and non-pairing probabilities, 
-                    based on a prior and the output from `Joint`.", 
+                    strong("Posterior:"),  "Computes posterior pairing probabilities, i.e.,
+                    the probability that a victim V is the missing person M.", 
                     br(),
                     
                     mainPanel(
@@ -260,6 +265,7 @@ ui <- fluidPage(
                     ),
                            
                     tabPanel("Analyses based on built in cases",
+
                               
                       actionButton("resetDVIBuilt", "Reset window", class = "btn btn-danger",
                         style = "position: absolute; bottom:30px; width: 170px"),
@@ -293,6 +299,14 @@ ui <- fluidPage(
                      
                       tabPanel("Analyses based on user loaded data",
                                
+                      "If there are multiple missing persons in a family, like in the case based on
+                      the ", a(href = "https://familias.name/dviapp/FamilyWith3Missing.fam", 
+                              "FamilyWith3Missing.fam" ,target="_blank"), 
+                      ", which is similar to a built-in-case,
+                      the number of missing must be specified in `Settings`, (`No missing :3`),
+                      and the missing persons must be named
+                      `M1`, `M2`,...(this is the case in the linked fam-file).",
+                      
                         actionButton("resetDVILoad", "Reset window", class = "btn btn-danger",
                         style = "position: absolute; bottom:30px; width: 170px"), 
                        
@@ -330,7 +344,7 @@ ui <- fluidPage(
                          column(2, numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729)),
                          column(2, numericInput("nSimulations", "No of simulations", min = 0, max = 10000, 
                             step = 100, value = 100),),
-                         column(2, numericInput("nProfiles", "No of sims for refs", min = 1, max = 10, value = 1)),
+                         column(2, numericInput("nProfiles", "No of sims for refs", min = 1, max = 10, value = 2)),
                          ),
                        
                        fluidRow(
@@ -342,8 +356,7 @@ ui <- fluidPage(
                          
                        fluidRow(
                          column(2, checkboxInput("mutation", label = "Mutation", value = FALSE)),
-                         column(2, numericInput("nMissing", "No missing", min = -1, value = -1)),
-                         column(2, checkboxInput("English", label = "English", value = TRUE)),                         
+                         column(2, numericInput("nMissing", "No missing", min = -1, value = -1)),                      
                          )      
                     )
               
@@ -393,8 +406,9 @@ server <- function(input, output, session) {
   output$powerPlotFam = renderPlot({
       file = input$famPower
       ext = getExt(file = file)
-      familias(file = file, method = "Power", DVI = FALSE, seed = input$seed, lrSims = input$nSimulations, 
-               plotOnly = input$plotOnlyFamPower, Log10 = input$log10PowerFam)
+      familias(file = file, method = "Power", DVI = FALSE, seed = input$seed, 
+               lrSims = input$nSimulations, plotOnly = input$plotOnlyFamPower, 
+               Log10 = input$log10PowerFam)
   }) %>%
   bindEvent(input$goPowerLoad)
   
@@ -412,11 +426,7 @@ server <- function(input, output, session) {
     , deleteFile = FALSE)
   
   output$TextPrioritiseBuilt = renderText({
-    if(input$English)
-       "Simulations can be performed ..."
-    else
-      "Se pueden realizar simulaciones ..."
-      
+       ""
   })
   
   # Prioritise > Analyses based on built in cases

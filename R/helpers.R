@@ -331,7 +331,7 @@ familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing
       stop(safeError(paste("There is only 1 reference family")))
   
     else if(!is.ped(am) & refFam > nAM)
-        stop(safeError(paste("There are only ", nAM, "reference families")))
+        stop(safeError(paste("Only ", nAM, "reference familie(s)")))
     else
        plot(am[[refFam]], hatched = typedMembers,  title = paste("Reference family ", refFam),
          col = list(red = miss, blue = typedMembers(am[[refFam]]), cex = 1.2))
