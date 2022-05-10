@@ -320,7 +320,7 @@ ui <- fluidPage(
                                 choices = list("None selected", "IBD estimates", "Exclusion","Pairwise",
                                   "Joint", "Posterior")
                                 ),
-                              actionButton("goDVILoad", "Go!", class = "btn-success"),
+#                              actionButton("goDVILoad", "Go!", class = "btn-success"),
                               downloadButton("downloadTableLoad", "Download DVI table output")
                               ),
                               mainPanel(
@@ -409,8 +409,9 @@ server <- function(input, output, session) {
       familias(file = file, method = "Power", DVI = FALSE, seed = input$seed, 
                lrSims = input$nSimulations, plotOnly = input$plotOnlyFamPower, 
                Log10 = input$log10PowerFam)
-  }) %>%
-  bindEvent(input$goPowerLoad)
+  }) 
+  # %>%
+  # bindEvent(input$goPowerLoad)
   
   ### Prioritise
   
@@ -502,10 +503,8 @@ server <- function(input, output, session) {
           tableJoint()
         else if (input$analysis == "Posterior")
           tablePosterior()
-        else
-          NULL
       }) %>%
-        bindEvent(input$goDVIBuilt)
+    bindEvent(input$goDVIBuilt)
 
     # DVI > Analysis based on user loaded data
     output$tableLoad <- renderTable(rownames = T,{
@@ -519,8 +518,9 @@ server <- function(input, output, session) {
         tableJoint()
       else if (input$analysisLoad == "Posterior")
         tablePosterior()
-    }) %>%
-      bindEvent(input$goDVILoad)
+    }) 
+    # %>%
+    # bindEvent(input$goDVILoad)
     
     ### Reactive functions
     

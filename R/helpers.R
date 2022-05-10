@@ -1,5 +1,4 @@
 #' Help functions for dviapp
-
 #' Function
 #' pedPower
 #'
