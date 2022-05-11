@@ -92,11 +92,11 @@ ui <- fluidPage(
                     checkboxInput("log10Power", label = "log10(LR)", value = TRUE), 
                     checkboxInput("plotOnlyBuiltPower", label = "Only plot pedigree", value = TRUE),
                     actionButton("goPowerBuilt", "Go!", class = "btn-success"),
-                  ),
-                  mainPanel(
-                    fluidRow(
-                      column(plotOutput("powerPlotSimulated"),  width = 9)
-                    )
+                ),
+                mainPanel(
+                  fluidRow(
+                    column(plotOutput("powerPlotSimulated"),  width = 9)
+                  )
                   )
                 ),
               ),
@@ -265,10 +265,10 @@ ui <- fluidPage(
                     ),
                            
                     tabPanel("Analyses based on built in cases",
-
                               
                       actionButton("resetDVIBuilt", "Reset window", class = "btn btn-danger",
                         style = "position: absolute; bottom:30px; width: 170px"),
+                      
                           sidebarLayout(position = "left",
                             sidebarPanel(
                               selectInput("dat", 
@@ -299,6 +299,9 @@ ui <- fluidPage(
                      
                       tabPanel("Analyses based on user loaded data",
                                
+                      actionButton("resetDVILoad", "Reset window", class = "btn btn-danger",
+                          style = "position: absolute; bottom:30px; width: 170px"), 
+                               
                       "If there are multiple missing persons in a family, like in the case based on
                       the ", a(href = "https://familias.name/dviapp/FamilyWith3Missing.fam", 
                               "FamilyWith3Missing.fam" ,target="_blank"), 
@@ -307,8 +310,7 @@ ui <- fluidPage(
                       and the missing persons must be named
                       `M1`, `M2`,...(this is the case in the linked fam-file).",
                       
-                        actionButton("resetDVILoad", "Reset window", class = "btn btn-danger",
-                        style = "position: absolute; bottom:30px; width: 170px"), 
+
                        
                           sidebarLayout(position = "left",
                             sidebarPanel(
