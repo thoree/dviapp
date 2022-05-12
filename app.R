@@ -322,9 +322,9 @@ ui <- fluidPage(
                                 choices = list("None selected", "IBD estimates", "Exclusion","Pairwise",
                                   "Joint", "Posterior")
                                 ),
-#                              actionButton("goDVILoad", "Go!", class = "btn-success"),
+                             actionButton("goDVILoad", "Go!", class = "btn-success"),
                               downloadButton("downloadTableLoad", "Download DVI table output")
-                              ),
+                            ),
                               mainPanel(
                                 fluidRow(
                                   column(tableOutput("tableLoad"),  width = 8),
@@ -414,7 +414,7 @@ server <- function(input, output, session) {
   }) 
   # %>%
   # bindEvent(input$goPowerLoad)
-  
+  # 
   ### Prioritise
   
   # Prioritise > Explanations: Picture
@@ -520,9 +520,8 @@ server <- function(input, output, session) {
         tableJoint()
       else if (input$analysisLoad == "Posterior")
         tablePosterior()
-    }) 
-    # %>%
-    # bindEvent(input$goDVILoad)
+    }) %>%
+    bindEvent(input$goDVILoad)
     
     ### Reactive functions
     
