@@ -9,11 +9,10 @@
 #' @param seed Integer
 #' @param lastMarker Integer, last marker in NorwegianFrequencies
 #' @param ids character, MP followed by ref(s)
-#' @param plotOnly logical
 #' @param log10 logical
 
 pedPower = function(claim, nsim = 10, seed = NULL, lastMarker = 35,
-                    ids = c("MP", "REF"), plotOnly = TRUE, Log10 = TRUE){
+                    ids = c("MP", "REF"), Log10 = TRUE){
   # Set markers and define H2
   claim = setMarkers(claim, locusAttributes = NorwegianFrequencies[1:lastMarker])
   unrel = list()
@@ -21,10 +20,6 @@ pedPower = function(claim, nsim = 10, seed = NULL, lastMarker = 35,
     unrel[[i]] = pedtools::singleton(ids[i])
   unrel = pedtools::transferMarkers(claim, unrel)
   
-  # Plot pedigree or simulate
-  if(plotOnly)
-    plot(claim, hatched = typedMembers, col = list(red = ids[1], blue = ids[-1]))
-  else{
     pow1 = LRpower(claim, unrel,  ids = ids, nsim = nsim,
                    seed = seed, plot = F, verbose = F)
     par(mfcol = c(1,2), oma = c(0, 0, 1, 0))
@@ -54,7 +49,6 @@ pedPower = function(claim, nsim = 10, seed = NULL, lastMarker = 35,
     tittel = paste("No of simulations: ", nsim,". Markers: 1 - ", lastMarker)
     title(tittel, outer = TRUE)
     par(mfcol = c(1,1))
-  }
 }
 
 #' Function
@@ -88,7 +82,6 @@ myjointDVI = function(pm, am, missing, mutation = FALSE, thresholdLR = 0){
 #' 
 #' @param ped pedigree
 #' @param plotPed Logical, only plot
-#' @param plotOnly Logical
 #' @param lastMarker Integer, last marker in NorwegianFrequencies
 #' @param seed integer
 #' @param nProfiles integer, see forrel::MPPsims
@@ -96,12 +89,9 @@ myjointDVI = function(pm, am, missing, mutation = FALSE, thresholdLR = 0){
 #' @param thresholdIP double, see forrel::MPPsims
 
 
-priPower = function(ped, plotOnly = T, lastMarker = 22, seed = NULL, nProfiles = 1, lrSims = 10,
+priPower = function(ped, lastMarker = 22, seed = NULL, nProfiles = 1, lrSims = 10,
                     thresholdIP = NULL, sel = list( "REF", c("REF", "E1"), c("REF", "E1", "E2"))) {
   
-  if(plotOnly)
-    plot(ped, col = list(red = "MP", blue = c("REF", "E1", "E2")))
-  else{
     ped = setMarkers(ped, locusAttributes = NorwegianFrequencies[1:lastMarker])
     
     simData = MPPsims(ped, missing = "MP", nProfiles = nProfiles,
@@ -111,7 +101,6 @@ priPower = function(ped, plotOnly = T, lastMarker = 22, seed = NULL, nProfiles =
     p3 = powerPlot(simData, type = 3)
     p1 + p3 + plot_layout(guides = 'collect')
 
-  }
 }
 
 #' Function
@@ -226,8 +215,8 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data.", nMissing
   t8 = differentMarkers(pm, am)$tekst
   t9 =" PS: The number of missing need to be given in Settings if there are families with
        multiple missing."
-  text = glue(header, t1, t2, t3, t5, t6, t7, t8, t9)
-  text
+
+  glue(header,  t1, t2, t3, t5, t6, t7, t8, t9)
 
 }
 
