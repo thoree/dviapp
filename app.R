@@ -80,7 +80,6 @@ ui <- fluidPage(
             actionButton("resetPowerBuilt", "Reset window", class = "btn btn-danger",
               style = "position: absolute; bottom:30px; width: 170px"),
                   
-#            "To perform a simulation, choose a built in pedigree, and press `Go!`.",
             br(),
               sidebarLayout(position = "left",
                 sidebarPanel(
@@ -89,9 +88,9 @@ ui <- fluidPage(
                                     "Missing GF, 2 grandchildren typed"),
                     ),
                     sliderInput("lastMarker", "No of markers", min = 1, max = 35, step = 1, value = 22),
-                    column(6, checkboxInput("log10Power", label = "log10(LR)", value = TRUE),
-                  )
-#                    actionButton("goPowerBuilt", "Go!", class = "btn-success"),
+                    checkboxInput("log10Power", label = "log10(LR)", value = TRUE),
+                  
+                    actionButton("goPowerBuilt", "Simulate!", class = "btn-success"),
                 ),
                 mainPanel(
                   fluidRow(
@@ -117,7 +116,7 @@ ui <- fluidPage(
                     sidebarPanel(width = 3,
                       fileInput("famPower", "Familias file for power simulation"),
                       checkboxInput("log10PowerFam", label = "log10(LR)", value = TRUE), 
-#                       actionButton("goPowerLoad", "Go!", class = "btn-success"),
+                       actionButton("goPowerLoad", "Simulate!", class = "btn-success"),
                     ),
                         mainPanel(width = 9,
                           fluidRow(
@@ -170,7 +169,7 @@ ui <- fluidPage(
                    actionButton("resetPriBuilt", "Reset window", class = "btn btn-danger",
                      style = "position: absolute; bottom:30px; width: 170px"),
                           
-                   "The simulation needs roughly 30 seconds to complete, plotting is instant.",
+#                   "The simulation needs roughly 30 seconds to complete, plotting is instant.",
                      sidebarLayout(position = "left",
                        sidebarPanel(
                          selectInput("pedigreePowerSimulatedPri", 
@@ -179,7 +178,7 @@ ui <- fluidPage(
                                "Missing uncle"),
                            ),
                          sliderInput("lastMarkerPri", "No of markers", min = 1, max = 35, step = 1, value = 22),
-#                         actionButton("goPriBuilt", "Go!", class = "btn-success"),
+                         actionButton("goPriBuilt", "Simulate!", class = "btn-success"),
                        ),
                        mainPanel(
                          fluidRow(
@@ -199,15 +198,13 @@ ui <- fluidPage(
                   
                   ". The missing person should be named `MP`, the reference `REF`, and the extra candidates
                   for genotyping `E1`and `E2`. The mentioned file gives output similar to that
-                  in `Priority > Explanations` (but not identical, even for the same seed, since this is simulation).
-                  Further information on the fam file loaded, and potential 
-                  errors in the conversion of the fam file, are reported to the console.",
+                  in `Priority > Explanations` (but not identical, even for the same seed, since this is simulation).",
                   
                   br(),
                     sidebarLayout(position = "left",
                       sidebarPanel(width = 3,
                         fileInput("priPower", "Familias file for priority simulation"),
-#                        actionButton("goPriLoad", "Go!", class = "btn-success"),
+                        actionButton("goPriLoad", "Simulate!", class = "btn-success"),
                         ),
                       mainPanel(width = 9,
                         fluidRow( column(plotOutput("priPlotFamPedigree"),  width = 3),
@@ -280,14 +277,16 @@ ui <- fluidPage(
                                 choices = list("None selected", "IBD estimates", "Exclusion","Pairwise",
                                   "Joint", "Posterior")
                                 ),
-#                              actionButton("goDVIBuilt", "Go!", class = "btn-success"),
-                              downloadButton("downloadTable", "Download DVI table output")
+                              fluidRow(
+                             column(6, actionButton("goDVIBuilt", "Do DVI analysis", class = "btn-success")),
+                            column(6, downloadButton("downloadTable", "Download")),
                               ),
+                            ),
                               mainPanel(width = 9,
                                 fluidRow(
-                                  column(plotOutput("plot"),  width = 6),
-                                  column(textOutput("DVISummaryBuiltIn"),  width = 6), 
-                                  column(tableOutput("table"),  width = 12)
+                                  column(textOutput("DVISummaryBuiltIn"),  width = 12), 
+                                  column(plotOutput("plot"),  width = 3),
+                                  column(tableOutput("table"),  width = 9)
                                   )
                                 )
                             ),
@@ -309,7 +308,7 @@ ui <- fluidPage(
 
                        
                           sidebarLayout(position = "left",
-                            sidebarPanel(width = 3,
+                            sidebarPanel(width = 4,
                               fluidRow(         
                               column(9, fileInput("fileDVI", "fam - or RData file")),
                               column(3, checkboxInput("relabel", label = "Relabel", value =  FALSE))
@@ -321,14 +320,14 @@ ui <- fluidPage(
                                   "Joint", "Posterior")
                                 ),
                               
-#                             actionButton("goDVILoad", "Go!", class = "btn-success"),
+                             actionButton("goDVILoad", "Do DVI analysis", class = "btn-success"),
                               downloadButton("downloadTableLoad", "Download DVI table output")
                             ),
-                              mainPanel(width = 9,
+                              mainPanel(width = 8,
                                 fluidRow(
-                                  column(plotOutput("plotLoad"),  width = 6),
-                                  column(textOutput("DVISummaryLoad"),  width = 6),
-                                  column(tableOutput("tableLoad"),  width = 12)
+                                  column(textOutput("DVISummaryLoad"),  width = 12),
+                                  column(plotOutput("plotLoad"),  width = 3),
+                                  column(tableOutput("tableLoad"),  width = 9)
                                   )
                                 )
                             ),
@@ -420,9 +419,8 @@ server <- function(input, output, session) {
       pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
                lastMarker = input$lastMarker)
     }
-  }) 
-    # %>%
-    # bindEvent(input$goPowerBuilt)
+  }) %>%
+    bindEvent(input$goPowerBuilt)
 
 
   # Power > Analyses based on user loaded data. Plot pedigree
@@ -440,9 +438,8 @@ server <- function(input, output, session) {
       ext = getExt(file = file)
       familias(file = file, method = "Power", DVI = FALSE, seed = input$seed, plotOnly = FALSE,
                lrSims = input$nSimulations, Log10 = input$log10PowerFam)
-  }) 
-  # %>% 
-  # bindEvent(input$goPowerLoad)
+  }) %>% 
+   bindEvent(input$goPowerLoad)
   # 
   
   ### Prioritise
@@ -473,7 +470,7 @@ server <- function(input, output, session) {
       plot(ped, col = list(red = "MP", blue = c("REF", "E1", "E2")))
     }
 
-  }) 
+  })  
     # %>%
     # bindEvent(input$goPriBuilt)
 
@@ -481,44 +478,61 @@ server <- function(input, output, session) {
   # Prioritise > Analyses based on built in cases. Simulation
   output$powerPlotSimulatedPri = renderPlot( {
     if(input$pedigreePowerSimulatedPri == "Missing brother"){
-      ped = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
-      ped = addChildren(ped, father = "FA", mother = "MO", nch = 2, 
+      
+      withProgress(message = 'Calculation in progress',
+                   detail = 'This may take a while...', value = 0, {
+
+        ped = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
+        ped = addChildren(ped, father = "FA", mother = "MO", nch = 2, 
                         sex = 1, ids = c("E1", "E2"))
-      priPower(ped,  lastMarker = input$lastMarkerPri, 
+        priPower(ped,  lastMarker = input$lastMarkerPri, 
                seed = input$seed,  nProfiles = input$nProfiles, 
                lrSims = input$nSimulations, thresholdIP = input$thresholdIP)
+      })
+      
     }
     else if(input$pedigreePowerSimulatedPri == "Missing uncle"){
+      
+      withProgress(message = 'Calculation in progress',
+                   detail = 'This may take a while...', value = 0, {
+                     
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "E2"))
       x = addSon(x, parent = "E2",  id = "REF")
       ped = relabel(x, "E1", "NN_1")     
       priPower(ped, lastMarker = input$lastMarkerPri, seed = input$seed,  
                nProfiles = input$nProfiles, lrSims = input$nSimulations,  thresholdIP = input$thresholdIP)
+      })
     }
-  }) 
-  # %>%
-  # bindEvent(input$goPriBuilt)
+  })  %>%
+  bindEvent(input$goPriBuilt)
   
 
   # Prioritise > Analyses based on user loaded data. Pedigree plot
   output$priPlotFamPedigree = renderPlot({
     file = input$priPower
     ext = getExt(file = file)
+    
     familias(file = file, method = "Prioritise", DVI = FALSE,
              plotOnly = TRUE, nProfiles = input$nProfiles,
              thresholdIP = input$thresholdIP)
+                   
   }) 
   
   # Prioritise > Analyses based on user loaded data. Simulation
   output$priPlotFam = renderPlot({
+    
+    withProgress(message = 'Calculation in progress',
+                 detail = 'This may take a while...', value = 0, {
+    
     file = input$priPower
     ext = getExt(file = file)
     familias(file = file, method = "Prioritise", DVI = FALSE,
              plotOnly = F, nProfiles = input$nProfiles,
              thresholdIP = input$thresholdIP)
-  }) 
-  # %>%
-  # bindEvent(input$goPriLoad)
+    
+                 })
+  }) %>%
+  bindEvent(input$goPriLoad)
 
   ### DVI
     
@@ -564,12 +578,15 @@ server <- function(input, output, session) {
           tableJoint()
         else if (input$analysis == "Posterior")
           tablePosterior()
-      }) 
-    # %>%
-    # bindEvent(input$goDVIBuilt)
+      }) %>%
+    bindEvent(input$goDVIBuilt)
 
     # DVI > Analysis based on user loaded data
     output$tableLoad <- renderTable(rownames = T,{
+      
+      withProgress(message = 'Calculation in progress',
+                   detail = 'This may take a while...', value = 0, {
+      
       if(input$analysisLoad == "IBD estimates")
         tableIBD()
       else if (input$analysisLoad == "Exclusion")
@@ -580,9 +597,9 @@ server <- function(input, output, session) {
         tableJoint()
       else if (input$analysisLoad == "Posterior")
         tablePosterior()
-    }) 
-    # %>%
-    # bindEvent(input$goDVILoad)
+                   })
+    }) %>%
+    bindEvent(input$goDVILoad)
     
     ### Reactive functions
     
