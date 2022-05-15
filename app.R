@@ -263,29 +263,32 @@ ui <- fluidPage(
                         style = "position: absolute; bottom:30px; width: 170px"),
                       
                           sidebarLayout(position = "left",
-                            sidebarPanel(width = 3,
-                              selectInput("datDVIBuilt", 
-                                label = "Case",
-                                choices = list("None selected", 
+                            sidebarPanel(width = 4,
+                              fluidRow(
+                                column(width = 9,           
+                                  selectInput("datDVIBuilt",  label = "Case", choices = list("None selected", 
                                                "planecrash", 
-                                               "DVIbook-p-115-116",
-                                               "Family with three missing", 
-                                               "grave")
-                                ),
-                              numericInput("refFam", 
-                                "Reference family to plot", min = 1, value = 1
-                                ),                                        
+                                               "DVIbook-Example-4.8.1",
+                                               "DVIbook-Example-4.8.4",
+                                               "DVIbook-Exercise-4.9.7",
+                                               "DVIbook-Exercise-4.9.8",
+                                               "DVIbook-Exercise-6.2.7",
+                                               "Three missing"))
+                                   ),
+                                column(width = 3, numericInput("refFam", 
+                                  "Plot", min = 1, value = 1)),
+                              ),
                               selectInput("analysis",
                                 label = "Choose DVI analysis",
                                 choices = list("None selected", "IBD estimates", "Exclusion","Pairwise",
                                   "Joint", "Posterior")
                                 ),
                               fluidRow(
-                             column(6, actionButton("goDVIBuilt", "Do DVI analysis", class = "btn-success")),
+                             column(6, actionButton("goDVIBuilt", "Analyze!", class = "btn-success")),
                             column(6, downloadButton("downloadTable", "Download")),
                               ),
                             ),
-                              mainPanel(width = 9,
+                              mainPanel(width = 8,
                                 fluidRow(
                                   column(textOutput("summaryDVIBuilt"),  width = 12), 
                                   column(plotOutput("plotDVIBuilt"),  width = 3),
@@ -323,7 +326,7 @@ ui <- fluidPage(
                                   "Joint", "Posterior")
                                 ),
                               
-                             actionButton("goDVILoad", "Do DVI analysis", class = "btn-success"),
+                             actionButton("goDVILoad", "Analyze!", class = "btn-success"),
                               downloadButton("downloadTableLoad", "Download DVI table output")
                             ),
                               mainPanel(width = 8,
@@ -345,22 +348,19 @@ ui <- fluidPage(
                        "Some default settings can be changed below",
                        fluidRow(
                          column(2, numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729)),
-                         column(2, numericInput("nSimulations", "No of simulations", min = 0, max = 10000, 
+                         column(3, numericInput("nSimulations", "Simulations", min = 0, max = 10000, 
                             step = 100, value = 100),),
-                         column(2, numericInput("nProfiles", "No of sims for refs", min = 1, max = 10, value = 2)),
+                         column(3, numericInput("nProfiles", "Ref sim", min = 1, max = 10, value = 2)),
+                         column(2, numericInput("nMissing", "No missing", min = -1, value = -1)),
+                         column(2, checkboxInput("mutation", label = "Mutation", value = FALSE)),
                          ),
                        
                        fluidRow(
-                         column(4, sliderInput("thresholdIP", "LR threshold inclusion power", min = 0, max = 10000, 
-                          step = 1000, value = 10000)),
-                         column(4, sliderInput("thresholdLRDisplay", "Show LR above", min = 0, max = 1000, 
+                         column(6, sliderInput("thresholdIP", "LR threshold inclusion power", min = 0, max = 10000, 
+                          step = 100, value = 10000)),
+                         column(6, sliderInput("thresholdLRDisplay", "Show LR above", min = 0, max = 1000, 
                           step = 10, value = 0)),
                          ),
-                         
-                       fluidRow(
-                         column(2, checkboxInput("mutation", label = "Mutation", value = FALSE)),
-                         column(2, numericInput("nMissing", "No missing", min = -1, value = -1)),                      
-                         )      
                     )
               
         )
@@ -369,7 +369,8 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
 
-  ### Power
+  ### Fix names of victims for dataExercise498 
+  names(dataExercise498$pm) = paste0("V", 1:3)
   
   # Power > Analysis based on built in cases. Plot pedigree
   output$powerPlotPedigree = renderPlot( {
@@ -548,16 +549,25 @@ server <- function(input, output, session) {
 
    # DVI > Analysis based on built in data: Summary
   output$summaryDVIBuilt <- renderPrint({
-    if(input$datDVIBuilt == "Family with three missing")
+    if(input$datDVIBuilt == "Three missing")
       summariseDVIreturned(example1$pm, example1$am, example1$missing, header = "Tutorial data. ")
-    else if (input$datDVIBuilt == "grave")
+    else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
       summariseDVIreturned(grave$pm, grave$am, grave$missing, header = "grave data. ")
     else if (input$datDVIBuilt == "planecrash")
       summariseDVIreturned(planecrash$pm, planecrash$am, planecrash$missing, 
                            header = "planecrash data. ")
-    else if (input$datDVIBuilt == "DVIbook-p-115-116")
+    else if (input$datDVIBuilt == "DVIbook-Example-4.8.1")
+      summariseDVIreturned(dataExample481$pm, dataExample481$am, dataExample481$missing, 
+                           header = "DVI book pp 112-112. ")
+    else if (input$datDVIBuilt == "DVIbook-Example-4.8.4")
       summariseDVIreturned(dataCh4$pm, dataCh4$am, dataCh4$missing, 
                            header = "DVI book pp 115-116. ")
+    else if (input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
+      summariseDVIreturned(dataExercise497$pm, dataExercise497$am, dataExercise497$missing, 
+                           header = "DVI book pp 124-125. ")
+    else if (input$datDVIBuilt == "DVIbook-Exercise-4.9.8")
+      summariseDVIreturned(dataExercise498$pm, dataExercise498$am, dataExercise498$missing, 
+                           header = "DVI book pp 125-126. ")
       
     }) 
 
@@ -573,12 +583,26 @@ server <- function(input, output, session) {
                   nMissingSpecified = input$nMissing)
      })      
     
-    # DVI > Analysis based on built in data
-    output$tableDVIBuilt <- renderTable(rownames = T,{
+    # DVI > Analysis based on built in data. First, fix digits
+    dig = reactiveVal(-4)
+    
+    observeEvent(input$analysis, {
+      if(input$analysis == "IBD estimates")
+        dig(-2)
+      else if(input$analysis == "Exclusion") 
+        dig(0)
+      else if(input$analysis == "Pairwise" | input$analysis == "Joint" )
+        dig(-2)
+      else if(input$analysis == "Posterior")
+        dig(4)
+    })
+    
+    output$tableDVIBuilt <- renderTable(rownames = T, digits = dig,{
         if(input$analysis == "IBD estimates")
           tableIBD()
         else if (input$analysis == "Exclusion")
           tableExclusion()
+
         else if (input$analysis == "Pairwise")
           tablePairwise()
         else if (input$analysis == "Joint")
@@ -587,9 +611,23 @@ server <- function(input, output, session) {
           tablePosterior()
       }) %>%
     bindEvent(input$goDVIBuilt)
+    
 
-    # DVI > Analysis based on user loaded data
-    output$tableLoad <- renderTable(rownames = T,{
+
+    # DVI > Analysis based on loaded data. First, fix digits
+    digLoad = reactiveVal(-4)
+    
+    observeEvent(input$analysisLoad, {
+      if(input$analysisLoad == "IBD estimates")
+        digLoad(-2)
+      else if(input$analysisLoad == "Exclusion") 
+        digLoad(0)
+      else if(input$analysisLoad == "Pairwise" | input$analysis == "Joint" )
+        digLoad(-2)
+      else if(input$analysisLoad == "Posterior")
+        digLoad(4)
+    })
+    output$tableLoad <- renderTable(rownames = T, digit = digLoad,{
       
       withProgress(message = 'Calculation in progress',
                    detail = 'This may take a while...', value = 0, {
@@ -612,14 +650,21 @@ server <- function(input, output, session) {
     
     #IBD, for built in and loaded data, fam or RData
     tableIBD = reactive({
-      if(input$datDVIBuilt == "Family with three missing")
+      if(input$datDVIBuilt == "Three missing")
         IBDestimates(example1$pm, thresholdLR = input$thresholdLRDisplay)
-      else if (input$datDVIBuilt == "grave")
+      else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
         IBDestimates(grave$pm, thresholdLR = input$thresholdLRDisplay)
       else if(input$datDVIBuilt == "planecrash")
         IBDestimates(planecrash$pm,  thresholdLR = input$thresholdLRDisplay)
-      else if(input$datDVIBuilt == "DVIbook-p-115-116")
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
+        IBDestimates(dataExample481$pm,  thresholdLR = input$thresholdLRDisplay)
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         IBDestimates(dataCh4$pm,  thresholdLR = input$thresholdLRDisplay)
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
+        IBDestimates(dataExercise497$pm,  thresholdLR = input$thresholdLRDisplay)
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.8")
+        IBDestimates(dataExercise498$pm,  thresholdLR = input$thresholdLRDisplay)
+      
       else{ 
         file = input$fileDVI
         ext = getExt(file = file)
@@ -634,14 +679,26 @@ server <- function(input, output, session) {
     
     #Exclusion, for built in and loaded data, fam or RData
     tableExclusion = reactive({
-      if(input$datDVIBuilt == "Family with three missing")
+      
+      withProgress(message = 'Calculation in progress',
+                   detail = 'This may take a while...', value = 0, {
+      
+      
+      if(input$datDVIBuilt == "Three missing")
         exclusionMatrix(example1$pm, example1$am , example1$missing)
-      else if (input$datDVIBuilt == "grave")
-        data.frame( Warning = "Not implemented, takes too much time. Runs in R library dvir")
+      else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
+        exclusionMatrix(grave$pm, grave$am , grave$missing)
       else if (input$datDVIBuilt == "planecrash")
         exclusionMatrix(planecrash$pm, planecrash$am , planecrash$missing)
-      else if(input$datDVIBuilt == "DVIbook-p-115-116")
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
+        exclusionMatrix(dataExample481$pm, dataExample481$am , dataExample481$missing)
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         exclusionMatrix(dataCh4$pm, dataCh4$am , dataCh4$missing)
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
+        exclusionMatrix(dataExercise497$pm, dataExercise497$am , dataExercise497$missing)
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.8")
+        exclusionMatrix(dataExercise498$pm, dataExercise498$am , dataExercise498$missing)
+
       else{
         if(!input$relabel)
           stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
@@ -658,18 +715,32 @@ server <- function(input, output, session) {
           familias(file = file, method = 'Exclusion',  relabel = input$relabel, miss = MPs)
         }
       }
+     })                
     })
     
     #Pairwise, for built in and loaded data, fam or RData
     tablePairwise = reactive({
-      if (input$datDVIBuilt == "Family with three missing")
+      
+      withProgress(message = 'Calculation in progress',
+                   detail = 'This may take a while...', value = 0, {
+      
+      if (input$datDVIBuilt == "Three missing")
         myPairwiseLR(example1$pm, example1$am , example1$missing, input$mutation)$LRmatrix
-      else if (input$datDVIBuilt == "grave")
+      else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
         myPairwiseLR(grave$pm, grave$am , grave$missing, input$mutation)$LRmatrix
       else if (input$datDVIBuilt == "planecrash")
         myPairwiseLR(planecrash$pm, planecrash$am, planecrash$missing, input$mutation)$LRmatrix
-      else if(input$datDVIBuilt == "DVIbook-p-115-116")
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
+        myPairwiseLR(dataExample481$pm, dataExample481$am, dataExample481$missing, input$mutation)$LRmatrix
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         myPairwiseLR(dataCh4$pm, dataCh4$am, dataCh4$missing, input$mutation)$LRmatrix
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
+        myPairwiseLR(dataExercise497$pm, dataExercise497$am, dataExercise497$missing, 
+                     input$mutation)$LRmatrix
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.8")
+        myPairwiseLR(dataExercise498$pm, dataExercise498$am, dataExercise498$missing, 
+                     input$mutation)$LRmatrix 
+      
       else{
         if(!input$relabel)
           stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
@@ -686,21 +757,36 @@ server <- function(input, output, session) {
                    miss = MPs, mutation = input$mutation)
         }
       }
+     })
     })
     
     #Joint, for built in and loaded data, fam or RData
     tableJoint = reactive({
-      if(input$datDVIBuilt == "Family with three missing")
+      
+      withProgress(message = 'Calculation in progress',
+                   detail = 'This may take a while...', value = 0, {
+      
+      if(input$datDVIBuilt == "Three missing")
         myjointDVI(example1$pm, example1$am , example1$missing, mutation = input$mutation,
                    thresholdLR = input$thresholdLRDisplay)
-      else if (input$datDVIBuilt == "grave")
-        data.frame( Warning = "Not implemented, takes too much time. Runs in R library dvir")
+      else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
+        myjointDVI(grave$pm, grave$am , grave$missing, mutation = input$mutation,
+                   thresholdLR = input$thresholdLRDisplay)
       else if (input$datDVIBuilt == "planecrash")
         myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, mutation = input$mutation,
                    thresholdLR = input$thresholdLRDisplay)
-      else if(input$datDVIBuilt == "DVIbook-p-115-116")
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
+        myjointDVI(dataExample481$pm, dataExample481$am , dataExample481$missing, mutation = input$mutation,
+                   thresholdLR = input$thresholdLRDisplay)
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         myjointDVI(dataCh4$pm, dataCh4$am , dataCh4$missing, mutation = input$mutation,
                    thresholdLR = input$thresholdLRDisplay)
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
+        myjointDVI(dataExercise497$pm, dataExercise497$am , dataExercise497$missing, 
+                   mutation = input$mutation, thresholdLR = input$thresholdLRDisplay)
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.8")
+        myjointDVI(dataExercise498$pm, dataExercise498$am , dataExercise498$missing, 
+                   mutation = input$mutation, thresholdLR = input$thresholdLRDisplay)
       
       else{
         if(!input$relabel)
@@ -721,21 +807,37 @@ server <- function(input, output, session) {
                    mutation = input$mutation, thresholdLR = input$thresholdLRDisplay)
         }
       }
+     })
     })
  
     #Posterior, for built in and loaded data, fam or RData   
     tablePosterior = reactive({
-      if (input$datDVIBuilt == "Family with three missing")
+      
+      withProgress(message = 'Calculation in progress',
+                   detail = 'This may take a while...', value = 0, {
+      
+      if (input$datDVIBuilt == "Three missing")
         Bmarginal(myjointDVI(example1$pm, example1$am, example1$missing, 
                   mutation = input$mutation), example1$missing)
-      else if (input$datDVIBuilt == "grave")
-        data.frame( Warning = "Not implemented, takes too much time. Runs in R library dvir")
+      else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
+        Bmarginal(myjointDVI(grave$pm, grave$am, grave$missing, 
+                             mutation = input$mutation), grave$missing)
       else if (input$datDVIBuilt == "planecrash")
         Bmarginal(myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, 
                   mutation = input$mutation), planecrash$missing)
-      else if(input$datDVIBuilt == "DVIbook-p-115-116")
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         Bmarginal(myjointDVI(dataCh4$pm, dataCh4$am, dataCh4$missing, 
                              mutation = input$mutation), dataCh4$missing)
+      else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
+        Bmarginal(myjointDVI(dataExample481$pm, dataExample481$am, dataExample481$missing, 
+                             mutation = input$mutation), dataCh4$missing)  
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
+        Bmarginal(myjointDVI(dataExercise497$pm, dataExercise497$am, dataExercise497$missing, 
+                             mutation = input$mutation), dataExercise497$missing) 
+      else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.8")
+        Bmarginal(myjointDVI(dataExercise498$pm, dataExercise498$am, dataExercise498$missing, 
+                             mutation = input$mutation), dataExercise498$missing)
+      
       else{
         if(!input$relabel)
           stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
@@ -752,6 +854,7 @@ server <- function(input, output, session) {
             familias(file = file, method = 'Posterior',  relabel = input$relabel, miss = MPs)
         }
       }
+     })
     })
     
     #DVI > Analyses based on built in data, download
@@ -791,36 +894,67 @@ server <- function(input, output, session) {
       if(input$refFam > 0) {
         file = input$fileDVI
         ext = tools::file_ext(file$datapath)
-        if(input$datDVIBuilt == "Family with three missing"){
+        if(input$datDVIBuilt == "Three missing"){
           if(input$refFam > 1)
-             stop(safeError("Impossible value for `Reference family to plot`, only 1 reference family"))
+             stop(safeError("Impossible value for `Reference family to plot`, only 1 reference family."))
           plot(example1$am, hatched = typedMembers, title = "Reference family",
                cex = 1.2, col = list(red = planecrash$missing,
                                      blue = typedMembers(example1$am)))
         }
         
-        else if (input$datDVIBuilt == "grave"){
+        else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7"){
           if(input$refFam > 1)
-            stop(safeError("Impossible value for `Reference family to plot`, only 1 reference family"))
-          plot(grave$am, marker = 1, hatched = typedMembers, title = "Reference family",
-               col = list(red = grave$missing, blue = typedMembers(grave$am), cex = 1.2))
+            stop(safeError("Impossible value for `Reference family to plot`, only 1 reference family."))
+            labs = labels(grave$am)
+            index = c(1:5,7:8, 16, 20:21)
+            am0 = relabel(grave$am, 1:length(index), labs[index] )
+            plot(am0,  hatched = typedMembers, title = "Reference family",
+               col = list(red = grave$missing, blue = typedMembers(grave$am)), cex = 0.7)
         }
         
         else if (input$datDVIBuilt == "planecrash"){
           if(input$refFam > 5)
-            stop(safeError("Impossible value for `Reference family to plot`, only 5 reference families"))
+            stop(safeError("Impossible value for `Reference family to plot`, only 5 reference families."))
           plot(planecrash$am[[input$refFam]], hatched = typedMembers, 
                       title = paste("Reference family ", input$refFam),
                       col = list(red = planecrash$missing,
                                  blue = typedMembers(planecrash$am[[input$refFam]])))
         }
-        else if (input$datDVIBuilt == "DVIbook-p-115-116"){
+        
+        else if (input$datDVIBuilt == "DVIbook-Example-4.8.1"){
+          if(input$refFam > 1)
+            stop(safeError("Impossible value for `Reference family to plot`, only 1 reference family."))
+          plot(dataExample481$am, hatched = typedMembers, 
+               title = paste("Reference family ", input$refFam),
+               col = list(red = dataExample481$missing,
+                          blue = typedMembers(dataExample481$am)))
+        }
+        
+        else if (input$datDVIBuilt == "DVIbook-Example-4.8.4"){
           if(input$refFam > 3)
-            stop(safeError("Impossible value for `Reference family to plot`, only 3 reference families"))
+            stop(safeError("Impossible value for `Reference family to plot`, only 3 reference families."))
           plot(dataCh4$am[[input$refFam]], hatched = typedMembers, 
                title = paste("Reference family ", input$refFam),
                col = list(red = dataCh4$missing,
                           blue = typedMembers(dataCh4$am[[input$refFam]])))
+        }
+        
+        else if (input$datDVIBuilt == "DVIbook-Exercise-4.9.7"){
+          if(input$refFam > 3)
+            stop(safeError("Impossible value for `Reference family to plot`, only 3 reference families."))
+          plot(dataExercise497$am[[input$refFam]], hatched = typedMembers, 
+               title = paste("Reference family ", input$refFam),
+               col = list(red = dataExercise497$missing,
+                          blue = typedMembers(dataExercise497$am[[input$refFam]])))
+        }
+        
+        else if (input$datDVIBuilt == "DVIbook-Exercise-4.9.8"){
+          if(input$refFam > 1)
+            stop(safeError("Impossible value for `Reference family to plot`, only 1 reference family."))
+          plot(dataExercise498$am, hatched = typedMembers, 
+               title = paste("Reference family ", input$refFam),
+               col = list(red = dataExercise498$missing,
+                          blue = typedMembers(dataExercise498$am)))
         }
       }
 
