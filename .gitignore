@@ -2,6 +2,16 @@
 .Rhistory
 .RData
 .Ruserdata
+doc/
+README_cache/
+README_files/
+man/
+data/LA-SERENA-PROJECT.fam
+data/different.RData
+data/differentMarkers.fam
+figures/unnamed-chunk-1-1.png
+figures/unnamed-chunk-2-1.png
+README.docx
 commands.R
 foo.txt
 app - Copy.R
