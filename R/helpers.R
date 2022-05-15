@@ -215,9 +215,7 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data.", nMissing
   t8 = differentMarkers(pm, am)$tekst
   t9 =" PS: The number of missing need to be given in Settings if there are families with
        multiple missing."
-
-  glue(header,  t1, t2, t3, t5, t6, t7, t8, t9)
-
+  glue(t1, t2, t3, t5, t6, t7, t8)
 }
 
 #' Function
@@ -255,7 +253,6 @@ familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing
     else{
       am = lapply(x[-1], function(dat) {
         ref = dat$`Reference pedigree`
-#        ref = dat[[2]]
         if(!is.ped(ref))
           ref = ref[[which(pedsize(ref) > 1)]]     # remove redundant singleton
         ref
@@ -277,7 +274,7 @@ familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing
       am = z$am
     }
   }
-
+  errorTextSame = "Must have the same markers for all pm and am data"
   if(method == "Describe data")
     summariseDVIreturned(pm, am, missing = miss, header = "Familias data. ", 
                          nMissingSpecified = nMissingSpecified)
@@ -287,25 +284,25 @@ familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing
   
   else if (method == "Exclusion"){
     if(differentMarkers(pm, am)$ulike)
-      stop(safeError(errorText))
+      stop(safeError(errorTextSame))
     exclusionMatrix(pm, am, miss)
   }
   
   else if (method == "Pairwise"){
     if(differentMarkers(pm, am)$ulike)
-      stop(safeError(errorText))
+      stop(safeError(errorTextSame))
     myPairwiseLR(pm, am, miss, mutation)$LRmatrix
   }
   
   else if (method == "Joint"){
     if(differentMarkers(pm, am)$ulike)
-      stop(safeError(errorText))
+      stop(safeError(errorTextSame))
     myjointDVI(pm, am, miss, mutation, thresholdLR = thresholdLR)
   }
   
   else if (method == "Posterior"){
     if(differentMarkers(pm, am)$ulike)
-      stop(safeError(errorText))
+      stop(safeError(errorTextSame))
     Bmarginal(myjointDVI(pm, am, miss, mutation), miss)
   }
   
@@ -413,13 +410,13 @@ differentMarkers = function(pm, am){
   ulike = (length(nM) != 1)
   if(ulike){
     ra = range(nM)
-    tekst = paste("The number of markers are in the range", ra[1],"-", ra[2],".")
+    tekst = paste("No of markers:", ra[1],"-", ra[2],".")
   }
   else{
     if(nM == 1)
-       tekst = "There is 1 marker."
+       tekst = "1 marker."
     else
-      tekst = paste("There are", nM, "markers.")
+      tekst = paste( nM, "markers.")
   }
   list(ulike = ulike, tekst = tekst)
 }
