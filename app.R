@@ -6,13 +6,21 @@ suppressPackageStartupMessages({
   library(ggplot2)
   library(patchwork)
   library(magrittr)
+  library(shiny.i18n)
+  library(yaml)
 })
+
+i18n <- Translator$new(translation_csvs_path = "data",
+                       translation_csv_config = "data/config.yaml")
+
+# Set language, English "en", Spanish "es"
+i18n$set_translation_language("en")
 
 VERSION = 1.0
 
 ui <- fluidPage(
   
-  titlePanel("Disaster Victim Identification"),
+  titlePanel(i18n$t("Disaster Victim Identification")),
   
     navbarPage("Introduction",
                
@@ -84,8 +92,13 @@ ui <- fluidPage(
               sidebarLayout(position = "left",
                 sidebarPanel(
                   selectInput("pedigreePowerSimulated", label = "Pedigree",
-                    choices = list( "None selected", "Missing brother", "Missing uncle", "Missing first cousin",
-                                    "Missing GF, 2 grandchildren typed"),
+                    choices = list( 
+                      "None selected", 
+                      "Missing father",
+                      "Missing brother", 
+                      "Missing uncle", 
+                      "Missing first cousin",
+                      "Missing GF, 2 grandchildren typed"),
                     ),
                     sliderInput("lastMarker", "No of markers", min = 1, max = 35, step = 1, value = 22),
                     checkboxInput("log10Power", label = "log10(LR)", value = TRUE),
@@ -110,7 +123,9 @@ ui <- fluidPage(
                 "gives output similar to that in `Power > Explanations` (but not identical, even for the 
                 same seed, since the simulation implementation is not identical).  Genotyped individuals 
                 (if any) are hatched and first marker displayed in the plot and these individuals
-                will be conditioned on.",
+                will be conditioned on. Here's an example file", 
+                a(href = "https://familias.name/dviapp/BrotherPowerConditioned.fam", 
+                  "BrotherPowerConditioned.fam", target="_blank"),
                 br(),
                   sidebarLayout(position = "left",
                     sidebarPanel(width = 3,
@@ -174,7 +189,9 @@ ui <- fluidPage(
                        sidebarPanel(
                          selectInput("pedigreePowerSimulatedPri", 
                            label = "Pedigree",
-                             choices = list( "None selected", "Missing brother", 
+                             choices = list( 
+                               "None selected", 
+                               "Missing brother",
                                "Missing uncle"),
                            ),
                          sliderInput("lastMarkerPri", "No of markers", min = 1, max = 35, step = 1, value = 22),
@@ -378,6 +395,10 @@ server <- function(input, output, session) {
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
       plot(claim, hatched = typedMembers, col = list(red = "MP", blue = "REF"))
     }
+    else if(input$pedigreePowerSimulated == "Missing father"){
+      claim = nuclearPed(fa = "MP", mo = "MO", children = "REF")
+      plot(claim, hatched = typedMembers, col = list(red = "MP", blue = "REF"))
+    }
     else if(input$pedigreePowerSimulated == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
       x = addSon(x, parent = "BR",  id = "REF")
@@ -398,10 +419,19 @@ server <- function(input, output, session) {
   
   # Power > Analysis based on built in cases. Simulation plot
   output$powerPlotSimulated = renderPlot( {
+    
+    withProgress(message = 'Calculation in progress',
+                 detail = 'This may take a while...', value = 0, {
+    
     if(input$pedigreePowerSimulated == "Missing brother"){
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
       pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
                lastMarker = input$lastMarker, Log10 = input$log10Power)
+    }
+    else if(input$pedigreePowerSimulated == "Missing father"){
+      claim = nuclearPed(2, father = "MP", mother ="MO", children = "REF")
+      pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
+               lastMarker = input$lastMarker)
     }
     else if(input$pedigreePowerSimulated == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
@@ -423,6 +453,7 @@ server <- function(input, output, session) {
       pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
                lastMarker = input$lastMarker)
     }
+   })
   }) %>%
     bindEvent(input$goPowerBuilt)
 
@@ -438,10 +469,15 @@ server <- function(input, output, session) {
   
   # Power > Analyses based on user loaded data. Simulation
   output$powerPlotFam = renderPlot({
+    
+    withProgress(message = 'Calculation in progress',
+                 detail = 'This may take a while...', value = 0, {
+    
       file = input$famPower
       ext = getExt(file = file)
       familias(file = file, method = "Power", DVI = FALSE, seed = input$seed, plotOnly = FALSE,
                lrSims = input$nSimulations, Log10 = input$log10PowerFam)
+    })
   }) %>% 
    bindEvent(input$goPowerLoad)
   # 
@@ -480,11 +516,12 @@ server <- function(input, output, session) {
 
   
   # Prioritise > Analyses based on built in cases. Simulation
-  output$powerPlotSimulatedPri = renderPlot( {
+  output$powerPlotSimulatedPri = renderPlot({
+    
+    withProgress(message = 'Calculation in progress',
+                 detail = 'This may take a while...', value = 0, {
+                   
     if(input$pedigreePowerSimulatedPri == "Missing brother"){
-      
-      withProgress(message = 'Calculation in progress',
-                   detail = 'This may take a while...', value = 0, {
 
         ped = nuclearPed(2, father = "FA", mother ="MO", children = c("MP", "REF"))
         ped = addChildren(ped, father = "FA", mother = "MO", nch = 2, 
@@ -492,21 +529,17 @@ server <- function(input, output, session) {
         priPower(ped,  lastMarker = input$lastMarkerPri, 
                seed = input$seed,  nProfiles = input$nProfiles, 
                lrSims = input$nSimulations, thresholdIP = input$thresholdIP)
-      })
-      
-    }
+        }
+    
     else if(input$pedigreePowerSimulatedPri == "Missing uncle"){
-      
-      withProgress(message = 'Calculation in progress',
-                   detail = 'This may take a while...', value = 0, {
                      
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "E2"))
       x = addSon(x, parent = "E2",  id = "REF")
       ped = relabel(x, "E1", "NN_1")     
       priPower(ped, lastMarker = input$lastMarkerPri, seed = input$seed,  
                nProfiles = input$nProfiles, lrSims = input$nSimulations,  thresholdIP = input$thresholdIP)
-      })
-    }
+      }
+    })
   })  %>%
   bindEvent(input$goPriBuilt)
   
