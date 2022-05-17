@@ -630,19 +630,23 @@ server <- function(input, output, session) {
         dig(4)
     })
     
-    output$tableDVIBuilt <- renderTable(rownames = T, digits = dig,{
+    output$tableDVIBuilt <- renderTable(rownames = T,  digits = dig,{
+      
+        withProgress(message = 'Calculation in progress',
+                   detail = 'This may take a while...', value = 0, {
+      
         if(input$analysis == "IBD estimates")
           tableIBD()
         else if (input$analysis == "Exclusion")
           tableExclusion()
-
         else if (input$analysis == "Pairwise")
           tablePairwise()
         else if (input$analysis == "Joint")
           tableJoint()
         else if (input$analysis == "Posterior")
           tablePosterior()
-      }) %>%
+      })
+     }) %>%
     bindEvent(input$goDVIBuilt)
     
 
@@ -712,11 +716,6 @@ server <- function(input, output, session) {
     
     #Exclusion, for built in and loaded data, fam or RData
     tableExclusion = reactive({
-      
-      withProgress(message = 'Calculation in progress',
-                   detail = 'This may take a while...', value = 0, {
-      
-      
       if(input$datDVIBuilt == "Three missing")
         exclusionMatrix(example1$pm, example1$am , example1$missing)
       else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
@@ -748,15 +747,11 @@ server <- function(input, output, session) {
           familias(file = file, method = 'Exclusion',  relabel = input$relabel, miss = MPs)
         }
       }
-     })                
     })
     
     #Pairwise, for built in and loaded data, fam or RData
     tablePairwise = reactive({
-      
-      withProgress(message = 'Calculation in progress',
-                   detail = 'This may take a while...', value = 0, {
-      
+
       if (input$datDVIBuilt == "Three missing")
         myPairwiseLR(example1$pm, example1$am , example1$missing, input$mutation)$LRmatrix
       else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
@@ -790,15 +785,12 @@ server <- function(input, output, session) {
                    miss = MPs, mutation = input$mutation)
         }
       }
-     })
     })
     
     #Joint, for built in and loaded data, fam or RData
     tableJoint = reactive({
       
-      withProgress(message = 'Calculation in progress',
-                   detail = 'This may take a while...', value = 0, {
-      
+
       if(input$datDVIBuilt == "Three missing")
         myjointDVI(example1$pm, example1$am , example1$missing, mutation = input$mutation,
                    thresholdLR = input$thresholdLRDisplay)
@@ -840,14 +832,10 @@ server <- function(input, output, session) {
                    mutation = input$mutation, thresholdLR = input$thresholdLRDisplay)
         }
       }
-     })
     })
  
     #Posterior, for built in and loaded data, fam or RData   
     tablePosterior = reactive({
-      
-      withProgress(message = 'Calculation in progress',
-                   detail = 'This may take a while...', value = 0, {
       
       if (input$datDVIBuilt == "Three missing")
         Bmarginal(myjointDVI(example1$pm, example1$am, example1$missing, 
@@ -887,7 +875,6 @@ server <- function(input, output, session) {
             familias(file = file, method = 'Posterior',  relabel = input$relabel, miss = MPs)
         }
       }
-     })
     })
     
     #DVI > Analyses based on built in data, download
