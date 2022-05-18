@@ -21,14 +21,12 @@ VERSION = 1.0
 ui <- fluidPage(
   
   shiny.i18n::usei18n(i18n),
-  div(style = "float: bottom;",
-      selectInput('selected_language',
-                  i18n$t("Change language"),
-                  choices = list("en", "es"),
-#                  choices = i18n$get_languages(),
-                  selected = "en")
-#                  selected = i18n$get_key_translation())
-  ),
+  # div(style = "float: bottom;",
+  #     selectInput('selected_language',
+  #                 i18n$t("Change language"),
+  #                 choices = list("en", "es"),
+  #                 selected = "en")
+  # ),
   
   titlePanel(i18n$t("Disaster Victim Identification")),
   
@@ -388,6 +386,15 @@ ui <- fluidPage(
                          column(6, sliderInput("thresholdLRDisplay", "Show LR above", min = 0, max = 1000, 
                           step = 10, value = 0)),
                          ),
+                       fluidRow(
+                         div(style = "float: bottom;",
+                             selectInput('selected_language',
+                                         i18n$t("Change language"),
+                                         choices = list("en", "es"),
+                                         selected = "en")
+                         ),
+                       )
+                       
                     )
               
         )
