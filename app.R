@@ -10,7 +10,7 @@ suppressPackageStartupMessages({
   library(yaml)
 })
 
-i18n <- Translator$new(translation_csvs_path = "data",
+i18n <- Translator$new(translation_csvs_path = "data/",
                        translation_csv_config = "data/config.yaml")
 
 # Set language, English "en", Spanish "es"
@@ -19,6 +19,16 @@ i18n$set_translation_language("en")
 VERSION = 1.0
 
 ui <- fluidPage(
+  
+  shiny.i18n::usei18n(i18n),
+  div(style = "float: bottom;",
+      selectInput('selected_language',
+                  i18n$t("Change language"),
+                  choices = list("en", "es"),
+#                  choices = i18n$get_languages(),
+                  selected = "en")
+#                  selected = i18n$get_key_translation())
+  ),
   
   titlePanel(i18n$t("Disaster Victim Identification")),
   
@@ -385,6 +395,13 @@ ui <- fluidPage(
 
 
 server <- function(input, output, session) {
+  
+  observeEvent(input$selected_language, {
+    # This print is just for demonstration
+    print(paste("Language change!", input$selected_language))
+    # Here is where we update language in session
+    shiny.i18n::update_lang(session, input$selected_language)
+  })
 
   ### Fix names of victims for dataExercise498 
   names(dataExercise498$pm) = paste0("V", 1:3)
