@@ -21,13 +21,7 @@ VERSION = 1.0
 ui <- fluidPage(
   
   shiny.i18n::usei18n(i18n),
-  # div(style = "float: bottom;",
-  #     selectInput('selected_language',
-  #                 i18n$t("Change language"),
-  #                 choices = list("en", "es"),
-  #                 selected = "en")
-  # ),
-  
+
   titlePanel(i18n$t("Disaster Victim Identification")),
   
     navbarPage("Introduction",
