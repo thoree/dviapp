@@ -14,7 +14,7 @@ i18n <- Translator$new(translation_csvs_path = "data/",
                        translation_csv_config = "data/config.yaml")
 
 # Set language, English "en", Spanish "es"
-i18n$set_translation_language("en")
+# i18n$set_translation_language("es")
 
 VERSION = 1.0
 
@@ -24,14 +24,14 @@ ui <- fluidPage(
 
   titlePanel(i18n$t("Disaster Victim Identification")),
   
-    navbarPage("Introduction",
+    navbarPage(i18n$t("Introduction"),
                
       # Button to return to introduction         
        tabPanel(icon("home"),
                
-            fluidRow(
-              
-              column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 3),
+            mainPanel(
+              fluidRow(
+              column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 4),
               column(
                 "This app deals with Disaster Victim Identification (DVI) problems and power 
                 calculation for kinship problems. Our goal has been to make  available functionality
@@ -66,8 +66,9 @@ ui <- fluidPage(
                 
                 a(href="https://github.com/thoree/dviapp", "here.",target="_blank"),
                 
-                width = 9)
+                width = 8)
                ),
+            ),
        ),
                
         navbarMenu("Power",
@@ -1089,6 +1090,7 @@ server <- function(input, output, session) {
     updateCheckboxInput(session, "mutation", label = "Mutation", value = FALSE) 
     updateSliderInput(session, "thresholdIP", value = 10000) 
     updateSliderInput(session,"thresholdLRDisplay", value = 0)
+    updateSelectInput(session, "selected_language", selected = "en")
   })
 
 }
