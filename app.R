@@ -229,7 +229,7 @@ ui <- fluidPage(
                       mainPanel(width = 9,
                         fluidRow( column(plotOutput("priPlotFamPedigree"),  width = 3),
                                   column(plotOutput("priPlotFam"),  width = 9))
-                        )
+                       )
                       ),
                    ),
                ),
