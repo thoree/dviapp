@@ -1,6 +1,6 @@
 Disaster Victim Identification app: dviapp
 ================
-10 mai 2022
+31 mai 2022
 
 This app deals with Disaster Victim Identification (DVI) problems and
 power calculation for kinship problems. Our goal has been to make
@@ -109,8 +109,7 @@ available. Results are reported when `E1` is genotyped and both `E1` and
 `E2`. In addition to the LR distribution described previously, results
 are also given for the `Exclusion probability` (EP) explained below.
 
-![Prioritise
-plot](C:/Users/theg/Dropbox/Rlibs/dviapp/figures/priPlot.png)
+![Prioritise plot](figures/priPlot.png)
 
 Consider first the panel on the left hand side. The Y-axis gives the
 inclusion power (IP) defined as the probability that LR exceeds 10,000
@@ -150,8 +149,7 @@ Familias files. In addition R-data can be loaded provided they are on
 the same format as the examples in the `dvir` library. The below figure
 shows the `planecrash` data.
 
-![Planecrash
-example](C:/Users/theg/Dropbox/Rlibs/dviapp/figures/planecrash.png)
+![Planecrash example](figures/planecrash.png)
 
 There are 8 female victims to left, hatched since they are genotyped. To
 the right there are five reference families, each having one missing

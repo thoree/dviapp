@@ -19,7 +19,12 @@ knitr::opts_chunk$set(results='hold', message = FALSE, fig.path = "figures/",
 This app deals with Disaster Victim Identification (DVI) problems and power 
 calculation for kinship problems. Our goal has been to make  available functionality
 in the [`pedsuite`](https://magnusdv.github.io/pedsuite/) of R libraries and also the 
-`dvir` library. Here's the dviapp: [https://thoree.shinyapps.io/dviapp/](https://thoree.shinyapps.io/dviapp/)
+`dvir` library. Compared to [`Familias`](https://thoree.shinyapps.io/dviapp/),
+the app provides several extensions
+including more general conditional simulations,
+exclusion calculations and the ability to handle multiple missing persons in a family.
+
+Here's the dviapp: [https://thoree.shinyapps.io/dviapp/](https://thoree.shinyapps.io/dviapp/)
 
 There are several built-in-cases. Alternatively, users can run run their own examples by
 uploading [Familias](https://www.familias.no) files or data on R format.
@@ -27,11 +32,11 @@ uploading [Familias](https://www.familias.no) files or data on R format.
 There are tree modules:
 
 * Power: Simulations can be done to determine if the statistical
-evidence in missing person is sufficient.
+evidence is sufficient.
 * Priority: The aim is to find the optimal extra persons to genotype in cases with insufficient data.
 * DVI: Methods to include or exclude missing persons are provided.
 
-These models are explained and exemplified below.
+These modules are explained and exemplified below.
 For more information, please check the books 
 [Mass identications](https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3)
 (Kling et al., 2021),
@@ -41,14 +46,14 @@ For more information, please check the books
 (Vigeland and Egeland, 2021). For further documentation and bug reporting, please go
 [here](https://github.com/thoree/dviapp).
 
-By default mutations are switched off. However, mutation can be turned
+Mutations are switched off in the examples below if not stated otherwise. However, mutation can be turned
 on in `Settings` and other options can be changed there as well.
 
 ## Power
 
 Power calculations are generally performed prior to the actual analysis
 to determine if there is sufficient data to reach conclusions.
-The conclusion may be that there is sufficient information *or* that 
+The conclusion from a power analysis may be that there is sufficient information *or* that 
 we are not likely to reach reliable conclusions.
 In the latter case more data is needed, either more markers or
 more genotyped reference individuals. This is explored in the `Prioritise` module.
@@ -68,8 +73,9 @@ The hypotheses are illustrated below.
   missingPersonPlot(x, missing = "MP", frames = T, fmar = 0.02)
 ```  
 
-Marker data is simulated a specified number times (default is 100) for POI and the references (in
-the figure above there is only one reference). This is done conditionally
+Marker data is simulated a specified number times for POI and the references (in
+the figure above there is only one reference). The default number of simulations is 100
+and should be increases to 1000 in final applications. The simulations are done conditionally
 on genotyped individuals, above there are none. These simulations are done
 assuming $H_1$ to be true, i.e., assuming that POI is MP. For each
 of these simulations the LR is calculated. This gives 
@@ -84,8 +90,9 @@ The left panel shows that the mean $\log_{10}$(LR) is 6.24,
 which corresponds to mean LR equal to 1,737,801.
 From the panel on the right hand side, we see that $\log_{10}$(LR)
 exceeds 3.89 with probability 0.8, or equivalently
-LR exceeds 7762 with probability 0.8. If the treshold is 10,000,
-the power is therefore not quite satisfactory.
+LR exceeds 7762 with probability 0.8. If the requirement is that LR should
+exceed 10,000 with a probability of at least 0.8,
+the power is not quite satisfactory.
 
 ### Analyses based on built-in-cases
 
@@ -192,8 +199,8 @@ There are $7\cdot 8/2 = 28$ pairwise comparisons that can be made between the 8 
 The parameters describing the pairwise relationship are estimated
 as (k0 = 0.14, k1 = 0.56, k2= 0.30). This is quite far from the parameters
 describing unrelated individuals, (0, 1, 0).
-The LR tests the estimated relationship against unrelated.
-In this case, $LR = 737562$, and this provides stong evidence in favor of V7 and V8 being related.
+The LR tests the estimated relationship against the specified, unrelated in this case.
+In this case, $LR = 737562$, and this provides strong evidence in favor of V7 and V8 being related.
 
  
 ### Exclusion
