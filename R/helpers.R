@@ -60,12 +60,13 @@ pedPower = function(claim, nsim = 10, seed = NULL, lastMarker = 35,
 #' @param pm, am, missing: see jointDVI
 #' @param mutation logical
 #' @param thresholdLR double
+#' @param ignoreSex logical
 
-myjointDVI = function(pm, am, missing, mutation = FALSE, thresholdLR = 0){
+myjointDVI = function(pm, am, missing, mutation = FALSE, thresholdLR = 0, ignoreSex = TRUE){
   if(mutation)
-    res = jointDVI(pm, am, missing, disableMutation = FALSE)
+    res = jointDVI(pm, am, missing, disableMutation = FALSE, ignoreSex = ignoreSex)
    else
-    res = jointDVI(pm, am, missing)
+    res = jointDVI(pm, am, missing, ignoreSex = ignoreSex)
    res[res$LR >= thresholdLR, ]
 }
 
@@ -131,9 +132,11 @@ IBDestimates = function(pm,  sorter = TRUE, thresholdLR = 0){
 #' @param mutation logical
 #' @param thresholdLR double, see IBDestimates
 #' @param nMissingSpecified integer. No of missing if multiple missing in at least one family
+#' @param ignoreSex logical
 
 RData = function(file = input$file1, sorter = TRUE,  method = NULL, refFam = 1, 
-                 mutation = FALSE, thresholdLR = NULL,  nMissingSpecified = -1){
+                 mutation = FALSE, thresholdLR = NULL,  nMissingSpecified = -1,
+                 ignoreSex = TRUE){
   # data pm, am, missing loaded next:
   load(file$datapath)
   errorText = "Must have the same markers for all pm and am data"
@@ -147,17 +150,17 @@ RData = function(file = input$file1, sorter = TRUE,  method = NULL, refFam = 1,
   else if (method == 'Pairwise'){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorText))
-    myPairwiseLR(pm, am, missing, mutation)$LRmatrix
+    myPairwiseLR(pm, am, missing, mutation,ignoreSex = ignoreSex)$LRmatrix
   }
   else if (method == 'Joint'){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorText))
-    myjointDVI(pm, am, missing, mutation, thresholdLR = thresholdLR)
+    myjointDVI(pm, am, missing, mutation, thresholdLR = thresholdLR, ignoreSex = ignoreSex)
   }
   else if (method == 'Posterior'){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorText))
-    Bmarginal(myjointDVI(pm, am, missing, mutation), missing)
+    Bmarginal(myjointDVI(pm, am, missing, mutation, ignoreSex = ignoreSex), missing)
   }
   else if (method == 'plot'){
     if (is.ped(am))
@@ -235,12 +238,13 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data.", nMissing
 #' @param mutation logical
 #' @param thresholdLR double, see IBDestimates
 #' @param nMissingSpecified integer. No of missing if multiple missing in at least one family
+#' @param ignoreSex
 #' 
 #' 
 familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing person', 
                      refFam = 1, DVI = TRUE, nProfiles = 1, lrSims = 100, seed = NULL, 
                      thresholdIP = 10000, plotOnly = TRUE, Log10 = TRUE, mutation = FALSE, 
-                     thresholdLR = 0, nMissingSpecified = -1){
+                     thresholdLR = 0, nMissingSpecified = -1, ignoreSex = TRUE){
   x = readFam(file$datapath)
   
   #Relabel if DVI and not power. Convert fam-file
@@ -291,19 +295,19 @@ familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing
   else if (method == "Pairwise"){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorTextSame))
-    myPairwiseLR(pm, am, miss, mutation)$LRmatrix
+    myPairwiseLR(pm, am, miss, mutation, ignoreSex = ignoreSex)$LRmatrix
   }
   
   else if (method == "Joint"){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorTextSame))
-    myjointDVI(pm, am, miss, mutation, thresholdLR = thresholdLR)
+    myjointDVI(pm, am, miss, mutation, thresholdLR = thresholdLR, ignoreSex = ignoreSex)
   }
   
   else if (method == "Posterior"){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorTextSame))
-    Bmarginal(myjointDVI(pm, am, miss, mutation), miss)
+    Bmarginal(myjointDVI(pm, am, miss, mutation, ignoreSex = ignoreSex), miss)
   }
   
   else if (method == "plot"){
@@ -425,11 +429,13 @@ differentMarkers = function(pm, am){
 #' myPairwiseLR
 #' 
 #' @param pm, am, missing: se dvir::pairwiseLR
+#' @param mutation logical
+#' @param ignoreSex logical
 #' 
-myPairwiseLR = function(pm, am, miss, mutation){
+myPairwiseLR = function(pm, am, miss, mutation, ignoreSex = TRUE){
   if(!mutation){
      pm = setMutationModel(pm, 'trivial')
      am = setMutationModel(am, 'trivial')
   }
-  pairwiseLR(pm, am, miss)  
+  pairwiseLR(pm, am, miss, ignoreSex = ignoreSex)  
 }

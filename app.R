@@ -369,11 +369,12 @@ ui <- fluidPage(
                        "Some default settings can be changed below",
                        fluidRow(
                          column(2, numericInput("seed", "Seed", min = 1, max = 100000, step = 1, value = 1729)),
-                         column(3, numericInput("nSimulations", "Simulations", min = 0, max = 10000, 
+                         column(2, numericInput("nSimulations", "Simulations", min = 0, max = 10000, 
                             step = 100, value = 100),),
-                         column(3, numericInput("nProfiles", "Ref sim", min = 1, max = 10, value = 2)),
+                         column(2, numericInput("nProfiles", "Ref sim", min = 1, max = 10, value = 2)),
                          column(2, numericInput("nMissing", "No missing", min = -1, value = -1)),
                          column(2, checkboxInput("mutation", label = "Mutation", value = FALSE)),
+                         column(2, checkboxInput("ignoreSex", label = "Ignore sex", value = TRUE)),
                          ),
                        
                        fluidRow(
@@ -780,23 +781,29 @@ server <- function(input, output, session) {
     tablePairwise = reactive({
 
       if (input$datDVIBuilt == "Three missing")
-        myPairwiseLR(example1$pm, example1$am , example1$missing, input$mutation)$LRmatrix
+        myPairwiseLR(example1$pm, example1$am , example1$missing, input$mutation, 
+                     ignoreSex = input$ignoreSex)$LRmatrix
       else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
-        myPairwiseLR(grave$pm, grave$am , grave$missing, input$mutation)$LRmatrix
+        myPairwiseLR(grave$pm, grave$am , grave$missing, input$mutation, 
+                     ignoreSex = input$ignoreSex)$LRmatrix
       else if (input$datDVIBuilt == "planecrash")
-        myPairwiseLR(planecrash$pm, planecrash$am, planecrash$missing, input$mutation)$LRmatrix
+        myPairwiseLR(planecrash$pm, planecrash$am, planecrash$missing, input$mutation, 
+                     ignoreSex =input$ignoreSex)$LRmatrix
       else if (input$datDVIBuilt == "serena")
-        myPairwiseLR(serena$pm, serena$am, serena$missing, TRUE)$LRmatrix
+        myPairwiseLR(serena$pm, serena$am, serena$missing, mutation = TRUE, 
+                     ignoreSex = input$ignoreSex)$LRmatrix
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
-        myPairwiseLR(dataExample481$pm, dataExample481$am, dataExample481$missing, input$mutation)$LRmatrix
+        myPairwiseLR(dataExample481$pm, dataExample481$am, dataExample481$missing, 
+                     input$mutation, ignoreSex = input$ignoreSex)$LRmatrix
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
-        myPairwiseLR(dataCh4$pm, dataCh4$am, dataCh4$missing, input$mutation)$LRmatrix
+        myPairwiseLR(dataCh4$pm, dataCh4$am, dataCh4$missing, input$mutation, 
+                     ignoreSex = input$ignoreSex)$LRmatrix
       else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
         myPairwiseLR(dataExercise497$pm, dataExercise497$am, dataExercise497$missing, 
-                     input$mutation)$LRmatrix
+                     input$mutation, ignoreSex = input$ignoreSex)$LRmatrix
       else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.8")
         myPairwiseLR(dataExercise498$pm, dataExercise498$am, dataExercise498$missing, 
-                     input$mutation)$LRmatrix 
+                     input$mutation, ignoreSex = input$ignoreSex)$LRmatrix 
       
       else{
         if(!input$relabel)
@@ -804,14 +811,14 @@ server <- function(input, output, session) {
         file = input$fileDVI
         ext = getExt(file = file)
         if (ext == "RData" |  ext == "rda")
-          RData(file = file, method = 'Pairwise', mutation = input$mutation)
+          RData(file = file, method = 'Pairwise', mutation = input$mutation, ignoreSex = input$ignoreSex)
         else {
         if (input$nMissing < 0)
             MPs = 'Missing person'
         else
             MPs = paste0("M", 1:input$nMissing)
           familias(file = file, method = 'Pairwise',  relabel = input$relabel, 
-                   miss = MPs, mutation = input$mutation)
+                   miss = MPs, mutation = input$mutation,ignoreSex = input$ignoreSex)
         }
       }
     })
@@ -822,28 +829,30 @@ server <- function(input, output, session) {
 
       if(input$datDVIBuilt == "Three missing")
         myjointDVI(example1$pm, example1$am , example1$missing, mutation = input$mutation,
-                   thresholdLR = input$thresholdLRDisplay)
+                   thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
       else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
         myjointDVI(grave$pm, grave$am , grave$missing, mutation = input$mutation,
-                   thresholdLR = input$thresholdLRDisplay)
+                   thresholdLR = input$thresholdLRDisplay,  ignoreSex = input$ignoreSex)
       else if (input$datDVIBuilt == "planecrash")
         myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, mutation = input$mutation,
-                   thresholdLR = input$thresholdLRDisplay)
+                   thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
       else if (input$datDVIBuilt == "serena")
         myjointDVI(serena$pm, serena$am, serena$missing, mutation = input$mutation,
-                   thresholdLR = input$thresholdLRDisplay)
+                   thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
         myjointDVI(dataExample481$pm, dataExample481$am , dataExample481$missing, mutation = input$mutation,
-                   thresholdLR = input$thresholdLRDisplay)
+                   thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         myjointDVI(dataCh4$pm, dataCh4$am , dataCh4$missing, mutation = input$mutation,
                    thresholdLR = input$thresholdLRDisplay)
       else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
         myjointDVI(dataExercise497$pm, dataExercise497$am , dataExercise497$missing, 
-                   mutation = input$mutation, thresholdLR = input$thresholdLRDisplay)
+                   mutation = input$mutation, thresholdLR = input$thresholdLRDisplay, 
+                   ignoreSex = input$ignoreSex)
       else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.8")
         myjointDVI(dataExercise498$pm, dataExercise498$am , dataExercise498$missing, 
-                   mutation = input$mutation, thresholdLR = input$thresholdLRDisplay)
+                   mutation = input$mutation,
+                   thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
       
       else{
         if(!input$relabel)
@@ -853,7 +862,7 @@ server <- function(input, output, session) {
         ext = getExt(file = file)
         if (ext == "RData" |  ext == "rda")
           RData(file = file, method = 'Joint', mutation = input$mutation,
-                thresholdLR = input$thresholdLRDisplay)
+                thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
         else {
         if (input$nMissing < 0)
             MPs = 'Missing person'
@@ -861,7 +870,8 @@ server <- function(input, output, session) {
             MPs = paste0("M", 1:input$nMissing)
         
           familias(file = file, method = 'Joint',  relabel = input$relabel, miss = MPs,
-                   mutation = input$mutation, thresholdLR = input$thresholdLRDisplay)
+                   mutation = input$mutation, thresholdLR = input$thresholdLRDisplay,
+                   ignoreSex = input$ignoreSex)
         }
       }
     })
@@ -871,28 +881,28 @@ server <- function(input, output, session) {
       
       if (input$datDVIBuilt == "Three missing")
         Bmarginal(myjointDVI(example1$pm, example1$am, example1$missing, 
-                  mutation = input$mutation), example1$missing)
+                  mutation = input$mutation, ignoreSex = input$ignoreSex), example1$missing)
       else if (input$datDVIBuilt == "DVIbook-Exercise-6.2.7")
         Bmarginal(myjointDVI(grave$pm, grave$am, grave$missing, 
-                             mutation = input$mutation), grave$missing)
+                             mutation = input$mutation, ignoreSex = input$ignoreSex), grave$missing)
       else if (input$datDVIBuilt == "planecrash")
         Bmarginal(myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, 
-                  mutation = input$mutation), planecrash$missing)
+                  mutation = input$mutation, ignoreSex = input$ignoreSex), planecrash$missing)
       else if (input$datDVIBuilt == "serena")
         Bmarginal(myjointDVI(serena$pm, serena$am, serena$missing, 
-                             mutation = input$mutation), serena$missing)
+                             mutation = input$mutation, ignoreSex = input$ignoreSex), serena$missing)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         Bmarginal(myjointDVI(dataCh4$pm, dataCh4$am, dataCh4$missing, 
-                             mutation = input$mutation), dataCh4$missing)
+                             mutation = input$mutation, ignoreSex = input$ignoreSex), dataCh4$missing)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
         Bmarginal(myjointDVI(dataExample481$pm, dataExample481$am, dataExample481$missing, 
-                             mutation = input$mutation), dataCh4$missing)  
+                             mutation = input$mutation, ignoreSex = input$ignoreSex), dataCh4$missing)  
       else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
         Bmarginal(myjointDVI(dataExercise497$pm, dataExercise497$am, dataExercise497$missing, 
-                             mutation = input$mutation), dataExercise497$missing) 
+                             mutation = input$mutation, ignoreSex = input$ignoreSex), dataExercise497$missing) 
       else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.8")
         Bmarginal(myjointDVI(dataExercise498$pm, dataExercise498$am, dataExercise498$missing, 
-                             mutation = input$mutation), dataExercise498$missing)
+                             mutation = input$mutation, ignoreSex = input$ignoreSex), dataExercise498$missing)
       
       else{
         if(!input$relabel)
@@ -901,13 +911,14 @@ server <- function(input, output, session) {
         file = input$fileDVI
         ext = getExt(file = file)
         if (ext == "RData" |  ext == "rda")
-          RData(file = file, method = 'Posterior', mutation = input$mutation)
+          RData(file = file, method = 'Posterior', mutation = input$mutation, ignoreSex = input$ignoreSex)
         else {
           if (input$nMissing < 0)
               MPs = 'Missing person'
           else
               MPs = paste0("M", 1:input$nMissing)
-            familias(file = file, method = 'Posterior',  relabel = input$relabel, miss = MPs)
+            familias(file = file, method = 'Posterior',  relabel = input$relabel, miss = MPs,
+                     ignoreSex = input$ignoreSex)
         }
       }
     })
@@ -1113,6 +1124,7 @@ server <- function(input, output, session) {
     updateSelectInput(session, "analysis", selected = "None selected")
     updateSelectInput(session, "analysisLoad", selected = "None selected")
     updateCheckboxInput(session, "mutation", label = "Mutation", value = FALSE) 
+    updateCheckboxInput(session, "ignoreSex", label = "Ignore sex", value = TRUE) 
     updateSliderInput(session, "thresholdIP", value = 10000) 
     updateSliderInput(session,"thresholdLRDisplay", value = 0)
     updateSelectInput(session, "selected_language", selected = "en")
