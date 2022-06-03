@@ -288,6 +288,7 @@ ui <- fluidPage(
                                 column(width = 9,           
                                   selectInput("datDVIBuilt",  label = "Case", choices = list("None selected", 
                                                "planecrash", 
+                                               "serena",
                                                "DVIbook-Example-4.8.1",
                                                "DVIbook-Example-4.8.4",
                                                "DVIbook-Exercise-4.9.7",
@@ -608,6 +609,9 @@ server <- function(input, output, session) {
     else if (input$datDVIBuilt == "planecrash")
       summariseDVIreturned(planecrash$pm, planecrash$am, planecrash$missing, 
                            header = "planecrash data. ")
+    else if (input$datDVIBuilt == "serena")
+      summariseDVIreturned(serena$pm, serena$am, serena$missing, 
+                           header = "serena data. ")
     else if (input$datDVIBuilt == "DVIbook-Example-4.8.1")
       summariseDVIreturned(dataExample481$pm, dataExample481$am, dataExample481$missing, 
                            header = "DVI book pp 112-112. ")
@@ -712,6 +716,8 @@ server <- function(input, output, session) {
         IBDestimates(grave$pm, thresholdLR = input$thresholdLRDisplay)
       else if(input$datDVIBuilt == "planecrash")
         IBDestimates(planecrash$pm,  thresholdLR = input$thresholdLRDisplay)
+      else if(input$datDVIBuilt == "serena")
+        IBDestimates(serena$pm,  thresholdLR = input$thresholdLRDisplay)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
         IBDestimates(dataExample481$pm,  thresholdLR = input$thresholdLRDisplay)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
@@ -741,6 +747,8 @@ server <- function(input, output, session) {
         exclusionMatrix(grave$pm, grave$am , grave$missing)
       else if (input$datDVIBuilt == "planecrash")
         exclusionMatrix(planecrash$pm, planecrash$am , planecrash$missing)
+      else if (input$datDVIBuilt == "serena")
+        exclusionMatrix(serena$pm, serena$am , serena$missing)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
         exclusionMatrix(dataExample481$pm, dataExample481$am , dataExample481$missing)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
@@ -777,6 +785,8 @@ server <- function(input, output, session) {
         myPairwiseLR(grave$pm, grave$am , grave$missing, input$mutation)$LRmatrix
       else if (input$datDVIBuilt == "planecrash")
         myPairwiseLR(planecrash$pm, planecrash$am, planecrash$missing, input$mutation)$LRmatrix
+      else if (input$datDVIBuilt == "serena")
+        myPairwiseLR(serena$pm, serena$am, serena$missing, TRUE)$LRmatrix
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
         myPairwiseLR(dataExample481$pm, dataExample481$am, dataExample481$missing, input$mutation)$LRmatrix
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
@@ -818,6 +828,9 @@ server <- function(input, output, session) {
                    thresholdLR = input$thresholdLRDisplay)
       else if (input$datDVIBuilt == "planecrash")
         myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, mutation = input$mutation,
+                   thresholdLR = input$thresholdLRDisplay)
+      else if (input$datDVIBuilt == "serena")
+        myjointDVI(serena$pm, serena$am, serena$missing, mutation = input$mutation,
                    thresholdLR = input$thresholdLRDisplay)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
         myjointDVI(dataExample481$pm, dataExample481$am , dataExample481$missing, mutation = input$mutation,
@@ -865,6 +878,9 @@ server <- function(input, output, session) {
       else if (input$datDVIBuilt == "planecrash")
         Bmarginal(myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, 
                   mutation = input$mutation), planecrash$missing)
+      else if (input$datDVIBuilt == "serena")
+        Bmarginal(myjointDVI(serena$pm, serena$am, serena$missing, 
+                             mutation = input$mutation), serena$missing)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         Bmarginal(myjointDVI(dataCh4$pm, dataCh4$am, dataCh4$missing, 
                              mutation = input$mutation), dataCh4$missing)
@@ -937,7 +953,7 @@ server <- function(input, output, session) {
           if(input$refFam > 1)
              stop(safeError("Impossible value for `Reference family to plot`, only 1 reference family."))
           plot(example1$am, hatched = typedMembers, title = "Reference family",
-               cex = 1.2, col = list(red = planecrash$missing,
+               cex = 1.2, col = list(red = example1$missing,
                                      blue = typedMembers(example1$am)))
         }
         
@@ -958,6 +974,15 @@ server <- function(input, output, session) {
                       title = paste("Reference family ", input$refFam),
                       col = list(red = planecrash$missing,
                                  blue = typedMembers(planecrash$am[[input$refFam]])))
+        }
+        
+        else if (input$datDVIBuilt == "serena"){
+          if(input$refFam > 15)
+            stop(safeError("Impossible value for `Reference family to plot`, only 15 reference families."))
+          plot(serena$am[[input$refFam]], hatched = typedMembers, 
+               title = paste("Reference family ", input$refFam),
+               col = list(red = serena$missing,
+                          blue = typedMembers(serena$am[[input$refFam]])))
         }
         
         else if (input$datDVIBuilt == "DVIbook-Example-4.8.1"){
