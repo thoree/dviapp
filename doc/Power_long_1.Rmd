@@ -1,0 +1,19 @@
+---
+# title: "Power_long_1"
+# author: ""
+# date: '2022-06-04'
+# output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
+has been computed for 1000 simulations of MP and REF conditioned on H1 below.
+The simulations use the 35 markers in the database `NorwegianFrequencies` 
+documented in the R library forrel. In `Power > Analyses based on built in cases` some prepared
+cases can be run and parameters like the number of markers, 
+can  be changed. In `Power > Analyses based on user loaded data`, 
+similar output is obtained by loading a familias file
+prepared by the user. The simulations will be conditioned on genotyped individuals, if any.

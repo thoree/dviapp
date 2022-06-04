@@ -1,0 +1,18 @@
+---
+# title: "Power_long_2"
+# author: ""
+# date: '2022-06-04'
+# output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The missing person should be named `MP` and the reference `REF` in the file. The file
+[BrotherPower.fam](https://familias.name/dviapp/BrotherPower.fam)
+gives output similar to that in `Power > Explanations` (but not identical, even for the 
+same seed, since the simulation implementation is not identical).  Genotyped individuals 
+(if any) are hatched and first marker displayed in the plot and these individuals
+will be conditioned on. Here's an example file
+[BrotherPowerConditioned.fam](https://familias.name/dviapp/BrotherPowerConditioned.fam).

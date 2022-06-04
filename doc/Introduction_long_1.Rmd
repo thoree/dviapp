@@ -1,0 +1,29 @@
+---
+# title: "Introduction_long_1"
+# author: ""
+# date: '2022-06-04'
+# output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This app deals with Disaster Victim Identification (DVI) problems and power 
+calculation for kinship problems. Our goal has been to make  available functionality
+in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
+in the [Familias software](https://www.familias.no).
+There are tree modules, all based on built in cases or user data (Familias or R files):
+
+* Power: Simulations can be done to determine if goals are likely to be achieved. 
+* Priority: The aim is to find the optimal extra persons to genotype.  
+* DVI: Methods to include or exclude missing persons are provided. 
+
+For more information, check the books
+[Mass identications](https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3) 
+Kling et al., 2021, 
+[Pedigree Analysis in R](https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2),
+Vigeland, 2021, and the
+[paper](https://www.nature.com/articles/s41598-021-93071-5)
+Vigeland and Egeland, 2021. For further documentation and bug reporting, please go
+[here](https://github.com/thoree/dviapp).

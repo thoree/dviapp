@@ -1,0 +1,23 @@
+---
+# title: "Prioritise_long_1"
+# author: ""
+# date: '2022-06-04'
+# output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The below explanation applies to the example obtained if 'brother' (default) 
+is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers`, 
+to H2: `MP and REF unrelated`, has been computed for 100 unconditional simulations 
+of MP and REF conditioned on H1 below. This corresponds to the `REF` case in the panel 
+to the right. We see that we can expect no exclusions
+(in fact exclusions are impossible with only two brothers) and log10(LR) slightly exceeding 10. 
+If one brother, `E1` is genotyped we can expect more than 10 exclusions and a log10(LR) slightly exceeding 20.
+Finally, if both brothers `E1`and `E2` are genotyped, the expected number of exclusions and LR increase further. 10 profiles are simulated for the relatives ('REF', `E1` and `E2`), assuming H1. 
+For each of these 10 profiles, corresponding to the smaller circles, 1000 
+simulations are performed for `MP` under H1 and H2.
+In `Prioritise > Analyses based on built in cases` simulations can be performed 
+for various parameter choices. In `Prioritise > Analyses based on user loaded data` similar simulations can be performed from a fam file.
