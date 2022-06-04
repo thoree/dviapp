@@ -10,7 +10,8 @@ suppressPackageStartupMessages({
   library(yaml)
 })
 
-i18n <- Translator$new(translation_csvs_path = "data/",
+
+i18n <- Translator$new(translation_json_path = paste0(getwd(), '/final-translation.json'),
                        translation_csv_config = "data/config.yaml")
 
 # Set language, English "en", Spanish "es"
@@ -33,7 +34,8 @@ ui <- fluidPage(
               fluidRow(
               column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 4),
               column(
-                "This app deals with Disaster Victim Identification (DVI) problems and power 
+                markdown(i18n$t("Introduction_long_1")),
+                "REMOVE: This app deals with Disaster Victim Identification (DVI) problems and power 
                 calculation for kinship problems. Our goal has been to make  available functionality
                 in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
                 in the", 
@@ -73,7 +75,8 @@ ui <- fluidPage(
                
         navbarMenu(i18n$t("Power"),
           tabPanel(i18n$t("Explanations"),
-               "LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
+               markdown(i18n$t("Power_long_1")),
+               "REMOVE: LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
                has been computed for 1000 simulations of MP and REF conditioned on H1 below.
                The simulations use the 35 markers in the database `NorwegianFrequencies` 
                documented in the R library forrel. In `Power > Analyses based on built in cases` some prepared
@@ -121,8 +124,8 @@ ui <- fluidPage(
               tabPanel("Analyses based on user loaded data",
                 actionButton("resetPowerFam", "Reset window", class = "btn btn-danger",
                   style = "position: absolute; bottom:30px; width: 170px"),
-
-                " The missing person should be named `MP` and the reference `REF` in the file. The file",
+                markdown(i18n$t("Power_long_2")),
+                "REMOVE: The missing person should be named `MP` and the reference `REF` in the file. The file",
                 a(href = "https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
                 "gives output similar to that in `Power > Explanations` (but not identical, even for the 
                 same seed, since the simulation implementation is not identical).  Genotyped individuals 
@@ -150,8 +153,8 @@ ui <- fluidPage(
                navbarMenu("Prioritise", 
                           
                  tabPanel("Explanations",
-                          
-                   "The below explanation applies to the example obtained if 'brother' (default) 
+                 markdown(i18n$t("Prioritise_long_1")),         
+                   "REMOVE: The below explanation applies to the example obtained if 'brother' (default) 
                     is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers`, 
                     to H2: `MP and REF unrelated`, has been computed for 100 unconditional simulations 
                     of MP and REF conditioned on H1 below. This corresponds to the `REF` case in the panel 
@@ -289,7 +292,7 @@ ui <- fluidPage(
                                 column(width = 9,           
                                   selectInput("datDVIBuilt",  label = "Case", choices = list("None selected", 
                                                "planecrash", 
-                                               "serena",
+                                               "Exclusion" = "serena",
                                                "DVIbook-Example-4.8.1",
                                                "DVIbook-Example-4.8.4",
                                                "DVIbook-Exercise-4.9.7",
