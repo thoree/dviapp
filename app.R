@@ -71,8 +71,8 @@ ui <- fluidPage(
             ),
        ),
                
-        navbarMenu("Power",
-          tabPanel("Explanations",
+        navbarMenu(i18n$t("Power"),
+          tabPanel(i18n$t("Explanations"),
                "LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
                has been computed for 1000 simulations of MP and REF conditioned on H1 below.
                The simulations use the 35 markers in the database `NorwegianFrequencies` 
@@ -86,22 +86,23 @@ ui <- fluidPage(
                  ), 
           ),
                  
-          tabPanel("Analyses based on built in cases",
+          tabPanel(i18n$t("Analyses based on built in cases"),
                      
-            actionButton("resetPowerBuilt", "Reset window", class = "btn btn-danger",
+            actionButton("resetPowerBuilt", i18n$t("Reset window"), class = "btn btn-danger",
               style = "position: absolute; bottom:30px; width: 170px"),
                   
             br(),
               sidebarLayout(position = "left",
                 sidebarPanel(
-                  selectInput("pedigreePowerSimulated", label = "Pedigree",
-                    choices = list( 
+                  selectInput("pedigreePowerSimulated", label = i18n$t("Pedigree"),
+                    choices = c( 
                       "None selected", 
-                      "Missing father",
+                      "Missing father", # i18n$t("Missing father") doesn't work
                       "Missing brother", 
                       "Missing uncle", 
                       "Missing first cousin",
                       "Missing GF, 2 grandchildren typed"),
+                    selected = "None selected",
                     ),
                     sliderInput("lastMarker", "No of markers", min = 1, max = 35, step = 1, value = 22),
                     checkboxInput("log10Power", label = "log10(LR)", value = TRUE),
