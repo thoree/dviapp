@@ -1,0 +1,32 @@
+---
+# title: "DVI_long_1"
+# author: ""
+# date: '2022-06-04'
+# output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Analyses can be done in this module from built in cases, from Familias (`fam`)
+files or from R data. The below figure shows the planecrash data. When the
+data is loaded in `DVI > Analyses based on built in cases`, 
+the following summary is provided: 
+ `DVI data. 8 victims: V1 ,..., V8 . 5 missing. 5 typed refs: R1 ,..., R5 . 5 reference families.` 
+The data is also available as a fam file:
+[planecrash.fam](https://familias.name/dviapp/planecrash.fam),
+and can also be downloaded as RData:
+[planecrash.RData](https://familias.name/dviapp/planecrash.RData),
+See the documentation for the details on the five analyses implemented. Here
+we only provide brief explanations: 
+
+* IBD estimates: The pairwise relationship between all pairs of victims is estimated. 
+* Exclusion: Each victim is tried as each missing person and the number
+of exclusions is given. 
+* Pairwise LR: For each victim V and each missing person M, the LR comparing
+`V = M` to `V and M unrelated` is calculated. 
+* Joint: All possible assignments of victims to missing persons
+are evaluated and solutions ranked according to the likelihood. 
+* Posterior: Computes posterior pairing probabilities, i.e.,
+the probability that a victim V is the missing person M. 
