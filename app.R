@@ -516,7 +516,7 @@ server <- function(input, output, session) {
   output$powerPlotFam = renderPlot({
     
     withProgress(message = 'Calculation in progress',
-                 detail = 'This may take a while...', value = 0, {
+                 detail = NULL, value = 0, {
     
       file = input$famPower
       ext = getExt(file = file)
@@ -564,7 +564,7 @@ server <- function(input, output, session) {
   output$powerPlotSimulatedPri = renderPlot({
     
     withProgress(message = 'Calculation in progress',
-                 detail = 'This may take a while...', value = 0, {
+                 detail = NULL, value = 0, {
                    
     if(input$pedigreePowerSimulatedPri == "Missing brother"){
 
@@ -604,7 +604,7 @@ server <- function(input, output, session) {
   output$priPlotFam = renderPlot({
     
     withProgress(message = 'Calculation in progress',
-                 detail = 'This may take a while...', value = 0, {
+                 detail = NULL, value = 0, {
     
     file = input$priPower
     ext = getExt(file = file)
@@ -681,7 +681,7 @@ server <- function(input, output, session) {
     output$tableDVIBuilt <- renderTable(rownames = T,  digits = dig,{
       
         withProgress(message = 'Calculation in progress',
-                   detail = 'This may take a while...', value = 0, {
+                   detail = NULL, value = 0, {
       
         if(input$analysis == "IBD estimates")
           tableIBD()
@@ -715,7 +715,7 @@ server <- function(input, output, session) {
     output$tableLoad <- renderTable(rownames = T, digit = digLoad,{
       
       withProgress(message = 'Calculation in progress',
-                   detail = 'This may take a while...', value = 0, {
+                   detail = NULL, value = 0, {
       
       if(input$analysisLoad == "IBD estimates")
         tableIBD()
