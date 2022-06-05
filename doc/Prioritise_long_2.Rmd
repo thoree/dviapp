@@ -1,0 +1,16 @@
+---
+# title: "Prioritise_long_2"
+# author: ""
+# date: '2022-06-04'
+# output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Priority power is calculated by uploading a Familias file. Here's an example file:
+[BrotherPriority.fam](https://familias.name/dviapp/BrotherPriority.fam).
+The missing person should be named `MP`, the reference `REF`, and the extra candidates
+for genotyping `E1`and `E2`. The mentioned file gives output similar to that
+in `Priority > Explanations` (but not identical, even for the same seed, since this is simulation).

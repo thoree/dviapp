@@ -34,7 +34,9 @@ ui <- fluidPage(
               fluidRow(
               column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 4),
               column(
+                
                 markdown(i18n$t("Introduction_long_1")),
+                
                 "REMOVE: This app deals with Disaster Victim Identification (DVI) problems and power 
                 calculation for kinship problems. Our goal has been to make  available functionality
                 in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
@@ -75,7 +77,9 @@ ui <- fluidPage(
                
         navbarMenu(i18n$t("Power"),
           tabPanel(i18n$t("Explanations"),
+                   
                markdown(i18n$t("Power_long_1")),
+               
                "REMOVE: LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
                has been computed for 1000 simulations of MP and REF conditioned on H1 below.
                The simulations use the 35 markers in the database `NorwegianFrequencies` 
@@ -100,17 +104,17 @@ ui <- fluidPage(
                   selectInput("pedigreePowerSimulated", label = i18n$t("Pedigree"),
                     choices = c( 
                       "None selected", 
-                      "Missing father", # i18n$t("Missing father") doesn't work
+                      "Missing father",
                       "Missing brother", 
                       "Missing uncle", 
                       "Missing first cousin",
                       "Missing GF, 2 grandchildren typed"),
                     selected = "None selected",
                     ),
-                    sliderInput("lastMarker", "No of markers", min = 1, max = 35, step = 1, value = 22),
+                    sliderInput("lastMarker", i18n$t("No of markers"), min = 1, max = 35, step = 1, value = 22),
                     checkboxInput("log10Power", label = "log10(LR)", value = TRUE),
                   
-                    actionButton("goPowerBuilt", "Simulate!", class = "btn-success"),
+                    actionButton("goPowerBuilt", i18n$t("Simulate!"), class = "btn-success"),
                 ),
                 mainPanel(
                   fluidRow(
@@ -121,10 +125,12 @@ ui <- fluidPage(
                 ),
               ),
                
-              tabPanel("Analyses based on user loaded data",
-                actionButton("resetPowerFam", "Reset window", class = "btn btn-danger",
+              tabPanel(i18n$t("Analyses based on user loaded data"),
+                actionButton("resetPowerFam", i18n$t("Reset window"), class = "btn btn-danger",
                   style = "position: absolute; bottom:30px; width: 170px"),
+                
                 markdown(i18n$t("Power_long_2")),
+                
                 "REMOVE: The missing person should be named `MP` and the reference `REF` in the file. The file",
                 a(href = "https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
                 "gives output similar to that in `Power > Explanations` (but not identical, even for the 
@@ -138,7 +144,7 @@ ui <- fluidPage(
                     sidebarPanel(width = 3,
                       fileInput("famPower", "Familias file"),
                       checkboxInput("log10PowerFam", label = "log10(LR)", value = TRUE), 
-                       actionButton("goPowerLoad", "Simulate!", class = "btn-success"),
+                       actionButton("goPowerLoad", i18n$t("Simulate!"), class = "btn-success"),
                     ),
                         mainPanel(width = 9,
                           fluidRow(
@@ -150,10 +156,12 @@ ui <- fluidPage(
                  ),              
                ), 
  
-               navbarMenu("Prioritise", 
+               navbarMenu(i18n$t("Prioritise"), 
                           
-                 tabPanel("Explanations",
-                 markdown(i18n$t("Prioritise_long_1")),         
+                 tabPanel(i18n$t("Explanations"),
+                          
+                 markdown(i18n$t("Prioritise_long_1")),
+                 
                    "REMOVE: The below explanation applies to the example obtained if 'brother' (default) 
                     is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers`, 
                     to H2: `MP and REF unrelated`, has been computed for 100 unconditional simulations 
@@ -174,7 +182,7 @@ ui <- fluidPage(
                     br(),
                     sidebarLayout(position = "left",
                       sidebarPanel(
-                        selectInput("pedigreePri", label = "Built in pedigree for priority simulation",
+                        selectInput("pedigreePri", label = i18n$t("Built in pedigree for priority simulation"),
                           choices = list( "brother", "None selected" ),
                           ),
                         ),
@@ -186,23 +194,22 @@ ui <- fluidPage(
                       ),
                  ), 
 
-                 tabPanel("Analyses based on built in cases",
+                 tabPanel(i18n$t("Analyses based on built in cases"),
                           
-                   actionButton("resetPriBuilt", "Reset window", class = "btn btn-danger",
+                   actionButton("resetPriBuilt", i18n$t("Reset window"), class = "btn btn-danger",
                      style = "position: absolute; bottom:30px; width: 170px"),
                           
-#                   "The simulation needs roughly 30 seconds to complete, plotting is instant.",
                      sidebarLayout(position = "left",
                        sidebarPanel(
                          selectInput("pedigreePowerSimulatedPri", 
-                           label = "Pedigree",
+                           label = i18n$t("Pedigree"),
                              choices = list( 
                                "None selected", 
                                "Missing brother",
                                "Missing uncle"),
                            ),
-                         sliderInput("lastMarkerPri", "No of markers", min = 1, max = 35, step = 1, value = 22),
-                         actionButton("goPriBuilt", "Simulate!", class = "btn-success"),
+                         sliderInput("lastMarkerPri", i18n$t("No of markers"), min = 1, max = 35, step = 1, value = 22),
+                         actionButton("goPriBuilt", i18n$t("Simulate!"), class = "btn-success"),
                        ),
                        mainPanel(
                          fluidRow(
@@ -213,10 +220,11 @@ ui <- fluidPage(
                        ),
                  ),
                                   
-                 tabPanel("Analyses based on user loaded data",
-                          
+                 tabPanel(i18n$t("Analyses based on user loaded data"),
+                 
+                 markdown(i18n$t("Prioritise_long_2")),
 
-                  "Priority power is calculated by uploading a Familias file. Here's an example:",
+                  "REMOVE :Priority power is calculated by uploading a Familias file. Here's an example:",
                   
                   a(href="https://familias.name/dviapp/BrotherPriority.fam", "BrotherPriority.fam", target="_blank"),
                   
@@ -238,11 +246,13 @@ ui <- fluidPage(
                    ),
                ),
                           
-                navbarMenu("DVI",
+                navbarMenu(i18n$t("DVI"),
                   
-                  tabPanel("Explanations",
+                  tabPanel(i18n$t("Explanations"),
                            
-                    "Analyses can be done in this module from built in cases, from Familias (`fam`)
+                    markdown(i18n$t("DVI_long_1")), 
+                    
+                    "REMOVE: Analyses can be done in this module from built in cases, from Familias (`fam`)
                     files or from R data. The below figure shows the planecrash data. When the
                     data is loaded in `DVI > Analyses based on built in cases`, 
                     the following summary is provided:,
@@ -281,16 +291,16 @@ ui <- fluidPage(
                       ),
                     ),
                            
-                    tabPanel("Analyses based on built in cases",
+                    tabPanel(i18n$t("Analyses based on built in cases"),
                               
-                      actionButton("resetDVIBuilt", "Reset window", class = "btn btn-danger",
+                      actionButton("resetDVIBuilt", i18n$t("Reset window"), class = "btn btn-danger",
                         style = "position: absolute; bottom:30px; width: 170px"),
                       
                           sidebarLayout(position = "left",
                             sidebarPanel(width = 4,
                               fluidRow(
                                 column(width = 9,           
-                                  selectInput("datDVIBuilt",  label = "Case", choices = list("None selected", 
+                                  selectInput("datDVIBuilt",  label = i18n$t("Case"), choices = list("None selected", 
                                                "planecrash", 
                                                "Exclusion" = "serena",
                                                "DVIbook-Example-4.8.1",
@@ -301,16 +311,16 @@ ui <- fluidPage(
                                                "Three missing"))
                                    ),
                                 column(width = 3, numericInput("refFam", 
-                                  "Plot", min = 1, value = 1)),
+                                  i18n$t("Plot"), min = 1, value = 1)),
                               ),
                               selectInput("analysis",
-                                label = "Choose DVI analysis",
+                                label = i18n$t("Choose DVI analysis"),
                                 choices = list("None selected", "IBD estimates", "Exclusion","Pairwise",
                                   "Joint", "Posterior")
                                 ),
                               fluidRow(
-                             column(6, actionButton("goDVIBuilt", "Analyze!", class = "btn-success")),
-                            column(6, downloadButton("downloadTable", "Download")),
+                             column(6, actionButton("goDVIBuilt", i18n$t("Analyze!"), class = "btn-success")),
+                            column(6, downloadButton("downloadTable", i18n$t("Download"))),
                               ),
                             ),
                               mainPanel(width = 8,
@@ -322,13 +332,15 @@ ui <- fluidPage(
                                 )
                             ),
                       ),
-                     
+                     # June 5
                       tabPanel("Analyses based on user loaded data",
                                
                       actionButton("resetDVILoad", "Reset window", class = "btn btn-danger",
                           style = "position: absolute; bottom:30px; width: 170px"), 
-                               
-                      "If there are multiple missing persons in a family, like in the case based on
+                      
+                      markdown(i18n$t("DVI_long_2")),
+                      
+                      "REMOVE: If there are multiple missing persons in a family, like in the case based on
                       the ", a(href = "https://familias.name/dviapp/FamilyWith3Missing.fam", 
                               "FamilyWith3Missing.fam" ,target="_blank"), 
                       ", which is similar to a built-in-case,

@@ -1,0 +1,17 @@
+---
+# title: "DVI_long_2"
+# author: ""
+# date: '2022-06-05'
+# output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+If there are multiple missing persons in a family, like in the case based on the file
+[FamilyWith3Missing.fam](https://familias.name/dviapp/FamilyWith3Missing.fam), 
+which is similar to a built-in-case,
+the number of missing must be specified in `Settings`, (`No missing: 3`),
+and the missing persons must be named
+`M1`, `M2`,...(this is the case in the fam-file linked above). 
