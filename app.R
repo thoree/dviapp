@@ -95,7 +95,7 @@ ui <- fluidPage(
                  
           tabPanel(i18n$t("Analyses based on built in cases"),
                      
-            actionButton("resetPowerBuilt", i18n$t("Reset window"), class = "btn btn-danger",
+            actionButton("resetPowerBuilt", label = i18n$t("Reset window"), class = "btn btn-danger",
               style = "position: absolute; bottom:30px; width: 170px"),
                   
             br(),
@@ -111,10 +111,11 @@ ui <- fluidPage(
                       "Missing GF, 2 grandchildren typed"),
                     selected = "None selected",
                     ),
-                    sliderInput("lastMarker", i18n$t("No of markers"), min = 1, max = 35, step = 1, value = 22),
+                    sliderInput("lastMarker", label = i18n$t("No of markers"), 
+                                min = 1, max = 35, step = 1, value = 22),
                     checkboxInput("log10Power", label = "log10(LR)", value = TRUE),
                   
-                    actionButton("goPowerBuilt", i18n$t("Simulate!"), class = "btn-success"),
+                    actionButton("goPowerBuilt", label = i18n$t("Simulate!"), class = "btn-success"),
                 ),
                 mainPanel(
                   fluidRow(
@@ -144,7 +145,7 @@ ui <- fluidPage(
                     sidebarPanel(width = 3,
                       fileInput("famPower", "Familias file"),
                       checkboxInput("log10PowerFam", label = "log10(LR)", value = TRUE), 
-                       actionButton("goPowerLoad", i18n$t("Simulate!"), class = "btn-success"),
+                       actionButton("goPowerLoad", label = i18n$t("Simulate!"), class = "btn-success"),
                     ),
                         mainPanel(width = 9,
                           fluidRow(
@@ -196,7 +197,7 @@ ui <- fluidPage(
 
                  tabPanel(i18n$t("Analyses based on built in cases"),
                           
-                   actionButton("resetPriBuilt", i18n$t("Reset window"), class = "btn btn-danger",
+                   actionButton("resetPriBuilt", label = i18n$t("Reset window"), class = "btn btn-danger",
                      style = "position: absolute; bottom:30px; width: 170px"),
                           
                      sidebarLayout(position = "left",
@@ -208,9 +209,9 @@ ui <- fluidPage(
                                "Missing brother",
                                "Missing uncle"),
                            ),
-                         sliderInput("lastMarkerPri", i18n$t("No of markers"), min = 1, max = 35, 
+                         sliderInput("lastMarkerPri", label = i18n$t("No of markers"), min = 1, max = 35, 
                                      step = 1, value = 22),
-                         actionButton("goPriBuilt", i18n$t("Simulate!"), class = "btn-success"),
+                         actionButton("goPriBuilt", label = i18n$t("Simulate!"), class = "btn-success"),
                        ),
                        mainPanel(
                          fluidRow(
@@ -236,8 +237,8 @@ ui <- fluidPage(
                   br(),
                     sidebarLayout(position = "left",
                       sidebarPanel(width = 3,
-                        fileInput("priPower", i18n$t("Familias file")),
-                        actionButton("goPriLoad", i18n$t("Simulate!"), class = "btn-success"),
+                        fileInput("priPower", label = i18n$t("Familias file")),
+                        actionButton("goPriLoad", label = i18n$t("Simulate!"), class = "btn-success"),
                         ),
                       mainPanel(width = 9,
                         fluidRow( column(plotOutput("priPlotFamPedigree"),  width = 3),
@@ -294,7 +295,7 @@ ui <- fluidPage(
                            
                     tabPanel(i18n$t("Analyses based on built in cases"),
                               
-                      actionButton("resetDVIBuilt", i18n$t("Reset window"), class = "btn btn-danger",
+                      actionButton("resetDVIBuilt", label = i18n$t("Reset window"), class = "btn btn-danger",
                         style = "position: absolute; bottom:30px; width: 170px"),
                       
                           sidebarLayout(position = "left",
@@ -321,8 +322,8 @@ ui <- fluidPage(
                                   "Joint", "Posterior")
                                 ),
                               fluidRow(
-                             column(6, actionButton("goDVIBuilt", i18n$t("Analyze!"), class = "btn-success")),
-                            column(6, downloadButton("downloadTable", i18n$t("Download"))),
+                             column(6, actionButton("goDVIBuilt", label = i18n$t("Analyze!"), class = "btn-success")),
+                            column(6, downloadButton("downloadTable", label = i18n$t("Download"))),
                               ),
                             ),
                               mainPanel(width = 8,
@@ -355,17 +356,18 @@ ui <- fluidPage(
                           sidebarLayout(position = "left",
                             sidebarPanel(width = 4,
                               fluidRow(         
-                              column(9, fileInput("fileDVI", i18n$t("fam - or RData file"))),
+                              column(9, fileInput("fileDVI", label = i18n$t("fam - or RData file"))),
                               column(3, checkboxInput("relabel", label = i18n$t("Relabel"), value =  FALSE))
                               ),
-                              numericInput("refFamLoad", i18n$t("Reference family to plot"), min = 0, value = 1),    
+                              numericInput("refFamLoad", label =i18n$t("Reference family to plot"), 
+                                           min = 0, value = 1),    
                               selectInput("analysisLoad",
                                 label = i18n$t("Choose DVI analysis"),
                                 choices = list("None selected", "IBD estimates", "Exclusion", "Pairwise",
                                   "Joint", "Posterior")
                                 ),
                               
-                             actionButton("goDVILoad", i18n$t("Analyze!"), class = "btn-success"),
+                             actionButton("goDVILoad", label = i18n$t("Analyze!"), class = "btn-success"),
                               downloadButton("downloadTableLoad", i18n$t("Download DVI table output"))
                             ),
                               mainPanel(width = 8,
@@ -381,7 +383,7 @@ ui <- fluidPage(
 
                      tabPanel(i18n$t("Settings"),
                               
-                       actionButton("reset", i18n$t("Reset all"), class = "btn btn-danger",
+                       actionButton("reset", label = i18n$t("Reset all"), class = "btn btn-danger",
                        style = "position: absolute; bottom:30px; width: 170px"),
     
                        "Some default settings can be changed below, see:",
@@ -389,25 +391,27 @@ ui <- fluidPage(
                        br(),
                        
                        fluidRow(
-                         column(2, numericInput("seed", i18n$t("Seed"), min = 1, max = 100000, step = 1, value = 1729)),
-                         column(2, numericInput("nSimulations", i18n$t("No simulations"), min = 0, max = 10000, 
-                            step = 100, value = 100),),
-                         column(2, numericInput("nProfiles", i18n$t("No ref. simulations"), min = 1, max = 10, value = 2)),
-                         column(2, numericInput("nMissing", i18n$t("No missing"), min = -1, value = -1)),
+                         column(2, numericInput("seed", label = i18n$t("Seed"), min = 1, 
+                                                max = 100000, step = 1, value = 1729)),
+                         column(2, numericInput("nSimulations", label =i18n$t("No simulations"), 
+                                                min = 0, max = 10000, step = 100, value = 100),),
+                         column(2, numericInput("nProfiles", label = i18n$t("No ref. simulations"), 
+                                                min = 1, max = 10, value = 2)),
+                         column(2, numericInput("nMissing", label = i18n$t("No missing"), min = -1, value = -1)),
                          column(2, checkboxInput("mutation", label = i18n$t("Mutation"), value = FALSE)),
                          column(2, checkboxInput("ignoreSex", label = i18n$t("Ignore sex"), value = TRUE)),
                          ),
                        
                        fluidRow(
-                         column(6, sliderInput("thresholdIP", i18n$t("LR threshold inclusion power"), 
+                         column(6, sliderInput("thresholdIP", label = i18n$t("LR threshold inclusion power"), 
                                                min = 0, max = 10000, step = 100, value = 10000)),
-                         column(6, sliderInput("thresholdLRDisplay", i18n$t("Show LR above"), 
+                         column(6, sliderInput("thresholdLRDisplay", label = i18n$t("Show LR above"), 
                                                min = 0, max = 1000, step = 10, value = 0)),
                          ),
                        fluidRow(
                          div(style = "float: bottom;",
                              selectInput('selected_language',
-                                         i18n$t("Change language"),
+                                         label = i18n$t("Change language"),
                                          choices = list("en", "es"),
                                          selected = "en")
                          ),
