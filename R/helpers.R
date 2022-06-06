@@ -12,7 +12,7 @@
 #' @param log10 logical
 
 pedPower = function(claim, nsim = 10, seed = NULL, lastMarker = 35,
-                    ids = c("MP", "REF"), Log10 = TRUE){
+                    ids = c("MP", "REF"), Log10 = TRUE, truePedH1 = TRUE){
   # Set markers and define H2
   claim = setMarkers(claim, locusAttributes = NorwegianFrequencies[1:lastMarker])
   unrel = list()
@@ -20,35 +20,48 @@ pedPower = function(claim, nsim = 10, seed = NULL, lastMarker = 35,
     unrel[[i]] = pedtools::singleton(ids[i])
   unrel = pedtools::transferMarkers(claim, unrel)
   
+  if(truePedH1){
+    hyp = "H1"
     pow1 = LRpower(claim, unrel,  ids = ids, nsim = nsim,
                    seed = seed, plot = F, verbose = F)
-    par(mfcol = c(1,2), oma = c(0, 0, 1, 0))
-    meanLR = mean(pow1$LRperSim)
+  }
+  else {
+    hyp = "H2"
+    pow1 = LRpower(claim, unrel, truePed = unrel,  ids = ids, nsim = nsim,
+                   seed = seed, plot = F, verbose = F)
+  }
+  if(all(pow1$LRperSim == 0))  
+    stop(safeError("All simulated values are 0"))
+  
+  par(mfcol = c(1,2), oma = c(0, 0, 1, 0))
+  meanLR = mean(pow1$LRperSim)
     
-    # Fix labels, titles, and subtitles
-    if(Log10){
+  # Fix labels, titles, and subtitles
+  if(Log10){
       y = log10(pow1$LRperSim)
       xl = "log10(LR)"
       sub1 = "mean(log10(LR))) = "
       sub2 = paste("P(log10(LR)) > ")
-    } else{
+  } else{
       y = pow1$LRperSim
       xl = "LR"
       sub1 = "mean(LR) = "
       sub2 = paste("P(LR >")
     }
-    m = mean(y)  
-    q20 = quantile(y, 0.2)
-    hist(y, xlab = xl, main = "", prob = TRUE,
-         sub = paste(sub1, formatC(m, format = "e", digits = 2)))
-    f = ecdf(y)
-    r = range(y)
-    curve(1-f(x), from = r[1], to = r[2],  xlim = r,
-          ylab = "Excedance probability", xlab = "x", lty = 1,
-          sub = paste(sub2, formatC(q20, format = "e", digits = 2), ") = 0.8"))
-    tittel = paste("No of simulations: ", nsim,". Markers: 1 - ", lastMarker)
-    title(tittel, outer = TRUE)
-    par(mfcol = c(1,1))
+  m = mean(y)  
+  q20 = quantile(y, 0.2)
+  hist(y, xlab = xl, main = "", prob = TRUE,
+      sub = paste(sub1, formatC(m, format = "e", digits = 2)))
+  f = ecdf(y)
+  r = range(y)
+  curve(1-f(x), from = r[1], to = r[2],  xlim = r,
+      ylab = "Excedance probability", xlab = "x", lty = 1,
+      sub = paste(sub2, formatC(q20, format = "e", digits = 2), ") = 0.8"))
+  
+  tittel = paste("No of simulations: ", nsim,". Markers: 1 - ", lastMarker,
+                 " True: ", hyp)
+  title(tittel, outer = TRUE)
+  par(mfcol = c(1,1))
 }
 
 #' Function
@@ -239,12 +252,15 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data.", nMissing
 #' @param thresholdLR double, see IBDestimates
 #' @param nMissingSpecified integer. No of missing if multiple missing in at least one family
 #' @param ignoreSex
+#' @param truePedH1 logical
 #' 
 #' 
 familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing person', 
                      refFam = 1, DVI = TRUE, nProfiles = 1, lrSims = 100, seed = NULL, 
                      thresholdIP = 10000, plotOnly = TRUE, Log10 = TRUE, mutation = FALSE, 
-                     thresholdLR = 0, nMissingSpecified = -1, ignoreSex = TRUE){
+                     thresholdLR = 0, nMissingSpecified = -1, ignoreSex = TRUE, truePedH1 = TRUE){
+  if(!truePedH1)
+    stop(safeError("Simulation under H2 not implemented"))
   x = readFam(file$datapath)
   
   #Relabel if DVI and not power. Convert fam-file
@@ -372,7 +388,8 @@ familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing
       curve(1-f(x), from = r[1], to = r[2],  xlim = r,
             ylab = "Excedance probability", xlab = "x", lty = 1,
           sub = paste(sub2, formatC(q20, format = "e", digits = 2), ") = 0.8"))
-      tittel = paste("No of simulations: ", lrSims, ". Markers: 1 - ", nMarkers(x[[1]]) )
+      tittel = paste("No of simulations: ", lrSims, ". Markers: 1 - ", nMarkers(x[[1]]), 
+                     "True ped H1" )
       title(tittel, outer = TRUE)
       par(mfcol = c(1,1))      
       

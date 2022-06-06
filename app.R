@@ -391,15 +391,18 @@ ui <- fluidPage(
                        br(),
                        
                        fluidRow(
-                         column(2, numericInput("seed", label = i18n$t("Seed"), min = 1, 
+                         column(3, numericInput("seed", label = i18n$t("Seed"), min = 1, 
                                                 max = 100000, step = 1, value = 1729)),
-                         column(2, numericInput("nSimulations", label =i18n$t("No simulations"), 
+                         column(3, numericInput("nSimulations", label =i18n$t("No simulations"), 
                                                 min = 0, max = 10000, step = 100, value = 100),),
-                         column(2, numericInput("nProfiles", label = i18n$t("No ref. simulations"), 
+                         column(3, numericInput("nProfiles", label = i18n$t("No reference simulations"), 
                                                 min = 1, max = 10, value = 2)),
-                         column(2, numericInput("nMissing", label = i18n$t("No missing"), min = -1, value = -1)),
-                         column(2, checkboxInput("mutation", label = i18n$t("Mutation"), value = FALSE)),
-                         column(2, checkboxInput("ignoreSex", label = i18n$t("Ignore sex"), value = TRUE)),
+                         column(3, numericInput("nMissing", label = i18n$t("No missing"), min = -1, value = -1)),
+                       ),
+                       fluidRow(
+                         column(4, checkboxInput("truePedH1", label = i18n$t("True ped H1"), value = TRUE)),
+                         column(4, checkboxInput("mutation", label = i18n$t("Mutation"), value = FALSE)),
+                         column(4, checkboxInput("ignoreSex", label = i18n$t("Ignore sex"), value = TRUE)),
                          ),
                        
                        fluidRow(
@@ -471,32 +474,33 @@ server <- function(input, output, session) {
     if(input$pedigreePowerSimulated == "Missing brother"){
       claim = nuclearPed(fa = "FA", mo = "MO", children = c("MP", "REF"))
       pedPower(claim, nsim = input$nSimulations, seed = input$seed, 
-               lastMarker = input$lastMarker, Log10 = input$log10Power)
+               lastMarker = input$lastMarker, Log10 = input$log10Power,
+               truePedH1 = input$truePedH1)
     }
     else if(input$pedigreePowerSimulated == "Missing father"){
       claim = nuclearPed(2, father = "MP", mother ="MO", children = "REF")
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
-               lastMarker = input$lastMarker)
+               lastMarker = input$lastMarker, truePedH1 = input$truePedH1)
     }
     else if(input$pedigreePowerSimulated == "Missing uncle"){
       x = nuclearPed(2, father = "FA", mother ="MO1", children = c("MP", "BR"))
       x = addSon(x, parent = "BR",  id = "REF")
       claim = relabel(x, "MO2", "NN_1")
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
-               lastMarker = input$lastMarker)
+               lastMarker = input$lastMarker, truePedH1 = input$truePedH1)
     }
     else if(input$pedigreePowerSimulated == "Missing first cousin"){
       x = cousinPed(1)
       claim = relabel(x, c("MP","REF"), 7:8)
       pedPower(claim, nsim = input$nSimulations, seed = input$seed,  
-               lastMarker = input$lastMarker)
+               lastMarker = input$lastMarker, truePedH1 = input$truePedH1)
     }
     else if(input$pedigreePowerSimulated == "Missing GF, 2 grandchildren typed"){
       IDS = c("MP", "REF1", "REF2")
       x = cousinPed(1)
       claim = relabel(x, IDS, c(1,7, 8))
       pedPower(claim, ids = IDS, nsim = input$nSimulations, seed = input$seed,  
-               lastMarker = input$lastMarker)
+               lastMarker = input$lastMarker, truePedH1 = input$truePedH1)
     }
    })
   }) %>%
@@ -521,7 +525,8 @@ server <- function(input, output, session) {
       file = input$famPower
       ext = getExt(file = file)
       familias(file = file, method = "Power", DVI = FALSE, seed = input$seed, plotOnly = FALSE,
-               lrSims = input$nSimulations, Log10 = input$log10PowerFam)
+               lrSims = input$nSimulations, Log10 = input$log10PowerFam, 
+               truePedH1 = input$truePedH1)
     })
   }) %>% 
    bindEvent(input$goPowerLoad)
@@ -1149,6 +1154,7 @@ server <- function(input, output, session) {
     updateSelectInput(session, "analysisLoad", selected = "None selected")
     updateCheckboxInput(session, "mutation", label = "Mutation", value = FALSE) 
     updateCheckboxInput(session, "ignoreSex", label = "Ignore sex", value = TRUE) 
+    updateCheckboxInput(session, "truePedH1", label = "True ped H1", value = TRUE) 
     updateSliderInput(session, "thresholdIP", value = 10000) 
     updateSliderInput(session,"thresholdLRDisplay", value = 0)
     updateSelectInput(session, "selected_language", selected = "en")
