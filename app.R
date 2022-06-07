@@ -917,13 +917,13 @@ server <- function(input, output, session) {
         Bmarginal(myjointDVI(grave$pm, grave$am, grave$missing, 
                              mutation = input$mutation, ignoreSex = input$ignoreSex), grave$missing)
       else if (input$datDVIBuilt == "planecrash")
-        Bmarginal(myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, 
-                  mutation = input$mutation, ignoreSex = input$ignoreSex), planecrash$missing)
-      else if (input$datDVIBuilt == "serena"){
+        myBmarginal(planecrash$pm, planecrash$am, planecrash$missing, mutation = input$mutation, 
+                    thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex, 
+                    prior = NULL, nExcl = input$nExcl)
+      else if (input$datDVIBuilt == "serena")
         myBmarginal(serena$pm, serena$am, serena$missing, mutation = input$mutation, 
                     thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex, 
                     prior = NULL, nExcl = input$nExcl)
-      }
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         Bmarginal(myjointDVI(dataCh4$pm, dataCh4$am, dataCh4$missing, 
                              mutation = input$mutation, ignoreSex = input$ignoreSex), dataCh4$missing)

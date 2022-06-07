@@ -500,6 +500,6 @@ myBmarginal = function(pm, am, missing, mutation = FALSE, thresholdLR = 0, ignor
     missing = reduced$missing
   }
   jointRes = myjointDVI(pm, am, missing, mutation = mutation, thresholdLR = thresholdLR, 
-                        ignoreSex = ignoreSex, nExcl = nExcl)
+                        ignoreSex = ignoreSex, nExcl = 0)
   Bmarginal(jointRes, missing)
 }
