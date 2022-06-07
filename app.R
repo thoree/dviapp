@@ -305,7 +305,7 @@ ui <- fluidPage(
                                   selectInput("datDVIBuilt",  label = i18n$t("Case"), 
                                                choices = list("None selected", 
                                                "planecrash", 
-                                               "Exclusion" = "serena",
+                                               "ExclusionData" = "serena",
                                                "DVIbook-Example-4.8.1",
                                                "DVIbook-Example-4.8.4",
                                                "DVIbook-Exercise-4.9.7",
@@ -391,13 +391,14 @@ ui <- fluidPage(
                        br(),
                        
                        fluidRow(
-                         column(3, numericInput("seed", label = i18n$t("Seed"), min = 1, 
+                         column(2, numericInput("seed", label = i18n$t("Seed"), min = 1, 
                                                 max = 100000, step = 1, value = 1729)),
-                         column(3, numericInput("nSimulations", label =i18n$t("No simulations"), 
+                         column(2, numericInput("nSimulations", label =i18n$t("No simulations"), 
                                                 min = 0, max = 10000, step = 100, value = 100),),
                          column(3, numericInput("nProfiles", label = i18n$t("No reference simulations"), 
                                                 min = 1, max = 10, value = 2)),
-                         column(3, numericInput("nMissing", label = i18n$t("No missing"), min = -1, value = -1)),
+                         column(2, numericInput("nMissing", label = i18n$t("No missing"), min = -1, value = -1)),
+                         column(3, numericInput("nExcl", label = i18n$t("Exclusion threshold"), min = -0, value = 0)),
                        ),
                        fluidRow(
                          column(4, checkboxInput("truePedH1", label = i18n$t("True ped H1"), value = TRUE)),
@@ -790,7 +791,7 @@ server <- function(input, output, session) {
 
       else{
         if(!input$relabel)
-          stop(safeError("Need to tick 'Relabel DVI' for Exclusion, Pairwise, Joint and Posterior"))
+          stop(safeError("Need to select, load data and tick 'Relabel DVI' for loaded data for Exclusion, Pairwise, Joint and Posterior"))
         file = input$fileDVI
         ext = getExt(file = file)
         if (ext == "RData" |  ext == "rda") 
@@ -867,7 +868,8 @@ server <- function(input, output, session) {
                    thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
       else if (input$datDVIBuilt == "serena")
         myjointDVI(serena$pm, serena$am, serena$missing, mutation = input$mutation,
-                   thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
+                   thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex,
+                   nExcl = input$nExcl)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.1")
         myjointDVI(dataExample481$pm, dataExample481$am , dataExample481$missing, mutation = input$mutation,
                    thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
@@ -917,9 +919,11 @@ server <- function(input, output, session) {
       else if (input$datDVIBuilt == "planecrash")
         Bmarginal(myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, 
                   mutation = input$mutation, ignoreSex = input$ignoreSex), planecrash$missing)
-      else if (input$datDVIBuilt == "serena")
-        Bmarginal(myjointDVI(serena$pm, serena$am, serena$missing, 
-                             mutation = input$mutation, ignoreSex = input$ignoreSex), serena$missing)
+      else if (input$datDVIBuilt == "serena"){
+        myBmarginal(serena$pm, serena$am, serena$missing, mutation = input$mutation, 
+                    thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex, 
+                    prior = NULL, nExcl = input$nExcl)
+      }
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         Bmarginal(myjointDVI(dataCh4$pm, dataCh4$am, dataCh4$missing, 
                              mutation = input$mutation, ignoreSex = input$ignoreSex), dataCh4$missing)
@@ -1158,6 +1162,7 @@ server <- function(input, output, session) {
     updateSliderInput(session, "thresholdIP", value = 10000) 
     updateSliderInput(session,"thresholdLRDisplay", value = 0)
     updateSelectInput(session, "selected_language", selected = "en")
+    updateNumericInput(session, "nExcl", value = 0)
   })
 
 }

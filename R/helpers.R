@@ -74,8 +74,17 @@ pedPower = function(claim, nsim = 10, seed = NULL, lastMarker = 35,
 #' @param mutation logical
 #' @param thresholdLR double
 #' @param ignoreSex logical
+#' @param nExcl integer
 
-myjointDVI = function(pm, am, missing, mutation = FALSE, thresholdLR = 0, ignoreSex = TRUE){
+myjointDVI = function(pm, am, missing, mutation = FALSE, thresholdLR = 0, 
+                      ignoreSex = TRUE, nExcl = 0){
+  if (nExcl > 0){
+    reduced = reduceDVI(pm, am, missing, nExcl)
+    pm = reduced$pm
+    am = reduced$am
+    missing = reduced$missing
+   }
+    
   if(mutation)
     res = jointDVI(pm, am, missing, disableMutation = FALSE, ignoreSex = ignoreSex)
    else
@@ -455,4 +464,42 @@ myPairwiseLR = function(pm, am, miss, mutation, ignoreSex = TRUE){
      am = setMutationModel(am, 'trivial')
   }
   pairwiseLR(pm, am, miss, ignoreSex = ignoreSex)  
+}
+
+reduceDVI = function(pm, am, missing, nExcl = 3){
+  # Find exclusion matrix
+  em = exclusionMatrix(pm, am, missing)
+  # Find potential victims to drop and drop
+  minExclusionVictims = apply(em,1, function(x) min(x))
+  dropVictims = (1:dim(em)[1])[minExclusionVictims >= nExcl]
+  if(length(dropVictims > 0))
+    em = em[-dropVictims,]
+  
+  # Drop potential families
+  minExclusionFamilies = apply(em,2, function(x) min(x))
+  dropFamilies = (1:dim(em)[2])[minExclusionFamilies >= nExcl]
+  
+  #Update pm, am and missing
+  if(length(dropVictims) > 0 )
+    pm = pm[-dropVictims]
+  if(length(dropFamilies) > 0 )
+    am = am[-dropFamilies]
+  keepMissing = missing %in% unlist(labels(am))
+  if(length(keepMissing) == 0)
+    stop("None identified")
+  else
+    missing = missing[keepMissing]
+  list(pm = pm, am = am, missing = missing)
+}
+
+myBmarginal = function(pm, am, missing, mutation = FALSE, thresholdLR = 0, ignoreSex = TRUE, prior = NULL, nExcl = 0){
+  if (nExcl > 0){
+    reduced = reduceDVI(pm, am, missing, nExcl)
+    pm = reduced$pm
+    am = reduced$am
+    missing = reduced$missing
+  }
+  jointRes = myjointDVI(pm, am, missing, mutation = mutation, thresholdLR = thresholdLR, 
+                        ignoreSex = ignoreSex, nExcl = nExcl)
+  Bmarginal(jointRes, missing)
 }
