@@ -155,10 +155,11 @@ IBDestimates = function(pm,  sorter = TRUE, thresholdLR = 0){
 #' @param thresholdLR double, see IBDestimates
 #' @param nMissingSpecified integer. No of missing if multiple missing in at least one family
 #' @param ignoreSex logical
+#' @param nExcl integer
 
 RData = function(file = input$file1, sorter = TRUE,  method = NULL, refFam = 1, 
                  mutation = FALSE, thresholdLR = NULL,  nMissingSpecified = -1,
-                 ignoreSex = TRUE){
+                 ignoreSex = TRUE, nExcl = 0){
   # data pm, am, missing loaded next:
   load(file$datapath)
   errorText = "Must have the same markers for all pm and am data"
@@ -177,12 +178,12 @@ RData = function(file = input$file1, sorter = TRUE,  method = NULL, refFam = 1,
   else if (method == 'Joint'){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorText))
-    myjointDVI(pm, am, missing, mutation, thresholdLR = thresholdLR, ignoreSex = ignoreSex)
+    myjointDVI(pm, am, missing, mutation, thresholdLR = thresholdLR, ignoreSex = ignoreSex, nExcl = nExcl)
   }
   else if (method == 'Posterior'){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorText))
-    Bmarginal(myjointDVI(pm, am, missing, mutation, ignoreSex = ignoreSex), missing)
+    myBmarginal(pm, am, missing, mutation = mutation,  ignoreSex = ignoreSex,  nExcl = nExcl)
   }
   else if (method == 'plot'){
     if (is.ped(am))
@@ -262,12 +263,14 @@ summariseDVIreturned = function (pm, am, missing, header = "DVI data.", nMissing
 #' @param nMissingSpecified integer. No of missing if multiple missing in at least one family
 #' @param ignoreSex
 #' @param truePedH1 logical
+#' @param nExcl integer
 #' 
 #' 
 familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing person', 
                      refFam = 1, DVI = TRUE, nProfiles = 1, lrSims = 100, seed = NULL, 
                      thresholdIP = 10000, plotOnly = TRUE, Log10 = TRUE, mutation = FALSE, 
-                     thresholdLR = 0, nMissingSpecified = -1, ignoreSex = TRUE, truePedH1 = TRUE){
+                     thresholdLR = 0, nMissingSpecified = -1, ignoreSex = TRUE, truePedH1 = TRUE,
+                     nExcl = 0){
   if(!truePedH1)
     stop(safeError("Simulation under H2 not implemented"))
   x = readFam(file$datapath)
@@ -326,13 +329,14 @@ familias =  function(file = NULL, method = NULL, relabel = TRUE, miss = 'Missing
   else if (method == "Joint"){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorTextSame))
-    myjointDVI(pm, am, miss, mutation, thresholdLR = thresholdLR, ignoreSex = ignoreSex)
+    myjointDVI(pm, am, miss, mutation, thresholdLR = thresholdLR, ignoreSex = ignoreSex, nExcl = nExcl)
   }
   
   else if (method == "Posterior"){
     if(differentMarkers(pm, am)$ulike)
       stop(safeError(errorTextSame))
-    Bmarginal(myjointDVI(pm, am, miss, mutation, ignoreSex = ignoreSex), miss)
+    myBmarginal(pm, am, missing, mutation = mutation,  ignoreSex = ignoreSex,  nExcl = nExcl)
+    #Bmarginal(myjointDVI(pm, am, miss, mutation, ignoreSex = ignoreSex), miss)
   }
   
   else if (method == "plot"){
@@ -466,6 +470,15 @@ myPairwiseLR = function(pm, am, miss, mutation, ignoreSex = TRUE){
   pairwiseLR(pm, am, miss, ignoreSex = ignoreSex)  
 }
 
+#'
+#' reduceDVI
+#' 
+#' Remove victims or reference families if the number of exclusion
+#' exceeds (>=) a specified value, nExcl
+#' @param pm, am, missing : as before
+#' nExcl integer
+#' 
+
 reduceDVI = function(pm, am, missing, nExcl = 3){
   # Find exclusion matrix
   em = exclusionMatrix(pm, am, missing)
@@ -492,14 +505,21 @@ reduceDVI = function(pm, am, missing, nExcl = 3){
   list(pm = pm, am = am, missing = missing)
 }
 
-myBmarginal = function(pm, am, missing, mutation = FALSE, thresholdLR = 0, ignoreSex = TRUE, prior = NULL, nExcl = 0){
+#'
+#' myBmarginal
+#' 
+#' Wrapper for Bmarginal to allow for removing based on exclusion
+#' 
+#' @param as before
+#' @param prior not yet used
+myBmarginal = function(pm, am, missing, mutation = FALSE,  ignoreSex = TRUE, prior = NULL, nExcl = 0){
   if (nExcl > 0){
     reduced = reduceDVI(pm, am, missing, nExcl)
     pm = reduced$pm
     am = reduced$am
     missing = reduced$missing
   }
-  jointRes = myjointDVI(pm, am, missing, mutation = mutation, thresholdLR = thresholdLR, 
+  jointRes = myjointDVI(pm, am, missing, mutation = mutation,
                         ignoreSex = ignoreSex, nExcl = 0)
   Bmarginal(jointRes, missing)
 }
