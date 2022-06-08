@@ -386,7 +386,7 @@ ui <- fluidPage(
                        actionButton("reset", label = i18n$t("Reset all"), class = "btn btn-danger",
                        style = "position: absolute; bottom:30px; width: 170px"),
     
-                       "Some default settings can be changed below, see:",
+                       i18n$t("Some default settings can be changed below, see:"),
                        a(href="https://github.com/thoree/dviapp", "manual.",target="_blank"),
                        br(),
                        
