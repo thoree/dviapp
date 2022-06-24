@@ -917,7 +917,7 @@ server <- function(input, output, session) {
         Bmarginal(myjointDVI(grave$pm, grave$am, grave$missing, 
                              mutation = input$mutation, ignoreSex = input$ignoreSex), grave$missing)
       else if (input$datDVIBuilt == "planecrash")
-        Bmarginal(myjointDVI(planecrash$pm, planecrsah$am, planecrash$missing, 
+        Bmarginal(myjointDVI(planecrash$pm, planecrash$am, planecrash$missing, 
                              mutation = input$mutation, ignoreSex = input$ignoreSex), planecrash$missing)
       else if (input$datDVIBuilt == "exclusionExample")
         myBmarginal(exclusionExample$pm, exclusionExample$am, exclusionExample$missing, mutation = input$mutation, 
