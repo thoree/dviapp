@@ -35,9 +35,9 @@ ui <- fluidPage(
               column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 4),
               column(
                 
-                markdown(i18n$t("Introduction_long_1")),
+                # markdown(i18n$t("Introduction_long_1")),
                 
-                "REMOVE: This app deals with Disaster Victim Identification (DVI) problems and power 
+                " This app deals with Disaster Victim Identification (DVI) problems and power 
                 calculation for kinship problems. Our goal has been to make  available functionality
                 in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
                 in the", 
@@ -78,9 +78,9 @@ ui <- fluidPage(
         navbarMenu(i18n$t("Power"),
           tabPanel(i18n$t("Explanations"),
                    
-               markdown(i18n$t("Power_long_1")),
+               # markdown(i18n$t("Power_long_1")),
                
-               "REMOVE: LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
+               " LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
                has been computed for 1000 simulations of MP and REF conditioned on H1 below.
                The simulations use the 35 markers in the database `NorwegianFrequencies` 
                documented in the R library forrel. In `Power > Analyses based on built in cases` some prepared
@@ -130,9 +130,9 @@ ui <- fluidPage(
                 actionButton("resetPowerFam", i18n$t("Reset window"), class = "btn btn-danger",
                   style = "position: absolute; bottom:30px; width: 170px"),
                 
-                markdown(i18n$t("Power_long_2")),
+                # markdown(i18n$t("Power_long_2")),
                 
-                "REMOVE: The missing person should be named `MP` and the reference `REF` in the file. The file",
+                " The missing person should be named `MP` and the reference `REF` in the file. The file",
                 a(href = "https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
                 "gives output similar to that in `Power > Explanations` (but not identical, even for the 
                 same seed, since the simulation implementation is not identical).  Genotyped individuals 
@@ -161,9 +161,9 @@ ui <- fluidPage(
                           
                  tabPanel(i18n$t("Explanations"),
                           
-                 markdown(i18n$t("Prioritise_long_1")),
+                 # markdown(i18n$t("Prioritise_long_1")),
                  
-                   "REMOVE: The below explanation applies to the example obtained if 'brother' (default) 
+                   " The below explanation applies to the example obtained if 'brother' (default) 
                     is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers`, 
                     to H2: `MP and REF unrelated`, has been computed for 100 unconditional simulations 
                     of MP and REF conditioned on H1 below. This corresponds to the `REF` case in the panel 
@@ -224,7 +224,7 @@ ui <- fluidPage(
                                   
                  tabPanel(i18n$t("Analyses based on user loaded data"),
                  
-                 markdown(i18n$t("Prioritise_long_2")),
+                 # markdown(i18n$t("Prioritise_long_2")),
 
                   "REMOVE :Priority power is calculated by uploading a Familias file. Here's an example:",
                   
@@ -252,9 +252,9 @@ ui <- fluidPage(
                   
                   tabPanel(i18n$t("Explanations"),
                            
-                    markdown(i18n$t("DVI_long_1")), 
+                    # markdown(i18n$t("DVI_long_1")), 
                     
-                    "REMOVE: Analyses can be done in this module from built in cases, from Familias (`fam`)
+                    " Analyses can be done in this module from built in cases, from Familias (`fam`)
                     files or from R data. The below figure shows the planecrash data. When the
                     data is loaded in `DVI > Analyses based on built in cases`, 
                     the following summary is provided:,
@@ -341,9 +341,9 @@ ui <- fluidPage(
                       actionButton("resetDVILoad", i18n$t("Reset window"), class = "btn btn-danger",
                           style = "position: absolute; bottom:30px; width: 170px"), 
                       
-                      markdown(i18n$t("DVI_long_2")),
+                      # markdown(i18n$t("DVI_long_2")),
                       
-                      "REMOVE: If there are multiple missing persons in a family, like in the case based on
+                      " If there are multiple missing persons in a family, like in the case based on
                       the ", a(href = "https://familias.name/dviapp/FamilyWith3Missing.fam", 
                               "FamilyWith3Missing.fam" ,target="_blank"), 
                       ", which is similar to a built-in-case,
