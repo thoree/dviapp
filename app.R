@@ -29,7 +29,7 @@ ui <- fluidPage(
     navbarPage(i18n$t("Introduction"),
                
       # Button to return to introduction         
-       tabPanel(icon("home"),
+       tabPanel(icon("house"), #Oct 13
                
             mainPanel(
               fluidRow(
@@ -805,7 +805,7 @@ server <- function(input, output, session) {
                    thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
       else if(input$datDVIBuilt == "DVIbook-Example-4.8.4")
         myjointDVI(dataCh4$pm, dataCh4$am , dataCh4$missing, mutation = input$mutation,
-                   thresholdLR = input$thresholdLRDisplay)
+                   thresholdLR = input$thresholdLRDisplay, ignoreSex = input$ignoreSex)
       else if(input$datDVIBuilt == "DVIbook-Exercise-4.9.7")
         myjointDVI(dataExercise497$pm, dataExercise497$am , dataExercise497$missing, 
                    mutation = input$mutation, thresholdLR = input$thresholdLRDisplay, 
