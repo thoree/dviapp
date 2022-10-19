@@ -1,0 +1,226 @@
+{
+  "languages": [
+    "key",
+    "en",
+    "es"
+  ],
+  "translation": [
+    {
+      "key": "Disaster Victim Identification",
+      "en": "Disaster Victim Identification",
+      "es": "Identificaci\u00f3n de v\u00edctimas de desastres"
+    },
+    {
+      "key": "Introduction",
+      "en": "Introduction",
+      "es": "Introducci\u00f3n"
+    },
+    {
+      "key": "Power",
+      "en": "Power",
+      "es": "Poder"
+    },
+    {
+      "key": "Explanations",
+      "en": "Explanations",
+      "es": "Explicaci\u00f3n"
+    },
+    {
+      "key": "Analyses based on built in cases",
+      "en": "Analyses based on built in cases",
+      "es": "An\u00e1lisis de casos predeterminados"
+    },
+    {
+      "key": "Reset window",
+      "en": "Reset window",
+      "es": "Restablecer"
+    },
+    {
+      "key": "Pedigree",
+      "en": "Pedigree",
+      "es": "Pedigr\u00ed"
+    },
+    {
+      "key": "No of markers",
+      "en": "No of markers",
+      "es": "N\u00fam. de marcadores"
+    },
+    {
+      "key": "Simulate!",
+      "en": "Simulate!",
+      "es": "Simular!"
+    },
+    {
+      "key": "Analyses based on user loaded data",
+      "en": "Analyses based on user loaded data",
+      "es": "An\u00e1lisis de casos del usuario"
+    },
+    {
+      "key": "Power_long_2",
+      "en": "Power_long_2"
+    },
+    {
+      "key": "Prioritise",
+      "en": "Prioritise",
+      "es": "Priorizar"
+    },
+    {
+      "key": "Built in pedigree for priority simulation",
+      "en": "Built in pedigree for priority simulation",
+      "es": "Pedigr\u00ed incorporado para la simulaci\u00f3n en la herramienta Priorizar"
+    },
+    {
+      "key": "Prioritise_long_2",
+      "en": "Prioritise_long_2"
+    },
+    {
+      "key": "Familias file",
+      "en": "Familias file",
+      "es": "Archivo de Familias"
+    },
+    {
+      "key": "DVI",
+      "en": "DVI",
+      "es": "IVD"
+    },
+    {
+      "key": "Case",
+      "en": "Case",
+      "es": "Caso"
+    },
+    {
+      "key": "Plot",
+      "en": "Plot",
+      "es": "Gr\u00e1fico"
+    },
+    {
+      "key": "Choose DVI analysis",
+      "en": "Choose DVI analysis",
+      "es": "Elegir tipo de an\u00e1lisis IVD"
+    },
+    {
+      "key": "Analyze!",
+      "en": "Analyze!",
+      "es": "Analizar!"
+    },
+    {
+      "key": "Download",
+      "en": "Download",
+      "es": "Descargar"
+    },
+    {
+      "key": "DVI_long_2",
+      "en": "DVI_long_2"
+    },
+    {
+      "key": "fam - or RData file",
+      "en": "fam - or RData file",
+      "es": "Archivo .fam o archivo .RData"
+    },
+    {
+      "key": "Relabel",
+      "en": "Relabel",
+      "es": "Renombrar"
+    },
+    {
+      "key": "Reference family to plot",
+      "en": "Reference family to plot",
+      "es": "Familia de referencia para representaci\u00f3n gr\u00e1fica"
+    },
+    {
+      "key": "Download DVI table output",
+      "en": "Download DVI table output",
+      "es": "Descargar tabla IVD de resultados"
+    },
+    {
+      "key": "Settings",
+      "en": "Settings",
+      "es": "Ajustes"
+    },
+    {
+      "key": "Reset all",
+      "en": "Reset all",
+      "es": "Restablecer todo"
+    },
+    {
+      "key": "Some default settings can be changed below, see:",
+      "en": "Some default settings can be changed below, see:",
+      "es": "Se pueden cambiar algunos de los ajustes predeterminados, ver:"
+    },
+    {
+      "key": "Seed",
+      "en": "Seed",
+      "es": "Semilla"
+    },
+    {
+      "key": "No simulations",
+      "en": "No simulations",
+      "es": "N\u00fam. de simulaciones"
+    },
+    {
+      "key": "No reference simulations",
+      "en": "No reference simulations",
+      "es": "N\u00fam. de simulaciones de referencia"
+    },
+    {
+      "key": "No missing",
+      "en": "No missing",
+      "es": "N\u00fam. de personas desaparecidas"
+    },
+    {
+      "key": "Exclusion threshold",
+      "en": "Exclusion threshold",
+      "es": "Umbral de exclusi\u00f3n"
+    },
+    {
+      "key": "True ped H1",
+      "en": "True ped H1",
+      "es": "Pedigr\u00ed real H1"
+    },
+    {
+      "key": "Mutation",
+      "en": "Mutation",
+      "es": "Mutaci\u00f3n"
+    },
+    {
+      "key": "Ignore sex",
+      "en": "Ignore sex",
+      "es": "Ignorar sexo"
+    },
+    {
+      "key": "LR threshold inclusion power",
+      "en": "LR threshold inclusion power",
+      "es": "Umbral de LR en poder de inclusi\u00f3n"
+    },
+    {
+      "key": "Show LR above",
+      "en": "Show LR above",
+      "es": "Mostrar LR mayor que"
+    },
+    {
+      "key": "Change language",
+      "en": "Change language",
+      "es": "Cambiar idioma"
+    },
+    {
+      "key": "Introduction_long_1",
+      "en": "This app deals with Disaster Victim Identification (DVI) problems and\npower calculation for kinship problems. Our goal has been to make\navailable functionality in the `pedsuite` of R libraries and also the\n`dvir` library. We also expand on functionality in the [Familias\nsoftware.](https://www.familias.no/)\n\nThere are three modules, all based on built in cases or user data\n(Familias or R files):\n\n-   **Power:** Simulations can be done to determine if goals are likely\n    to be achieved.\n-   **Priority:** The aim is to find the optimal extra persons to\n    genotype.\n-   **DVI:** Methods to include or exclude missing persons are provided.\n\nFor more information, check the books: [Mass\nidentications,](https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3)\n(Kling et al., 2021), [Pedigree Analysis in\nR](https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2)\n(Vigeland, 2021), and the [dvir\npaper](https://www.nature.com/articles/s41598-021-93071-5) (Vigeland and\nEgeland, 2021). For further documentation and bug reporting, please go\n[here](https://github.com/thoree/dviapp).",
+      "es": "Esta aplicaci\u00f3n se ocupa de los problemas de identificaci\u00f3n de v\u00edctimas\nde desastres (DVI) y del c\u00e1lculo del poder estad\u00edstico en problemas de\nparentesco. Nuestro objetivo ha sido hacer que la funcionalidad de las\nbibliotecas R `pedsuite` y `dvir` sea f\u00e1cilmente accesible.\n\nTambi\u00e9n ampliamos la funcionalidad del [*software\nFamilias*](https://www.familias.no/). La aplicaci\u00f3n se compone de tres\nm\u00f3dulos, todos ellos con casos pre-configurados o con la posibilidad de\nque los usuarios analicen sus propios datos (archivos Familias o R):\n\n-   **Poder:** permite realizar simulaciones para determinar si es\n    probable que se alcancen los objetivos en un proyecto de\n    identificaci\u00f3n.\n-   **Prioridad**: Permite determinar qu\u00e9 familiares de referencia extra\n    son los m\u00e1s \u00f3ptimos para genotipar en casos de pedigr\u00edes\n    incompletos.\n-   **DVI**: proporciona m\u00e9todos para incluir o excluir personas\n    desaparecidas.\n\nPara m\u00e1s informaci\u00f3n, consulte los libros: [*Mass\nidentications*](https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3),\n(Kling et al., 2021), [*Pedigree Analysis in\nR*](https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2)\n(Vigeland, 2021) y el art\u00edculo\n\"[*dvir*](https://www.nature.com/articles/s41598-021-93071-5)\" (Vigeland\ny Egeland, 2021). Para obtener m\u00e1s documentaci\u00f3n y reportar errores, por\nfavor vaya [*aqu\u00ed*](https://github.com/thoree/dviapp)."
+    },
+    {
+      "key": "Power_long_1",
+      "en": "LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF`\nunrelated, has been computed for 1000 simulations of MP and REF\nconditioned on H1 below. The simulations use the 35 markers in the\ndatabase `NorwegianFrequencies` documented in the R library forrel. In\n`Power > Analyses based on built in cases` some prepared cases can be\nrun and parameters like the number of markers, can be changed. In\n`Power > Analyses based on user loaded data`, similar output is\nobtained by loading a familias file prepared by the user. The\nsimulations will be conditioned on genotyped individuals, if any.",
+      "es": "En la figura se pueden ver los valores del LR para las hip\u00f3tesis H1:\n'MP y REF son hermanos completos', versus H2: 'MP y REF' no est\u00e1n\nrelacionados. Para ello se han realizado 1000 simulaciones de perfiles\ngen\u00e9ticos de MP y REF teniendo en cuenta que H1 es cierta. Se usaron los\n35 marcadores de la base de datos `NorwegianFrequencies` documentada\nen la biblioteca R forrel. En la pesta\u00f1a `Potencia > An\u00e1lisis basados\nen casos pre-configurados` se pueden ejecutar algunos casos preparados\ny se pueden cambiar par\u00e1metros como el n\u00famero de marcadores. En la\npesta\u00f1a `Potencia > An\u00e1lisis basados en datos cargados por el\nusuario`, se obtiene un resultado similar cargando un archivo familias\npreparado por el usuario. Las simulaciones estar\u00e1n condicionadas a\nindividuos genotipados, si los hubiere."
+    },
+    {
+      "key": "Prioritise_long_1",
+      "en": "The below explanation applies to the example obtained if \\'brother\\'\n(default) is chosen in the pull down menu below. The LR comparing H1:\n\\`MP and REF full brothers\\`, to H2: \\`MP and REF unrelated\\`, has been\ncomputed for 100 unconditional simulations of MP and REF conditioned on\nH1 below. This corresponds to the \\`REF\\` case in the panel to the\nright. We see that we can expect no exclusions (in fact exclusions are\nimpossible with only two brothers) and log10(LR) slightly exceeding 10.\nIf one brother, \\`E1\\` is genotyped we can expect more than 10\nexclusions and a log10(LR) slightly exceeding 20. Finally, if both\nbrothers \\`E1\\`and \\`E2\\` are genotyped, the expected number of\nexclusions and LR increase further. 10 profiles are simulated for the\nrelatives (\\'REF\\', \\`E1\\` and \\`E2\\`), assuming H1. For each of these\n10 profiles, corresponding to the smaller circles, 1000 simulations are\nperformed for \\`MP\\` under H1 and H2. In \\`Prioritise \\> Analyses based\non built in cases\\` simulations can be performed for various parameter\nchoices. In \\`Prioritise \\> Analyses based on user loaded data\\` similar\nsimulations can be performed from a fam file.",
+      "es": "La figura muestra el resultado cuando se selecciona el ejemplo\n'hermano' (predeterminado) en el men\u00fa desplegable de abajo. Para\ncalcular el LR teniendo en cuenta las hip\u00f3tesis H1: 'MP y REF son\nhermanos completos', con H2: 'MP y REF no est\u00e1n relacionados', se\nrealizaron 100 simulaciones incondicionales de perfiles gen\u00e9ticos de MP\ny REF suponiendo que H1 es cierta. El resultado se muestra en el caso\n`REF` del panel de la derecha. Vemos que no podemos esperar\nexclusiones (de hecho, las exclusiones son imposibles con solo dos\nhermanos) y el log10 (LR) es ligeramente superior a 10. Si se genotipa\nun hermano m\u00e1s, 'E1', podemos esperar m\u00e1s de 10 exclusiones y un log10\n(LR) ligeramente superior a 20. Finalmente, si se genotipan dos hermanos\nm\u00e1s, `E1` y `E2`, el n\u00famero esperado de exclusiones y el valor del\nLR aumentan a\u00fan m\u00e1s. Se han simulado 10 perfiles para los familiares\n('REF', `E1` y `E2`), asumiendo que H1 es cierta. Para cada uno de\nestos 10 perfiles, correspondientes a los c\u00edrculos m\u00e1s peque\u00f1os, se\nrealizan 1000 simulaciones de perfiles para `MP` bajo H1 y H2. En la\npesta\u00f1a `Priorizar > An\u00e1lisis basados en casos integrados` se\npueden realizar simulaciones para varias opciones de par\u00e1metros. En la\npesta\u00f1a `Priorizar > An\u00e1lisis basados en datos cargados por el usuario` se pueden realizar simulaciones similares desde un archivo\nfam."
+    },
+    {
+      "key": "DVI_long_1",
+      "en": "Analyses can be done in this module from built in cases, from Familias\n(`fam`) files or from R data. The below figure shows the planecrash\ndata. When the data is loaded in `DVI > Analyses based on built in\ncases`, the following summary is provided:, `DVI data. 8 victims: V1, ..., V8. 5 missing. 5 typed refs: R1, ..., R5 . 5 reference\nfamilies.` The data is also available as a fam file:\n[planecrash.fam](https://familias.name/dviapp/planecrash.fam) , and can\nalso be downloaded as RData:\n[planecrash.RData](https://familias.name/dviapp/planecrash.RData) . See\nthe documentation for the details on the five analyses implemented. Here\nwe only provide brief explanations:\n\n-   **IBD estimates:** The pairwise relationship between all pairs of\n    victims is estimated.\n-   **Exclusion:** Each victim is tried as each missing person and the\n    number of exclusions is given.\n-   **Pairwise LR:** For each victim V and each missing person M, the LR\n    comparing `V = M` to `V and M unrelated` is calculated.\n-   **Joint:** All possible assignments of victims to missing persons\n    are evaluated and solutions ranked according to the likelihood.\n-   **Posterior:** Computes posterior pairing probabilities, i.e., the\n    probability that a victim V is the missing person M.",
+      "es": "low. The LR comparing H1:\n`MP and REF full brothers`, to H2: `MP and REF unrelated`, has been\ncomputed for 100 unconditional simulations of MP and REF conditioned on\nH1 below. This corresponds to the `REF` case in the panel to the\nright. We see that we can expect no exclusions (in fact exclusions are\nimpossible with only two brothers) and log10(LR) slightly exceeding 10.\nIf one brother, `E1` is genotyped we can expect more than 10\nexclusions and a log10(LR) slightly exceeding 20. Finally, if both\nbrothers `E1`and `E2` are genotyped, the expected number of\nexclusions and LR increase further. 10 profiles are simulated for the\nrelatives ('REF', `E1` and `E2`), assuming H1. For each of these\n10 profiles, corresponding to the smaller circles, 1000 simulations are\nperformed for `MP` under H1 and H2. In `Prioritise > Analyses based\non built in cases` simulations can be performed for various parameter\nchoices. In `Prioritise > Analyses based on user loaded data` similar\nsimulations can be performed from a fam file.\n\n---\n\nLa figura muestra el resultado cuando se selecciona el ejemplo\n'hermano' (predeterminado) en el men\u00fa desplegable de abajo. Para\ncalcular el LR teniendo en cuenta las hip\u00f3tesis H1: 'MP y REF son\nhermanos completos', con H2: 'MP y REF no est\u00e1n relacionados', se\nrealizaron 100 simulaciones incondicionales de perfiles gen\u00e9ticos de MP\ny REF suponiendo que H1 es cierta. El resultado se muestra en el caso\n`REF` del panel de la derecha. Vemos que no podemos esperar\nexclusiones (de hecho, las exclusiones son imposibles con solo dos\nhermanos) y el log10 (LR) es ligeramente superior a 10. Si se genotipa\nun hermano m\u00e1s, 'E1', podemos esperar m\u00e1s de 10 exclusiones y un log10\n(LR) ligeramente superior a 20. Finalmente, si se genotipan dos hermanos\nm\u00e1s, `E1` y `E2`, el n\u00famero esperado de exclusiones y el valor del\nLR aumentan a\u00fan m\u00e1s. Se han simulado 10 perfiles para los familiares\n('REF', `E1` y `E2`), asumiendo que H1 es cierta. Para cada uno de\nestos 10 perfiles, correspondientes a los c\u00edrculos m\u00e1s peque\u00f1os, se\nrealizan 1000 simulaciones de perfiles para `MP` bajo H1 y H2. En la\npesta\u00f1a `Priorizar > An\u00e1lisis basados en casos integrados` se\npueden realizar simulaciones para varias opciones de par\u00e1metros. En la\npesta\u00f1a `Priorizar > An\u00e1lisis basados en datos cargados por el\nusuario` se pueden realizar simulaciones similares desde un archivo\nfam.\n\n# DVI_long_1\n\nAnalyses can be done in this module from built in cases, from Familias\n(`fam`) files or from R data. The below figure shows the planecrash\ndata. When the data is loaded in `DVI > Analyses based on built in\ncases`, the following summary is provided:, `DVI data. 8 victims: V1\n,\\..., V8 . 5 missing. 5 typed refs: R1 ,\\..., R5 . 5 reference\nfamilies.` The data is also available as a fam file:\n[planecrash.fam](https://familias.name/dviapp/planecrash.fam) , and can\nalso be downloaded as RData:\n[planecrash.RData](https://familias.name/dviapp/planecrash.RData) . See\nthe documentation for the details on the five analyses implemented. Here\nwe only provide brief explanations:\n\n-   **IBD estimates:** The pairwise relationship between all pairs of\n    victims is estimated.\n-   **Exclusion:** Each victim is tried as each missing person and the\n    number of exclusions is given.\n-   **Pairwise LR:** For each victim V and each missing person M, the LR\n    comparing `V = M` to `V and M unrelated` is calculated.\n-   **Joint:** All possible assignments of victims to missing persons\n    are evaluated and solutions ranked according to the likelihood.\n-   **Posterior:** Computes posterior pairing probabilities, i.e., the\n    probability that a victim V is the missing person M.\n\n----\n\nEn este m\u00f3dulo, los an\u00e1lisis se pueden hacer casos pre-configurados,\ndesde archivos de Familias (`fam`) o desde datos R. La figura\nsiguiente muestra los datos del caso \"accidente a\u00e9reo''. Cuando los\ndatos se cargan en la pesta\u00f1a `DVI > An\u00e1lisis basados en casos\nintegrados`, la aplicaci\u00f3n proporciona el siguiente resumen: `Datos\nDVI. 8 v\u00edctimas: V1 ,\\..., V8 . 5 desaparecidos. 5 referencias escritas:\nR1 ,\\..., R5 . 5 familias de referencia.` Los datos tambi\u00e9n est\u00e1n\ndisponibles en un archivo con formato fam:\n[*planecrash.fam*](https://familias.name/dviapp/planecrash.fam), y\ntambi\u00e9n se pueden descargar como RData:\n[*planecrash.RData*](https://familias.name/dviapp/planecrash.RData).\nConsulte la documentaci\u00f3n para obtener detalles sobre los cinco an\u00e1lisis\nimplementados. Aqu\u00ed s\u00f3lo proporcionamos breves explicaciones:\n\n-   **Estimaciones IBD**: se estima la relaci\u00f3n entre todas las v\u00edctimas\n    por pares.\n-   **Exclusi\u00f3n**: Se coloca a cada v\u00edctima en la posici\u00f3n de cada\n    desaparecido en cada pedigr\u00ed y se da el n\u00famero de exclusiones.\n-   **LR por pares**: para cada v\u00edctima V y cada persona desaparecida M,\n    se calcula el LR teniendo en cuenta las hip\u00f3tesis `V = M` y `V y\n    M sin parentesco`.\n-   **Conjunto**: se eval\u00faan todas las asignaciones posibles de v\u00edctimas\n    a personas desaparecidas y las soluciones se clasifican seg\u00fan su\n    probabilidad.\n-   **Posterior**: calcula las probabilidades *a posteriori* de\n    emparejamiento, es decir, la probabilidad de que una v\u00edctima V sea\n    la persona desaparecida M."
+    }
+  ]
+}
