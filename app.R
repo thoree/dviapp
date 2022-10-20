@@ -8,16 +8,17 @@ suppressPackageStartupMessages({
   library(magrittr)
   library(shiny.i18n)
   library(yaml)
+  library(commonmark)
 })
 
 
-i18n <- Translator$new(translation_json_path = paste0(getwd(), '/final-translation.json'),
-                       translation_csv_config = "data/config.yaml")
+i18n <- Translator$new(translation_json_path = 'translation.json')
 
 # Set language, English "en", Spanish "es"
 # i18n$set_translation_language("es")
 
 VERSION = 1.0
+
 
 ui <- fluidPage(
   
@@ -32,62 +33,29 @@ ui <- fluidPage(
                
             mainPanel(
               fluidRow(
-              column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 4),
-              column(
-                
-                # markdown(i18n$t("Introduction_long_1")),
-                
-                " This app deals with Disaster Victim Identification (DVI) problems and power 
-                calculation for kinship problems. Our goal has been to make  available functionality
-                in the `pedsuite` of R libraries and also the `dvir` library. We also expand on functionality 
-                in the", 
-                a(href="https://www.familias.no", "Familias software.",target="_blank"),
-                "There are tree modules, all based on built in cases or user data (Familias or R files):",
-                br(),
-                strong("- Power:"), "Simulations can be done to determine if goals are likely to be achieved.",
-                br(),
-                strong("- Priority:"), "The aim is to find the optimal extra persons to genotype.",
-                br(),
-                strong("- DVI:"), "Methods to include or exclude missing persons are provided.",
-                br(), 
-                "For more information, check the books:",
-                
-                a(href="https://www.elsevier.com/books/mass-identifications/kling/978-0-12-818423-3",  
-                "Mass identications,",target="_blank"), 
-                
-                "(Kling et al., 2021),",
-                
-                a(href="https://www.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2",
-                "Pedigree Analysis in R",target="_blank")," 
-                
-                (Vigeland, 2021), and the",
-                
-                a(href="https://www.nature.com/articles/s41598-021-93071-5", "dvir paper",target="_blank"),
-                
-                "(Vigeland and Egeland, 2021). 
-                
-                For further documentation and bug reporting, please go ",
-                
-                a(href="https://github.com/thoree/dviapp", "here.",target="_blank"),
-                
-                width = 8)
-               ),
+                column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 4),
+                column(
+                  uiOutput('Introduction_long_1_HTML'),
+                  width = 8
+                ),
+                column(
+                  tags$img(src='logo_nmbu.png', height='150px'),
+                  width = 6,
+                  class = 'text-right',
+                  style = 'margin-top: 3rem'
+                ),
+                column(
+                  tags$img(src='logo_cgpc.png', height='150px'),
+                  width = 6,
+                  style = 'margin-top: 3rem'
+                ),
+              ),
             ),
        ),
                
         navbarMenu(i18n$t("Power"),
           tabPanel(i18n$t("Explanations"),
-                   
-               # markdown(i18n$t("Power_long_1")),
-               
-               " LR comparing H1: `MP and REF full brothers`, versus H2: `MP and REF` unrelated,
-               has been computed for 1000 simulations of MP and REF conditioned on H1 below.
-               The simulations use the 35 markers in the database `NorwegianFrequencies` 
-               documented in the R library forrel. In `Power > Analyses based on built in cases` some prepared
-               cases can be run and parameters like the number of markers, 
-               can  be changed. In `Power > Analyses based on user loaded data`, 
-               similar output is obtained by loading a familias file
-               prepared by the user. The simulations will be conditioned on genotyped individuals, if any.",
+               uiOutput('Power_long_1_HTML'),
                fluidRow(
                  column(tags$img(src = "brotherPow.png", width = "792px", height = "240px"), width = 12),
                  ), 
@@ -160,27 +128,8 @@ ui <- fluidPage(
                navbarMenu(i18n$t("Prioritise"), 
                           
                  tabPanel(i18n$t("Explanations"),
-                          
-                 # markdown(i18n$t("Prioritise_long_1")),
-                 
-                   " The below explanation applies to the example obtained if 'brother' (default) 
-                    is chosen in the pull down menu below. The LR comparing H1: `MP and REF full brothers`, 
-                    to H2: `MP and REF unrelated`, has been computed for 100 unconditional simulations 
-                    of MP and REF conditioned on H1 below. This corresponds to the `REF` case in the panel 
-                    to the right. We see that we can expect no exclusions
-                    (in fact exclusions are impossible with only two brothers) and log10(LR) slightly exceeding 10. 
-                    If one brother, 
-                    `E1` is genotyped we can expect more than 10 exclusions and a log10(LR) slightly exceeding 20.
-                    Finally, if both brothers `E1`and `E2` are genotyped, the expected number of exclusions and 
-                    LR increase further.  10 profiles are simulated for the relatives ('REF', `E1` and `E2`), assuming H1. 
-                    For each of these 10 profiles, corresponding to the smaller circles, 1000 
-                    simulations are performed for `MP` under H1 and H2.
-                    In `Prioritise > Analyses based on built in cases` simulations can be performed 
-                    for various parameter choices. In
-                    `Prioritise > Analyses based on user loaded data` similar simulations can be performed from a
-                    fam file.",
-                   
-                    br(),
+                    uiOutput('Prioritise_long_1_HTML'),
+                    
                     sidebarLayout(position = "left",
                       sidebarPanel(
                         selectInput("pedigreePri", label = i18n$t("Built in pedigree for priority simulation"),
@@ -251,40 +200,7 @@ ui <- fluidPage(
                 navbarMenu(i18n$t("DVI"),
                   
                   tabPanel(i18n$t("Explanations"),
-                           
-                    # markdown(i18n$t("DVI_long_1")), 
-                    
-                    " Analyses can be done in this module from built in cases, from Familias (`fam`)
-                    files or from R data. The below figure shows the planecrash data. When the
-                    data is loaded in `DVI > Analyses based on built in cases`, 
-                    the following summary is provided:,
-                    `DVI data. 8 victims: V1 ,..., V8 . 5 missing. 
-                    5 typed refs: R1 ,..., R5 . 5 reference families.`
-                    The data is also available as a fam file:",
-                   
-                     a(href="https://familias.name/dviapp/planecrash.fam", "planecrash.fam", target="_blank"),
-                                    
-                    ", and can also be downloaded as RData: ",
-                                    
-                    a(href="https://familias.name/dviapp/planecrash.RData", "planecrash.RData", target="_blank"),
-                                      
-                    ". See the documentation for the details on the five analyses implemented. Here
-                    we only provide brief explanations:", br(), br(), 
-                    strong("IBD estimates:"),"The pairwise relationship between all pairs of victims is estimated.",
-                    
-                    br(),
-                    strong("Exclusion:"),"Each victim is tried as each missing person and the number 
-                    of exclusions is given.",
-                    br(),
-                    strong("Pairwise LR:"), "For each victim V and each missing person M, the LR comparing
-                    `V = M` to `V and M unrelated` is calculated.",
-                    br(),
-                    strong("Joint:"),  "All possible assignments of victims to missing persons
-                    are evaluated and solutions ranked according to the likelihood.",
-                    br(),
-                    strong("Posterior:"),  "Computes posterior pairing probabilities, i.e.,
-                    the probability that a victim V is the missing person M.", 
-                    br(),
+                    uiOutput('DVI_long_1_HTML'),
                     
                     mainPanel(
                       fluidRow(
@@ -434,6 +350,20 @@ server <- function(input, output, session) {
     print(paste("Language change!", input$selected_language))
     # Here is where we update language in session
     shiny.i18n::update_lang(session, input$selected_language)
+    
+    
+    output$Introduction_long_1_HTML = renderUI({
+      markdown(i18n$t('Introduction_long_1'))
+    })
+    output$Power_long_1_HTML = renderUI({
+      markdown(i18n$t("Power_long_1"))
+    })
+    output$Prioritise_long_1_HTML = renderUI({
+      markdown(i18n$t("Prioritise_long_1"))
+    })
+    output$DVI_long_1_HTML = renderUI({
+      markdown(i18n$t("DVI_long_1"))
+    })
   })
 
   ### Fix names of victims for dataExercise498 
