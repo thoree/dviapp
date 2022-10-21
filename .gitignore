@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-README.Rmd
 nelthume.rda
 DVI_long_1.html
 exclusionCase.Rmd
@@ -10,7 +9,6 @@ exclusionCase.md
 exclusionCase.docx
 exclusionCase.log
 exclusionCase.tex
-README.md
 README.pdf
 README_cache/
 README_files/
