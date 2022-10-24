@@ -33,22 +33,19 @@ ui <- fluidPage(
                
             mainPanel(
               fluidRow(
-                column(tags$img(src = "bookKETP.png", width = "176px", height = "220px"), width = 4),
+                column(
+                  tags$img(src='logo_cgpc.png', width='150px'),
+                  tags$img(src='logo_nmbu.png', width='150px'),
+                  width=3,
+                ),
                 column(
                   uiOutput('Introduction_long_1_HTML'),
-                  width = 8
+                  width = 6
                 ),
                 column(
-                  tags$img(src='logo_nmbu.png', height='150px'),
-                  width = 6,
-                  class = 'text-right',
-                  style = 'margin-top: 3rem'
-                ),
-                column(
-                  tags$img(src='logo_cgpc.png', height='150px'),
-                  width = 6,
-                  style = 'margin-top: 3rem'
-                ),
+                  tags$img(src = "bookKETP.png", width = "176px", height = "220px"),
+                  width = 3
+                )
               ),
             ),
        ),
@@ -98,17 +95,7 @@ ui <- fluidPage(
                 actionButton("resetPowerFam", i18n$t("Reset window"), class = "btn btn-danger",
                   style = "position: absolute; bottom:30px; width: 170px"),
                 
-                # markdown(i18n$t("Power_long_2")),
-                
-                " The missing person should be named `MP` and the reference `REF` in the file. The file",
-                a(href = "https://familias.name/dviapp/BrotherPower.fam", "BrotherPower.fam", target="_blank"),
-                "gives output similar to that in `Power > Explanations` (but not identical, even for the 
-                same seed, since the simulation implementation is not identical).  Genotyped individuals 
-                (if any) are hatched and first marker displayed in the plot and these individuals
-                will be conditioned on. Here's an example file", 
-                a(href = "https://familias.name/dviapp/BrotherPowerConditioned.fam", 
-                  "BrotherPowerConditioned.fam", target="_blank"),
-                br(),
+                uiOutput('Power_long_2_HTML'),
                   sidebarLayout(position = "left",
                     sidebarPanel(width = 3,
                       fileInput("famPower", "Familias file"),
@@ -172,18 +159,9 @@ ui <- fluidPage(
                  ),
                                   
                  tabPanel(i18n$t("Analyses based on user loaded data"),
-                 
-                 # markdown(i18n$t("Prioritise_long_2")),
+                  uiOutput('Prioritise_long_2_HTML'),
 
-                  "REMOVE :Priority power is calculated by uploading a Familias file. Here's an example:",
                   
-                  a(href="https://familias.name/dviapp/BrotherPriority.fam", "BrotherPriority.fam", target="_blank"),
-                  
-                  ". The missing person should be named `MP`, the reference `REF`, and the extra candidates
-                  for genotyping `E1`and `E2`. The mentioned file gives output similar to that
-                  in `Priority > Explanations` (but not identical, even for the same seed, since this is simulation).",
-                  
-                  br(),
                     sidebarLayout(position = "left",
                       sidebarPanel(width = 3,
                         fileInput("priPower", label = i18n$t("Familias file")),
@@ -257,18 +235,8 @@ ui <- fluidPage(
                       actionButton("resetDVILoad", i18n$t("Reset window"), class = "btn btn-danger",
                           style = "position: absolute; bottom:30px; width: 170px"), 
                       
-                      # markdown(i18n$t("DVI_long_2")),
-                      
-                      " If there are multiple missing persons in a family, like in the case based on
-                      the ", a(href = "https://familias.name/dviapp/FamilyWith3Missing.fam", 
-                              "FamilyWith3Missing.fam" ,target="_blank"), 
-                      ", which is similar to a built-in-case,
-                      the number of missing must be specified in `Settings`, (`No missing :3`),
-                      and the missing persons must be named
-                      `M1`, `M2`,...(this is the case in the linked fam-file).",
-                      
-
-                       
+                      uiOutput('DVI_long_2_HTML'),
+                    
                           sidebarLayout(position = "left",
                             sidebarPanel(width = 4,
                               fluidRow(         
@@ -358,11 +326,20 @@ server <- function(input, output, session) {
     output$Power_long_1_HTML = renderUI({
       markdown(i18n$t("Power_long_1"))
     })
+    output$Power_long_2_HTML = renderUI({
+      markdown(i18n$t("Power_long_2"))
+    })
     output$Prioritise_long_1_HTML = renderUI({
       markdown(i18n$t("Prioritise_long_1"))
     })
+    output$Prioritise_long_2_HTML = renderUI({
+      markdown(i18n$t("Prioritise_long_2"))
+    })
     output$DVI_long_1_HTML = renderUI({
       markdown(i18n$t("DVI_long_1"))
+    })
+    output$DVI_long_2_HTML = renderUI({
+      markdown(i18n$t("DVI_long_2"))
     })
   })
 
