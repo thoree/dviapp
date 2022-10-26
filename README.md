@@ -6,7 +6,8 @@ This note documents the functionality of the `dviapp`. The app deals
 with Disaster Victim Identification (DVI) problems and power calculation
 for kinship problems. Our goal has been to make available functionality
 in the [`pedsuite`](https://magnusdv.github.io/pedsuite/) of R libraries
-and also the `dvir` library. Compared to
+and also the `dvir` (importantly, it needs to be version 2.2.0
+throughout) library. Compared to
 [`Familias`](https://thoree.shinyapps.io/dviapp/), the app provides
 several extensions including more general conditional simulations,
 exclusion calculations and the ability to handle multiple missing
