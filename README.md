@@ -1,6 +1,6 @@
 Disaster Victim Identification app: dviapp
 ================
-October 21, 2022
+October 26, 2022
 
 This note documents the functionality of the `dviapp`. The app deals
 with Disaster Victim Identification (DVI) problems and power calculation
